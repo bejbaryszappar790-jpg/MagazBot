@@ -12,7 +12,7 @@ if DB_URL is None:
     raise ValueError("Database url is empty")
 
 
-BASE = declarative_base()
+Base = declarative_base()
 engine = create_async_engine(DB_URL)
 SessionLocal = async_sessionmaker(autoflush=False, autocommit=False, bind=engine, class_=AsyncSession)
 
