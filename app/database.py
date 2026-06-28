@@ -1,0 +1,23 @@
+import os
+from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession, create_async_engine
+from sqlalchemy.orm import declarative_base
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DB_URL = os.getenv("ALCHEMY_DATABASE_URL")
+
+
+if DB_URL is None:
+    raise ValueError("Database url is empty")
+
+
+BASE = declarative_base()
+engine = create_async_engine(DB_URL)
+SessionLocal = async_sessionmaker(autoflush=False, autocommit=False, bind=engine, class_=AsyncSession)
+
+async def get_db():
+   async with SessionLocal() as db:
+        yield db
+
+    
