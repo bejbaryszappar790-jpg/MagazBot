@@ -15,9 +15,3 @@ if DB_URL is None:
 Base = declarative_base()
 engine = create_async_engine(DB_URL)
 SessionLocal = async_sessionmaker(autoflush=False, autocommit=False, bind=engine, class_=AsyncSession)
-
-async def get_db():
-   async with SessionLocal() as db:
-        yield db
-
-    
