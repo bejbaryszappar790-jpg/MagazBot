@@ -2,7 +2,7 @@ import os
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from dotenv import load_dotenv
-from app.models import Users, UserRole
+from bot.models import Users, UserRole
 
 
 load_dotenv()

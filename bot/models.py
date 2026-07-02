@@ -3,7 +3,7 @@ from decimal import Decimal
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, Numeric, BigInteger
 from sqlalchemy import Enum as SAENUM
-from app.database import Base
+from bot.database import Base
 
 
 
