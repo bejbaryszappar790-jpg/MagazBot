@@ -48,6 +48,7 @@ class Variants(Base):
 
 
 class Attributes(Base):
+    __tablename__ = "Attributes"
     att_id : Mapped[int] = mapped_column(primary_key = True, index = True)
     var_id : Mapped[int] = mapped_column(ForeignKey("Variants.var_id"), nullable = False, index = True)
     att_name : Mapped[str] = mapped_column(nullable = False)
@@ -55,6 +56,7 @@ class Attributes(Base):
     variant : Mapped["Variants"] = relationship("Variants", back_populates = "attributes")
 
 class Stocks(Base):
+    __tablename__ = "Stocks"
     stock_id : Mapped[int] = mapped_column(primary_key = True, index = True)
     var_id : Mapped[int] = mapped_column(ForeignKey("Variants.var_id"), nullable = False, index = True)
     stock_quantity : Mapped[int] = mapped_column(nullable = False)

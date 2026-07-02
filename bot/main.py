@@ -4,6 +4,10 @@ from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand, Message
 from aiogram.filters import Command
 from dotenv import load_dotenv
+from bot.middleware.db import DbSessionMiddleware
+from bot.handlers.supplier import router as supplier_router
+from bot.handlers.user import router as user_router
+from bot.database import SessionLocal
 
 
 load_dotenv()
@@ -14,12 +18,12 @@ bot_token = os.getenv("BOT_TOKEN", "")
 async def set_main_menu(bot : Bot):
     
     main_menu_commands = [
-        BotCommand(command = "Добавить_Продукт", description = "Добавляет новый продукт"),
-        BotCommand(command = "Добаввить_Вариянт", description = "Добавляет новый вариянт"),
-        BotCommand(command = "Показать_Цену_Вариянта", description = "Показывает цену вариянта"),
-        BotCommand(command = "Изменить_Цену_Варията", description = "Меняет цену вариянта."),
-        BotCommand(command = "Увидеть_Кол_Вариянта", description = "Показывает количество вариянта"),
-        BotCommand(command = "Изменить_Кол_Вариянта", description = "Меняет количество вариянта"),
+        BotCommand(command = "add_product", description = "Добавляет новый продукт"),
+        BotCommand(command = "add_variant", description = "Добавляет новый вариянт"),
+        BotCommand(command = "show_var_price", description = "Показывает цену вариянта"),
+        BotCommand(command = "change_var_price", description = "Меняет цену вариянта."),
+        BotCommand(command = "show_var_quantity", description = "Показывает количество вариянта"),
+        BotCommand(command = "change_var_quantity", description = "Меняет количество вариянта"),
     ]
 
     await bot.set_my_commands(main_menu_commands)
@@ -30,9 +34,12 @@ async def cmd_status(message : Message):
 
 async def main():
     bot = Bot(token = bot_token)
-    
-    
     dp = Dispatcher()
+
+    dp.message.middleware(DbSessionMiddleware(session_pool = SessionLocal))
+
+    dp.include_router(supplier_router)
+    dp.include_router(user_router)
 
     dp.message.register(cmd_status, Command("status"))
 
