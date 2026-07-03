@@ -5,7 +5,7 @@ from aiogram.types import BotCommand, Message
 from aiogram.filters import Command
 from dotenv import load_dotenv
 from bot.middleware.db import DbSessionMiddleware
-from bot.handlers.supplier import router as supplier_router
+from bot.handlers.product import router as supplier_router
 from bot.handlers.user import router as user_router
 from bot.database import SessionLocal
 
@@ -30,7 +30,7 @@ async def set_main_menu(bot : Bot):
 
 
 async def cmd_status(message : Message):
-    message.answer("Статус бота: Хороший")
+    await message.answer("Статус бота: Хороший")
 
 async def main():
     bot = Bot(token = bot_token)

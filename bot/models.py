@@ -33,27 +33,17 @@ class Variants(Base):
     __tablename__ = "Variants"
 
     var_id : Mapped[int] = mapped_column(primary_key = True, index = True)
+    var_name : Mapped[str] = mapped_column(nullable = False)
     parent_id : Mapped[int] = mapped_column(ForeignKey("Parent_Products.parent_id"), nullable = True, index = True)
     var_price : Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable = True)
     parent : Mapped["Parent_Products"] = relationship("Parent_Products", back_populates = "variants")
-    attributes : Mapped[list["Attributes"]] = relationship(
-        "Attributes", 
-        back_populates = "variant",
-        cascade = "all, delete-orphan"
-        )
+    
     stocks : Mapped[list["Stocks"]] = relationship(
         "Stocks", 
         back_populates = "variant",
         cascade = "all, delete-orphan")
 
 
-class Attributes(Base):
-    __tablename__ = "Attributes"
-    att_id : Mapped[int] = mapped_column(primary_key = True, index = True)
-    var_id : Mapped[int] = mapped_column(ForeignKey("Variants.var_id"), nullable = False, index = True)
-    att_name : Mapped[str] = mapped_column(nullable = False)
-    att_value : Mapped[str] = mapped_column(nullable = False)
-    variant : Mapped["Variants"] = relationship("Variants", back_populates = "attributes")
 
 class Stocks(Base):
     __tablename__ = "Stocks"
