@@ -1,11 +1,10 @@
 import os
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from dotenv import load_dotenv
 from bot.models import Users, UserRole
 
 
-load_dotenv()
+
 
 admin_str = os.getenv("ADMIN_IDS")
 
@@ -36,4 +35,5 @@ async def register_user(session : AsyncSession, user_id : int):
 
     
     session.add(new_user)
+    await session.flush()
     return new_user

@@ -1,9 +1,7 @@
 import os
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base
-from dotenv import load_dotenv
 
-load_dotenv()
 
 DB_URL = os.getenv("ALCHEMY_DATABASE_URL")
 

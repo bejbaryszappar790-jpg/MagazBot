@@ -9,8 +9,8 @@ from bot.handlers.product import router as supplier_router
 from bot.handlers.user import router as user_router
 from bot.database import SessionLocal
 
-
 load_dotenv()
+
 bot_token = os.getenv("BOT_TOKEN", "")
 
 
@@ -20,8 +20,8 @@ async def set_main_menu(bot : Bot):
     main_menu_commands = [
         BotCommand(command = "add_product", description = "Добавляет новый продукт"),
         BotCommand(command = "add_variant", description = "Добавляет новый вариянт"),
-        BotCommand(command = "show_var_price", description = "Показывает цену вариянта"),
-        BotCommand(command = "change_var_price", description = "Меняет цену вариянта."),
+        BotCommand(command = "show_var_price", description = "Показывает цену варианта"),
+        BotCommand(command = "change_var_price", description = "Меняет цену варианта."),
         BotCommand(command = "show_var_quantity", description = "Показывает количество вариянта"),
         BotCommand(command = "change_var_quantity", description = "Меняет количество вариянта"),
     ]
@@ -36,7 +36,7 @@ async def main():
     bot = Bot(token = bot_token)
     dp = Dispatcher()
 
-    dp.message.middleware(DbSessionMiddleware(session_pool = SessionLocal))
+    dp.update.middleware(DbSessionMiddleware(session_pool = SessionLocal))
 
     dp.include_router(supplier_router)
     dp.include_router(user_router)

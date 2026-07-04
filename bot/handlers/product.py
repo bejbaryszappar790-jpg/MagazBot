@@ -10,7 +10,7 @@ from bot.crud.product import (
     create_product, 
     get_all_parent_names_ids, 
     )
-from bot.tools.chekc_userRole import check_user_role
+from bot.tools.check_userRole import check_user_role
 
 
 
@@ -31,7 +31,7 @@ async def ask_name(message : Message,
    
     admin_id = message.from_user.id
 
-    admin_role = check_user_role(session = session, user_id = admin_id)
+    admin_role = await check_user_role(session = session, user_id = admin_id)
 
     if admin_role is None:
         await message.answer(
@@ -65,11 +65,13 @@ async def create_parent(message : Message, session : AsyncSession, state : FSMCo
     exsisting_products = await get_all_parent_names_ids(session = session, parent_name = parent_name)
 
     attributes = exsisting_products.get("attributes", {})
-    if parent_name in attributes:
-        await message.answer(
-            "Такой товар уже существует!"
-        )
-        return
+    
+    for key in attributes.keys():
+        if key.lower() == parent_name.lower():
+            await message.answer(
+                "Такой продукт уже существует!"
+            )
+            return
     
     new_product = await create_product(session = session, parent_name = parent_name)
 
