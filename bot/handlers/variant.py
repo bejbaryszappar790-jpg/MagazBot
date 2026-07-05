@@ -98,9 +98,11 @@ async def receiving_parent_id(callback : CallbackQuery,  state : FSMContext):
     
     await callback.answer()
 
+    text = callback.data.split("_")[1]
 
     try:
         parent_id = int(callback.data.split("_")[1])
+        
 
         
         
@@ -113,7 +115,7 @@ async def receiving_parent_id(callback : CallbackQuery,  state : FSMContext):
         return
     except ValueError:
         await callback.message.answer(
-            "Почему то мы не нашли продукт в базе данных."
+            f"Почему то мы не нашли продукт по id {text} в базе данных."
         )
         await state.clear()
 
@@ -167,19 +169,20 @@ async def receiving_var_quantity(message : Message, session : AsyncSession, stat
             "Вы не отправили количество"
         )
         return
-
+    
+    
     try:
         quantity = int(message.text)
         if quantity < 0:
             await message.answer(
                 "Надо написать число равно или больше нуля!"
             )
-            
             return
         
         admin_data = await state.get_data()
 
         parent_id = admin_data.get("parent_id", None)
+
         if parent_id is None:
             await message.answer(
                 "Мы не смогли найти товар, проблема с БД"
@@ -188,6 +191,7 @@ async def receiving_var_quantity(message : Message, session : AsyncSession, stat
             return
         
         var_name = admin_data.get("var_name", "")
+        
         if not var_name:
             await message.answer(
                 "Название варианта не нашли, что-то ту не в порядке."
