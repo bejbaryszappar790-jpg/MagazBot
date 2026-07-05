@@ -5,6 +5,7 @@ from bot.models import (
     )
 
 
+
 async def create_product(session : AsyncSession, parent_name : str):
     new_product = Parent_Products(parent_name = parent_name)
     session.add(new_product)

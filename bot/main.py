@@ -5,7 +5,6 @@ from aiogram.types import BotCommand, Message
 from aiogram.filters import Command
 from dotenv import load_dotenv
 from bot.middleware.db import DbSessionMiddleware
-from bot.handlers.product import router as supplier_router
 from bot.handlers.user import router as user_router
 from bot.handlers.variant import router as variant_router
 from bot.handlers.product import router as product_router
@@ -40,7 +39,7 @@ async def main():
 
     dp.update.middleware(DbSessionMiddleware(session_pool = SessionLocal))
 
-    dp.include_router(supplier_router)
+
     dp.include_router(user_router)
     dp.include_router(variant_router)
     dp.include_router(product_router)
