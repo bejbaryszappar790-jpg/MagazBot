@@ -56,7 +56,7 @@ async def ask_name(message : Message,
 
 @router.message(AddProductFlow.waiting_for_name)
 async def create_parent(message : Message, session : AsyncSession, state : FSMContext):
-    if message.text is None or message.text == "":
+    if not message.text:
         await message.answer("Вы отправили пустую строку. Напишите имя продукта!")
         return
     

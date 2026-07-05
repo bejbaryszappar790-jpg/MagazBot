@@ -27,6 +27,7 @@ async def check_parent_name(message : Message, session : AsyncSession, state : F
         await message.answer(
             "Id пользователя не найден"
         )
+        await state.clear()
         return
     
 
@@ -38,24 +39,26 @@ async def check_parent_name(message : Message, session : AsyncSession, state : F
         await message.answer(
             "Пользователь не зарегестрирован!"
         )
+        await state.clear()
         return
     
     if admin_role != UserRole.ADMIN:
         await message.answer(
             "Пользователь должен быть админом!"
         )
+        await state.clear()
         return
     
     await state.set_state(AddVariantFlow.waiting_for_parent_name)
 
     await message.answer(
-        "Отправьте имя продукта к которому хотите добавить вариянт."
+        "Отправьте имя продукта к которому хотите добавить вариант."
     )
 
 
 @router.message(AddVariantFlow.waiting_for_parent_name)
 async def receiving_parent_name(message : Message, session : AsyncSession, state : FSMContext):
-    if message.text is None or message.text == "":
+    if not message.text:
         await message.answer(
             "Вы ничего не написали!"
         )
@@ -79,7 +82,7 @@ async def receiving_parent_name(message : Message, session : AsyncSession, state
     await state.set_state(AddVariantFlow.waiting_for_parent_id)
 
     await message.answer(
-        "Выберите продукт которому хотите добавить вариянт.",
+        "Выберите продукт которому хотите добавить вариант.",
         reply_markup = builder
     )
 
@@ -90,7 +93,12 @@ async def receiving_parent_name(message : Message, session : AsyncSession, state
 async def receiving_parent_id(callback : CallbackQuery,  state : FSMContext):
     if callback.data is None or callback.message is None:
         await callback.answer("Что то пошло не так.", show_alert = False)
+        await state.clear()
         return
+    
+    await callback.answer()
+
+
     try:
         parent_id = int(callback.data.split("_")[1])
 
@@ -100,19 +108,20 @@ async def receiving_parent_id(callback : CallbackQuery,  state : FSMContext):
         await state.set_state(AddVariantFlow.waiting_for_variant_name)
 
         await callback.message.answer(
-            "Напишите имя вариянта которую вы хотите добавить."
+            "Напишите имя варианта которую вы хотите добавить."
         )
         return
     except ValueError:
         await callback.message.answer(
             "Почему то мы не нашли продукт в базе данных."
         )
+        await state.clear()
 
 @router.message(AddVariantFlow.waiting_for_variant_name)
 async def receiving_var_name(message : Message, state : FSMContext):
-    if message.text is None or message.text == "": 
+    if not message.text: 
         await message.answer(
-            "Напишите имя вариянта!"
+            "Напишите имя варианта!"
         )
         return
     
@@ -120,7 +129,7 @@ async def receiving_var_name(message : Message, state : FSMContext):
 
     await state.set_state(AddVariantFlow.waiting_for_price)
     await message.answer(
-        "Теперь напишите цену вариянта."
+        "Теперь напишите цену варианта."
     )
     
 
@@ -133,25 +142,27 @@ async def receiving_var_price(message : Message, state : FSMContext):
         return
     
     try:
-        price = float(message.text)
+        price_text = message.text.replace(",", ".")
+        price = float(price_text)
         if price < 0.0:
             await message.answer(
                 "Надо написать число равно или больше нуля!"
             )
             return
+        
         await state.update_data(price = price)
         await state.set_state(AddVariantFlow.waiting_for_quantity)
         await message.answer(
-            "Теперь напишите количество вариянта."
+            "Теперь напишите количество варианта."
         )
     except ValueError:
         await message.answer(
-            "Напишите дробно число с 2 цифрами после точки!"
+            "Напишите дробно число например как 100 или 10.50!"
         )
         
 @router.message(AddVariantFlow.waiting_for_quantity)
 async def receiving_var_quantity(message : Message, session : AsyncSession, state : FSMContext):
-    if message.text is None or message.text == "":
+    if not message.text:
         await message.answer(
             "Вы не отправили количество"
         )
@@ -163,6 +174,7 @@ async def receiving_var_quantity(message : Message, session : AsyncSession, stat
             await message.answer(
                 "Надо написать число равно или больше нуля!"
             )
+            
             return
         
         admin_data = await state.get_data()
@@ -172,13 +184,15 @@ async def receiving_var_quantity(message : Message, session : AsyncSession, stat
             await message.answer(
                 "Мы не смогли найти товар, проблема с БД"
             )
+            await state.clear()
             return
         
         var_name = admin_data.get("var_name", "")
-        if var_name == "":
+        if not var_name:
             await message.answer(
-                "Название вариянта не нашли, что-то ту не в порядке."
+                "Название варианта не нашли, что-то ту не в порядке."
             )
+            await state.clear()
             return
         
         var_price = admin_data.get("price", 0.0)
@@ -186,9 +200,18 @@ async def receiving_var_quantity(message : Message, session : AsyncSession, stat
             await message.answer(
                 "Не правильная цена!"
             )
+            await state.clear()
             return
         
         parent_obj = await search_product_byid(session = session, parent_id = parent_id)
+
+        if parent_obj is None:
+            await message.answer(
+                "Не смогли найти продукт в базе данных!"
+            )
+            await state.clear()
+            return
+        
         new_variant = await create_variant(session = session, 
                                      parent_product = parent_obj,
                                      var_name = var_name,
@@ -198,8 +221,9 @@ async def receiving_var_quantity(message : Message, session : AsyncSession, stat
         
         if new_variant is None:
             await message.answer(
-                "Что то пошло не так вариянт не создался"
+                "Что то пошло не так вариант не создался"
             )
+            await state.clear()
             return
         
         await state.clear()
@@ -209,13 +233,6 @@ async def receiving_var_quantity(message : Message, session : AsyncSession, stat
         return
     except ValueError:
         await message.answer(
-            "Отправьте целое число которое будет отображать количество вариянта котрого вы хотите добавить."
+            "Отправьте целое число которое будет отображать количество варианта котрого вы хотите добавить."
         )
         return
-
-        
-        
-    
-    
-    
-        
