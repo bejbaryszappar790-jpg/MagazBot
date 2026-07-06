@@ -11,6 +11,7 @@ from bot.crud.product import (
     get_all_parent_names_ids, 
     )
 from bot.tools.check_userRole import check_user_role
+from bot.tools.exist import check_exist
 
 
 
@@ -62,16 +63,19 @@ async def create_parent(message : Message, session : AsyncSession, state : FSMCo
     
     parent_name = message.text
 
-    exsisting_products = await get_all_parent_names_ids(session = session, parent_name = parent_name)
+    existing_products = await get_all_parent_names_ids(session = session, parent_name = parent_name)
 
-    attributes = exsisting_products.get("attributes", {})
+    if not existing_products:
+        await message.answer(
+            "Продукта и продуктов которые похожи по буквам на то что вы написали нету."
+        )
+        return
     
-    for key in attributes.keys():
-        if key.lower() == parent_name.lower():
-            await message.answer(
-                "Такой продукт уже существует!"
-            )
-            return
+    if check_exist(names = existing_products, name = parent_name) == "exist":
+        await message.answer(
+            "Такой продукт уже сущетсвует."
+        )
+        return
     
     new_product = await create_product(session = session, parent_name = parent_name)
 
@@ -79,8 +83,8 @@ async def create_parent(message : Message, session : AsyncSession, state : FSMCo
         await message.answer("Товар не смог создан.")
         return
     
-    await state.clear()
     await message.answer(f"Товар {parent_name} создался")
+    await state.clear()
     return 
 
 

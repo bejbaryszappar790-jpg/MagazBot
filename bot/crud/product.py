@@ -25,16 +25,14 @@ async def get_all_parent_names_ids(session : AsyncSession, parent_name : str):
     )
 
     result = await session.execute(query)
-    parent_fields = result.all()
+    rows = result.all()
 
     
-    answer = {
-        "attributes" : {}
-    }
+    answer = {}
 
 
-    for properties in parent_fields:
-        answer["attributes"][properties[0]] = properties[1]
+    for row in rows:
+        answer[row[0]] = row[1]
 
     
     return answer 

@@ -8,7 +8,7 @@ from sqlalchemy import pool
 from alembic import context
 from dotenv import load_dotenv
 from bot.database import Base
-from bot.models import UserRole, Users, Variants, Parent_Products, Stocks
+import bot.models
 
 load_dotenv()
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))

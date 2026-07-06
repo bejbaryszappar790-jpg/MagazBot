@@ -14,7 +14,8 @@ from bot.crud.variant import (
 )
 from bot.tools.check_userRole import check_user_role
 from bot.keyboard.products import create_product_buttons
-
+from bot.crud.variant import get_all_variant_names_ids
+from bot.tools.exist import check_exist
 
 
 
@@ -66,19 +67,20 @@ async def receiving_parent_name(message : Message, session : AsyncSession, state
     
     parent_name = message.text
     existing_products = await get_all_parent_names_ids(session = session, parent_name = parent_name)
-    attributes = existing_products["attributes"]
-    is_exist = False
-    for key in attributes.keys():
-        if key.lower() == parent_name.lower():
-            is_exist = True
-            break
-
-    if not is_exist:
+    
+    if not existing_products:
         await message.answer(
-            "Такого продукта не существует!"
-        )  
+            "Продукта и продуктов которые похожи по буквам на то что вы написали нету."
+        )
         return
-    builder = create_product_buttons(data = attributes)
+
+    if check_exist(names = existing_products, name = parent_name) == "not exist":
+        await message.answer(
+            "Такой продукт не сущетсвует."
+        )
+        return
+    
+    builder = create_product_buttons(data = existing_products)
     await state.set_state(AddVariantFlow.waiting_for_parent_id)
 
     await message.answer(
@@ -90,7 +92,7 @@ async def receiving_parent_name(message : Message, session : AsyncSession, state
     AddVariantFlow.waiting_for_parent_id,
     F.data.startswith("product_")
     )
-async def receiving_parent_id(callback : CallbackQuery,  state : FSMContext):
+async def receiving_parent_id(callback : CallbackQuery, session : AsyncSession, state : FSMContext):
     if callback.data is None or callback.message is None:
         await callback.answer("Что то пошло не так.", show_alert = False)
         await state.clear()
@@ -104,8 +106,6 @@ async def receiving_parent_id(callback : CallbackQuery,  state : FSMContext):
         parent_id = int(callback.data.split("_")[1])
         
 
-        
-        
         await state.update_data(parent_id = parent_id)
         await state.set_state(AddVariantFlow.waiting_for_variant_name)
 
@@ -120,13 +120,35 @@ async def receiving_parent_id(callback : CallbackQuery,  state : FSMContext):
         await state.clear()
 
 @router.message(AddVariantFlow.waiting_for_variant_name)
-async def receiving_var_name(message : Message, state : FSMContext):
+async def receiving_var_name(message : Message, session : AsyncSession, state : FSMContext):
     if not message.text: 
         await message.answer(
             "Напишите имя варианта!"
         )
         return
     
+
+    admin_data = await state.get_data()
+
+    parent_id = admin_data.get("parent_id", None)
+    if parent_id is None:
+        await message.answer(
+            "Мы не смогли получить id продукта."
+        )
+        await state.clear()
+        return
+    
+    existing_variants = await get_all_variant_names_ids(session = session, 
+                                                        var_name = message.text, 
+                                                        parent_id = parent_id
+                                                        )
+    
+    if check_exist(names = existing_variants, name = message.text) == "exist":
+        await message.answer(
+            "Такой вариянт уже существует"
+        )
+        return
+        
     await state.update_data(var_name = message.text)
 
     await state.set_state(AddVariantFlow.waiting_for_price)
@@ -180,7 +202,12 @@ async def receiving_var_quantity(message : Message, session : AsyncSession, stat
             return
         
         admin_data = await state.get_data()
-
+        if not admin_data:
+            await message.answer(
+                "Словарь состояинй пуст"
+            )
+            return
+        
         parent_id = admin_data.get("parent_id", None)
 
         if parent_id is None:
@@ -191,7 +218,7 @@ async def receiving_var_quantity(message : Message, session : AsyncSession, stat
             return
         
         var_name = admin_data.get("var_name", "")
-        
+
         if not var_name:
             await message.answer(
                 "Название варианта не нашли, что-то ту не в порядке."
@@ -199,7 +226,7 @@ async def receiving_var_quantity(message : Message, session : AsyncSession, stat
             await state.clear()
             return
         
-        var_price = admin_data.get("price", 0.0)
+        var_price = admin_data.get("price", None)
         if var_price is None:
             await message.answer(
                 "Не правильная цена!"
@@ -230,13 +257,21 @@ async def receiving_var_quantity(message : Message, session : AsyncSession, stat
             await state.clear()
             return
         
-        await state.clear()
+
         await message.answer(
             f"Продукт {var_name} с ценой: {var_price} и с количеством {quantity} создался"
         )
+        await state.clear()
         return
+    
     except ValueError:
         await message.answer(
             "Отправьте целое число которое будет отображать количество варианта котрого вы хотите добавить."
         )
+        return
+    except Exception as e:
+        await message.answer(
+            f"Ошибка типа {e}"
+        )
+        await state.clear()
         return
