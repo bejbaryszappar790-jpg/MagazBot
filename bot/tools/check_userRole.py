@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from bot.crud.user import search_user
+from bot.repositories.user import search_user
 
 async def check_user_role(session : AsyncSession, user_id : int):
 

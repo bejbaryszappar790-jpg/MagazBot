@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
-from bot.crud.user import search_user, register_user
+from bot.repositories.user import search_user, register_user
 from bot.schemas.sessionstart import SessionStart_In
 router = Router()
 

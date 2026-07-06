@@ -5,16 +5,16 @@ from aiogram.types import Message, CallbackQuery
 from sqlalchemy.ext.asyncio import AsyncSession
 from bot.states.add_variant import AddVariantFlow
 from bot.models import UserRole
-from bot.crud.product import (
+from bot.repositories.product import (
     get_all_parent_names_ids,
     search_product_byid
     )
-from bot.crud.variant import (
+from bot.repositories.variant import (
     create_variant
 )
 from bot.tools.check_userRole import check_user_role
 from bot.keyboard.products import create_product_buttons
-from bot.crud.variant import get_all_variant_names_ids
+from bot.repositories.variant import get_all_variant_names_ids
 from bot.tools.exist import check_exist
 
 

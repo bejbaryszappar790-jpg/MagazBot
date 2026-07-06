@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from bot.states.add_product import AddProductFlow
 
 from bot.models import UserRole
-from bot.crud.product import (
+from bot.repositories.product import (
     create_product, 
     get_all_parent_names_ids, 
     )
