@@ -2,15 +2,10 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from sqlalchemy.ext.asyncio import AsyncSession
 from bot.states.add_product import AddProductFlow
-
+from bot.repositories.product import ProductRepository
+from bot.repositories.user import UserRepository
 from bot.models import UserRole
-from bot.repositories.product import (
-    create_product, 
-    get_all_parent_names_ids, 
-    )
-from bot.tools.check_userRole import check_user_role
 from bot.tools.exist import check_exist
 
 
@@ -21,7 +16,7 @@ router = Router()
 
 @router.message(Command("add_product"))
 async def ask_name(message : Message, 
-                   session : AsyncSession,
+                   user_service: UserRepository,
                     state : FSMContext):
 
 
@@ -32,7 +27,7 @@ async def ask_name(message : Message,
    
     admin_id = message.from_user.id
 
-    admin_role = await check_user_role(session = session, user_id = admin_id)
+    admin_role = await user_service.check_user_role(admin_id = admin_id)
 
     if admin_role is None:
         await message.answer(
@@ -56,14 +51,14 @@ async def ask_name(message : Message,
 
 
 @router.message(AddProductFlow.waiting_for_name)
-async def create_parent(message : Message, session : AsyncSession, state : FSMContext):
+async def create_parent(message : Message, product_service : ProductRepository, state : FSMContext):
     if not message.text:
         await message.answer("Вы отправили пустую строку. Напишите имя продукта!")
         return
     
     parent_name = message.text
 
-    existing_products = await get_all_parent_names_ids(session = session, parent_name = parent_name)
+    existing_products = await product_service.get_all_parent_names_ids(parent_name = parent_name)
 
     if not existing_products:
         await message.answer(
@@ -77,7 +72,7 @@ async def create_parent(message : Message, session : AsyncSession, state : FSMCo
         )
         return
     
-    new_product = await create_product(session = session, parent_name = parent_name)
+    new_product = await product_service.create_product(parent_name = parent_name)
 
     if new_product is None:
         await message.answer("Товар не смог создан.")

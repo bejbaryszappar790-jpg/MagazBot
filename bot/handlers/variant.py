@@ -5,16 +5,10 @@ from aiogram.types import Message, CallbackQuery
 from sqlalchemy.ext.asyncio import AsyncSession
 from bot.states.add_variant import AddVariantFlow
 from bot.models import UserRole
-from bot.repositories.product import (
-    get_all_parent_names_ids,
-    search_product_byid
-    )
-from bot.repositories.variant import (
-    create_variant
-)
-from bot.tools.check_userRole import check_user_role
+from bot.repositories.user import UserRepository
+from bot.repositories.variant import VariantRepository
+from bot.repositories.product import ProductRepository
 from bot.keyboard.products import create_product_buttons
-from bot.repositories.variant import get_all_variant_names_ids
 from bot.tools.exist import check_exist
 
 
@@ -23,7 +17,7 @@ router = Router()
 
 
 @router.message(Command("add_variant"))
-async def check_parent_name(message : Message, session : AsyncSession, state : FSMContext):
+async def check_parent_name(message : Message, user_service : UserRepository, state : FSMContext):
     if message.from_user is None:
         await message.answer(
             "Id пользователя не найден"
@@ -34,7 +28,7 @@ async def check_parent_name(message : Message, session : AsyncSession, state : F
 
     admin_id = message.from_user.id
 
-    admin_role = await check_user_role(session = session, user_id = admin_id)
+    admin_role = await user_service.check_user_role(admin_id= admin_id)
 
     if admin_role is None:
         await message.answer(
@@ -58,7 +52,7 @@ async def check_parent_name(message : Message, session : AsyncSession, state : F
 
 
 @router.message(AddVariantFlow.waiting_for_parent_name)
-async def receiving_parent_name(message : Message, session : AsyncSession, state : FSMContext):
+async def receiving_parent_name(message : Message, product_service: ProductRepository, state : FSMContext):
     if not message.text:
         await message.answer(
             "Вы ничего не написали!"
@@ -66,7 +60,7 @@ async def receiving_parent_name(message : Message, session : AsyncSession, state
         return
     
     parent_name = message.text
-    existing_products = await get_all_parent_names_ids(session = session, parent_name = parent_name)
+    existing_products = await product_service.get_all_parent_names_ids(parent_name = parent_name)
     
     if not existing_products:
         await message.answer(
@@ -120,7 +114,7 @@ async def receiving_parent_id(callback : CallbackQuery, session : AsyncSession, 
         await state.clear()
 
 @router.message(AddVariantFlow.waiting_for_variant_name)
-async def receiving_var_name(message : Message, session : AsyncSession, state : FSMContext):
+async def receiving_var_name(message : Message, variant_service : VariantRepository, state : FSMContext):
     if not message.text: 
         await message.answer(
             "Напишите имя варианта!"
@@ -138,7 +132,7 @@ async def receiving_var_name(message : Message, session : AsyncSession, state : 
         await state.clear()
         return
     
-    existing_variants = await get_all_variant_names_ids(session = session, 
+    existing_variants = await variant_service.get_all_variant_names_ids(
                                                         var_name = message.text, 
                                                         parent_id = parent_id
                                                         )
@@ -185,7 +179,10 @@ async def receiving_var_price(message : Message, state : FSMContext):
         )
         
 @router.message(AddVariantFlow.waiting_for_quantity)
-async def receiving_var_quantity(message : Message, session : AsyncSession, state : FSMContext):
+async def receiving_var_quantity(message : Message, 
+                                 variant_service : VariantRepository, 
+                                 product_service : ProductRepository,
+                                 state : FSMContext):
     if not message.text:
         await message.answer(
             "Вы не отправили количество"
@@ -234,7 +231,7 @@ async def receiving_var_quantity(message : Message, session : AsyncSession, stat
             await state.clear()
             return
         
-        parent_obj = await search_product_byid(session = session, parent_id = parent_id)
+        parent_obj = await product_service.search_product_byid(parent_id = parent_id)
 
         if parent_obj is None:
             await message.answer(
@@ -243,7 +240,7 @@ async def receiving_var_quantity(message : Message, session : AsyncSession, stat
             await state.clear()
             return
         
-        new_variant = await create_variant(session = session, 
+        new_variant = await variant_service.create_variant(
                                      parent_product = parent_obj,
                                      var_name = var_name,
                                      var_price = var_price,

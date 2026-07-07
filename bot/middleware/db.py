@@ -2,6 +2,9 @@ from typing import Callable, Dict, Any, Awaitable
 from aiogram import BaseMiddleware 
 from aiogram.types import TelegramObject
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from bot.repositories.product import ProductRepository
+from bot.repositories.user import UserRepository
+from bot.repositories.variant import VariantRepository
 
 class DbSessionMiddleware(BaseMiddleware):
     def __init__(self, session_pool : async_sessionmaker[AsyncSession]):
@@ -15,6 +18,9 @@ class DbSessionMiddleware(BaseMiddleware):
                        ) -> Any:
             async with self.session_pool() as session:
                 data["session"] = session
+                data["product_service"] = ProductRepository(session= session)
+                data["user_service"] = UserRepository(session = session)
+                data["variant_service"] = VariantRepository(session = session)
                 try:
                     result = await handler(event, data)
                     await session.commit()
@@ -22,5 +28,3 @@ class DbSessionMiddleware(BaseMiddleware):
                 except Exception:
                     await session.rollback()
                     raise
-                finally:
-                    await session.close()

@@ -5,50 +5,55 @@ from bot.models import (
     )
 
 
+class ProductRepository:
 
-async def create_product(session : AsyncSession, parent_name : str):
-    new_product = Parent_Products(parent_name = parent_name)
-    session.add(new_product)
-    await session.flush()
-    return new_product
+    def __init__(self, session : AsyncSession):
+        self.session = session
 
 
-
-
-async def get_all_parent_names_ids(session : AsyncSession, parent_name : str):
-    query = (
-        select(
-            Parent_Products.parent_name,
-            Parent_Products.parent_id
-            )
-        .where(Parent_Products.parent_name.ilike(f"%{parent_name}%"))
-    )
-
-    result = await session.execute(query)
-    rows = result.all()
-
-    
-    answer = {}
-
-
-    for row in rows:
-        answer[row[0]] = row[1]
-
-    
-    return answer 
+    async def create_product(self, parent_name : str):
+        new_product = Parent_Products(parent_name = parent_name)
+        self.session.add(new_product)
+        await self.session.flush()
+        return new_product
 
 
 
 
-async def search_product_byid(session : AsyncSession, parent_id : int):
-    query = (
-        select(Parent_Products)
-        .where(Parent_Products.parent_id == parent_id)
-    )
+    async def get_all_parent_names_ids(self, parent_name : str):
+        query = (
+            select(
+                Parent_Products.parent_name,
+                Parent_Products.parent_id
+                )
+            .where(Parent_Products.parent_name.ilike(f"%{parent_name}%"))
+        )
 
-    result = await session.execute(query)
-    return result.scalars().first()
+        result = await self.session.execute(query)
+        rows = result.all()
+
+        
+        answer = {}
+
+
+        for row in rows:
+            answer[row[0]] = row[1]
+
+        
+        return answer 
 
 
 
-    
+
+    async def search_product_byid(self, parent_id : int):
+        query = (
+            select(Parent_Products)
+            .where(Parent_Products.parent_id == parent_id)
+        )
+
+        result = await self.session.execute(query)
+        return result.scalars().first()
+
+
+
+        
