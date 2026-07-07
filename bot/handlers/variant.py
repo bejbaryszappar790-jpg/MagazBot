@@ -17,7 +17,7 @@ router = Router()
 
 
 @router.message(Command("add_variant"))
-async def check_parent_name(message : Message, user_service : UserRepository, state : FSMContext):
+async def check_parent_name(message : Message,  : UserRepository, state : FSMContext):
     if message.from_user is None:
         await message.answer(
             "Id пользователя не найден"
@@ -28,7 +28,7 @@ async def check_parent_name(message : Message, user_service : UserRepository, st
 
     admin_id = message.from_user.id
 
-    admin_role = await user_service.check_user_role(admin_id= admin_id)
+    admin_role = await .check_user_role(admin_id= admin_id)
 
     if admin_role is None:
         await message.answer(

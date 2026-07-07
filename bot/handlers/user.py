@@ -7,7 +7,7 @@ router = Router()
 
 
 @router.message(CommandStart())
-async def start_session(message : Message, user_service : UserRepository):
+async def start_session(message : Message, user_repo : UserRepository):
 
     if message.from_user is None:
         await message.answer("Неизвестный пользователь!")
@@ -19,14 +19,14 @@ async def start_session(message : Message, user_service : UserRepository):
 
     input = SessionStart_In(user_id = user_id)
 
-    existing_user = await user_service.search_user(user_id = input.user_id)
+    existing_user = await user_repo.search_user(user_id = input.user_id)
 
     if existing_user:
         await message.answer("Добро пожаловать снова!")
         return
 
     
-    new_user = await user_service.register_user(user_id = input.user_id)
+    new_user = await user_repo.register_user(user_id = input.user_id)
     
     if new_user is None:
         await message.answer("Пользователь не был создан в базе данных!")

@@ -49,5 +49,4 @@ class UserRepository:
         )
 
         result = await self.session.execute(query)
-        return result
-    
+        return result.scalar_one_or_none()

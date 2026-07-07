@@ -16,7 +16,7 @@ router = Router()
 
 @router.message(Command("add_product"))
 async def ask_name(message : Message, 
-                   user_service: UserRepository,
+                   user_repo: UserRepository,
                     state : FSMContext):
 
 
@@ -27,7 +27,7 @@ async def ask_name(message : Message,
    
     admin_id = message.from_user.id
 
-    admin_role = await user_service.check_user_role(admin_id = admin_id)
+    admin_role = await user_repo.check_user_role(admin_id = admin_id)
 
     if admin_role is None:
         await message.answer(

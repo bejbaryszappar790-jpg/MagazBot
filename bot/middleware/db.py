@@ -19,7 +19,7 @@ class DbSessionMiddleware(BaseMiddleware):
             async with self.session_pool() as session:
                 data["session"] = session
                 data["product_service"] = ProductRepository(session= session)
-                data["user_service"] = UserRepository(session = session)
+                data["user_repo"] = UserRepository(session = session)
                 data["variant_service"] = VariantRepository(session = session)
                 try:
                     result = await handler(event, data)
