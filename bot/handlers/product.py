@@ -4,8 +4,10 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from bot.states.add_product import AddProductFlow
 from bot.repositories.product import ProductRepository
-from bot.repositories.user import UserRepository
+from bot.services.product_service import ProductService
+from bot.services.user_service import UserService
 from bot.models import UserRole
+from bot.errors.common_errors import BotError
 from bot.tools.exist import check_exist
 
 
@@ -16,7 +18,8 @@ router = Router()
 
 @router.message(Command("add_product"))
 async def ask_name(message : Message, 
-                   user_repo: UserRepository,
+                   product_service : ProductService,
+                   user_service : UserService,
                     state : FSMContext):
 
 
@@ -25,26 +28,19 @@ async def ask_name(message : Message,
         return
     
    
-    admin_id = message.from_user.id
-
-    admin_role = await user_repo.check_user_role(admin_id = admin_id)
-
-    if admin_role is None:
+    try:
+    
+        result = await product_service.start_asking_name(admin_id = message.from_user.id, 
+                                                        user_repo = user_service.user_repo)
+        
+        if result:
+            await state.set_state(AddProductFlow.waiting_for_name)
+            await message.reply("Введите имя товара:")
+            return
+    except BotError as e:
         await message.answer(
-            "Пользователь не зарегестрирован!"
+            f"Ошибка: {e}"
         )
-        return
-    
-    if admin_role != UserRole.ADMIN:
-        await message.answer(
-            "Пользователь должен быть админом!"
-        )
-        return
-    
-    
-    
-    await state.set_state(AddProductFlow.waiting_for_name)
-    await message.reply("Введите имя товара:")
 
 
 

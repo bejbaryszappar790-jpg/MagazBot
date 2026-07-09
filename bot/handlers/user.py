@@ -1,37 +1,35 @@
 from aiogram import Router
 from aiogram.filters import CommandStart
 from aiogram.types import Message
-from bot.repositories.user import UserRepository
-from bot.schemas.sessionstart import SessionStart_In
+from bot.services.user_service import UserService
+from bot.errors.common_errors import BotError
+
 router = Router()
 
 
 @router.message(CommandStart())
-async def start_session(message : Message, user_repo : UserRepository):
+async def start_session(message : Message, user_service : UserService):
 
     if message.from_user is None:
         await message.answer("Неизвестный пользователь!")
         return
     
+    try:
+        answer = await user_service.process_user_start(admin_id = message.from_user.id)
+
+        if answer:
+            await message.answer(
+                "Добро Пожаловать снова!"
+            )  
+        else:
+            await message.answer(
+                "Добро Пожаловать."
+            )
+            
+    except BotError as e:
+        await message.answer(
+            f"Ошибка: {e}"
+        )
+
     
-    user_id = message.from_user.id
-
-
-    input = SessionStart_In(user_id = user_id)
-
-    existing_user = await user_repo.search_user(user_id = input.user_id)
-
-    if existing_user:
-        await message.answer("Добро пожаловать снова!")
-        return
-
-    
-    new_user = await user_repo.register_user(user_id = input.user_id)
-    
-    if new_user is None:
-        await message.answer("Пользователь не был создан в базе данных!")
-        return
-    
-    await message.answer("Добро Пожаловать!")
-    return
 

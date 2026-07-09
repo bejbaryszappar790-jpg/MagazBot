@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 from bot.repositories.product import ProductRepository
 from bot.repositories.user import UserRepository
 from bot.repositories.variant import VariantRepository
+from bot.services.user_service import UserService
 
 class DbSessionMiddleware(BaseMiddleware):
     def __init__(self, session_pool : async_sessionmaker[AsyncSession]):
@@ -18,8 +19,14 @@ class DbSessionMiddleware(BaseMiddleware):
                        ) -> Any:
             async with self.session_pool() as session:
                 data["session"] = session
+                user_repo = UserRepository(session = session)
+                product_repo = ProductRepository(session = session)
+                variant_repo = VariantRepository(session = session)
+                
+                
+                #todo finish writing services then connect it with middleware
                 data["product_service"] = ProductRepository(session= session)
-                data["user_repo"] = UserRepository(session = session)
+                data["user_service"] = UserService(user_repo = user_repo)
                 data["variant_service"] = VariantRepository(session = session)
                 try:
                     result = await handler(event, data)
