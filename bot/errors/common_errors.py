@@ -15,3 +15,7 @@ class PydanticError(BotError):
 class RoleError(BotError):
     "Любая ошибка которая связанно с ролем пользователя."
     pass
+
+class DuplicateError(BotError):
+    "Ошибка которая сработает если существет уже такое товар/вариянт и т.д"
+    pass

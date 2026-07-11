@@ -6,7 +6,6 @@ from bot.states.add_product import AddProductFlow
 from bot.repositories.product import ProductRepository
 from bot.services.product_service import ProductService
 from bot.services.user_service import UserService
-from bot.models import UserRole
 from bot.errors.common_errors import BotError
 from bot.tools.exist import check_exist
 
@@ -52,31 +51,37 @@ async def create_parent(message : Message, product_service : ProductRepository, 
         await message.answer("Вы отправили пустую строку. Напишите имя продукта!")
         return
     
-    parent_name = message.text
 
-    existing_products = await product_service.get_all_parent_names_ids(parent_name = parent_name)
+    try:
+        parent_name = message.text
 
-    if not existing_products:
+        existing_products = await product_service.get_all_parent_names_ids(parent_name = parent_name)
+
+        if not existing_products:
+            await message.answer(
+                "Продукта и продуктов которые похожи по буквам на то что вы написали нету."
+            )
+            return
+        
+        if check_exist(names = existing_products, name = parent_name) == "exist":
+            await message.answer(
+                "Такой продукт уже сущетсвует."
+            )
+            return
+        
+        new_product = await product_service.create_product(parent_name = parent_name)
+
+        if new_product is None:
+            await message.answer("Товар не смог создан.")
+            return
+        
+        await message.answer(f"Товар {parent_name} создался")
+        await state.clear()
+        return 
+    except BotError as e:
         await message.answer(
-            "Продукта и продуктов которые похожи по буквам на то что вы написали нету."
+            f"{e}"
         )
-        return
-    
-    if check_exist(names = existing_products, name = parent_name) == "exist":
-        await message.answer(
-            "Такой продукт уже сущетсвует."
-        )
-        return
-    
-    new_product = await product_service.create_product(parent_name = parent_name)
-
-    if new_product is None:
-        await message.answer("Товар не смог создан.")
-        return
-    
-    await message.answer(f"Товар {parent_name} создался")
-    await state.clear()
-    return 
 
 
     

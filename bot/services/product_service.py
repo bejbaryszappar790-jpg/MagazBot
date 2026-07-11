@@ -39,3 +39,11 @@ class ProductService:
             raise DataBaseError("Почему то alchemy гонит в сервисе продукта и в методе start_asking_name")
         except ValidationError:
             raise PydanticError("Почему то pydantic не смог изменить тип id в сервисе продуктах.")
+        
+
+    async def creating_product(self, parent_name : str) -> bool:
+        try:
+            product_dict = await self.product_repo.get_all_parent_names_ids(parent_name = parent_name)
+
+            if not product_dict:
+                
