@@ -7,11 +7,12 @@ from bot.repositories.user import UserRepository
 from bot.errors.common_errors import (
     RoleError,
     DataBaseError,
-    PydanticError
+    PydanticError,
+    DuplicateError
 )
 from bot.schemas.id import Id_In
 from bot.models import UserRole
-
+from bot.tools.exist import check_exist
 
 
 class ProductService:
@@ -32,7 +33,7 @@ class ProductService:
             
             
             if admin_role != UserRole.ADMIN:
-                raise RoleError("В сервисе продукта и в методе start_asking_name роль пользователя не подхит админу")
+                raise RoleError("В сервисе продукта и в методе start_asking_name роль пользователя не подходит админу")
             
             return True
         except SQLAlchemyError:
@@ -46,4 +47,17 @@ class ProductService:
             product_dict = await self.product_repo.get_all_parent_names_ids(parent_name = parent_name)
 
             if not product_dict:
-                
+                return True
+            
+            if check_exist(names = product_dict, name = parent_name):
+                raise DuplicateError(f"Продукт: {parent_name} уже существует")
+            
+            new_product = await self.product_repo.create_product(parent_name = parent_name)
+            
+            if new_product is None:
+                raise DataBaseError("Почему то новый продукт не создался")
+            
+            return True
+        except SQLAlchemyError:
+            raise DataBaseError("Почему то база данных не работает в сервисах продукта и в методе создание продукта.")
+        

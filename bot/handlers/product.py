@@ -3,11 +3,9 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from bot.states.add_product import AddProductFlow
-from bot.repositories.product import ProductRepository
-from bot.services.product_service import ProductService
-from bot.services.user_service import UserService
+from bot.services.product_services import ProductService
+from bot.services.user_services import UserService
 from bot.errors.common_errors import BotError
-from bot.tools.exist import check_exist
 
 
 
@@ -46,42 +44,24 @@ async def ask_name(message : Message,
 
 
 @router.message(AddProductFlow.waiting_for_name)
-async def create_parent(message : Message, product_service : ProductRepository, state : FSMContext):
+async def create_parent(message : Message, product_service : ProductService, state : FSMContext):
     if not message.text:
         await message.answer("Вы отправили пустую строку. Напишите имя продукта!")
         return
     
 
     try:
-        parent_name = message.text
-
-        existing_products = await product_service.get_all_parent_names_ids(parent_name = parent_name)
-
-        if not existing_products:
+        result = product_service.creating_product(parent_name = message.text)
+        if result:
             await message.answer(
-                "Продукта и продуктов которые похожи по буквам на то что вы написали нету."
+                f"Продукт по имени {message.text} создался!"
             )
-            return
-        
-        if check_exist(names = existing_products, name = parent_name) == "exist":
-            await message.answer(
-                "Такой продукт уже сущетсвует."
-            )
-            return
-        
-        new_product = await product_service.create_product(parent_name = parent_name)
-
-        if new_product is None:
-            await message.answer("Товар не смог создан.")
-            return
-        
-        await message.answer(f"Товар {parent_name} создался")
-        await state.clear()
-        return 
     except BotError as e:
         await message.answer(
-            f"{e}"
+            f"Ошибка: {e}"
         )
+
+
 
 
     

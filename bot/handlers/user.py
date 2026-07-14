@@ -1,7 +1,7 @@
 from aiogram import Router
 from aiogram.filters import CommandStart
 from aiogram.types import Message
-from bot.services.user_service import UserService
+from bot.services.user_services import UserService
 from bot.errors.common_errors import BotError
 
 router = Router()

@@ -2,14 +2,19 @@ from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
-from sqlalchemy.ext.asyncio import AsyncSession
 from bot.states.add_variant import AddVariantFlow
-from bot.models import UserRole
-from bot.repositories.user import UserRepository
-from bot.repositories.variant import VariantRepository
-from bot.repositories.product import ProductRepository
+from bot.services.variant_services import VariantService
+from bot.services.user_services import UserService
+from bot.services.product_services import ProductService
+from bot.errors.common_errors import (
+    BotError,
+    AbsenseError,
+    SimpleValidationError
+    )
 from bot.keyboard.products import create_product_buttons
 from bot.tools.exist import check_exist
+
+
 
 
 
@@ -17,7 +22,11 @@ router = Router()
 
 
 @router.message(Command("add_variant"))
-async def check_parent_name(message : Message,  : UserRepository, state : FSMContext):
+async def check_parent_name(message : Message,  
+                            variant_service : VariantService, 
+                            user_service : UserService,
+                            state : FSMContext
+                            ):
     if message.from_user is None:
         await message.answer(
             "Id пользователя не найден"
@@ -26,95 +35,116 @@ async def check_parent_name(message : Message,  : UserRepository, state : FSMCon
         return
     
 
-    admin_id = message.from_user.id
+    try:
+        result = await variant_service.start_creating_variant(admin_id = message.from_user.id, 
+                                                              user_repo = user_service.user_repo
+                                                              )
+        if result:
+            await state.set_state(AddVariantFlow.waiting_for_parent_name)
 
-    admin_role = await .check_user_role(admin_id= admin_id)
-
-    if admin_role is None:
+            await message.answer(
+                "Отправьте имя продукта к которому хотите добавить вариант."
+            )
+            return
+        
         await message.answer(
-            "Пользователь не зарегестрирован!"
+            "Почему то в хэндлере с командой /add_variant сервис не вернула True."
         )
         await state.clear()
-        return
-    
-    if admin_role != UserRole.ADMIN:
+    except BotError as e:
         await message.answer(
-            "Пользователь должен быть админом!"
+            f"Ошибка: {e}"
         )
-        await state.clear()
-        return
+   
     
-    await state.set_state(AddVariantFlow.waiting_for_parent_name)
-
-    await message.answer(
-        "Отправьте имя продукта к которому хотите добавить вариант."
-    )
 
 
 @router.message(AddVariantFlow.waiting_for_parent_name)
-async def receiving_parent_name(message : Message, product_service: ProductRepository, state : FSMContext):
+async def receiving_parent_name(message : Message, 
+                                variant_service : VariantService,
+                                product_service: ProductService, 
+                                state : FSMContext
+                                ):
     if not message.text:
         await message.answer(
             "Вы ничего не написали!"
         )
         return
     
-    parent_name = message.text
-    existing_products = await product_service.get_all_parent_names_ids(parent_name = parent_name)
-    
-    if not existing_products:
-        await message.answer(
-            "Продукта и продуктов которые похожи по буквам на то что вы написали нету."
-        )
-        return
+    try:
+        product_data = await variant_service.get_ProductNameForVariant(parent_name = message.text, 
+                                                       product_repo = product_service.product_repo
+                                                       )
+        
+        if product_data:
+            kb = create_product_buttons(data = product_data)
+            await state.set_state(AddVariantFlow.waiting_for_parent_id)
 
-    if check_exist(names = existing_products, name = parent_name) == "not exist":
+            await message.answer(
+                "Выберите продукт которому хотите добавить вариант.",
+                reply_markup = kb
+            )
+            return
         await message.answer(
-            "Такой продукт не сущетсвует."
+            "Почему то product_data пуст."
         )
-        return
-    
-    builder = create_product_buttons(data = existing_products)
-    await state.set_state(AddVariantFlow.waiting_for_parent_id)
+        await state.clear()
+    except BotError as e:
+        await message.answer(
+            f"Ошибка: {e}"
+        )
 
-    await message.answer(
-        "Выберите продукт которому хотите добавить вариант.",
-        reply_markup = builder
-    )
 
 @router.callback_query(
     AddVariantFlow.waiting_for_parent_id,
     F.data.startswith("product_")
     )
-async def receiving_parent_id(callback : CallbackQuery, session : AsyncSession, state : FSMContext):
+async def receiving_parent_id(callback : CallbackQuery, 
+                              variant_service : VariantService, 
+                              product_service : ProductService,
+                              state : FSMContext
+                              ):
+    
     if callback.data is None or callback.message is None:
         await callback.answer("Что то пошло не так.", show_alert = False)
         await state.clear()
         return
     
     await callback.answer()
-
-    text = callback.data.split("_")[1]
-
+    
     try:
-        parent_id = int(callback.data.split("_")[1])
+        parent_id = variant_service.get_ProductIdForVariant(callback_data = callback.data,
+                                                            product_repo = product_service.product_repo
+                                                            )
         
+        if parent_id:
+            await state.update_data(parent_id = parent_id)
+            await state.set_state(AddVariantFlow.waiting_for_variant_name)
 
-        await state.update_data(parent_id = parent_id)
-        await state.set_state(AddVariantFlow.waiting_for_variant_name)
-
+            await callback.message.answer(
+                "Напишите имя варианта которую вы хотите добавить."
+            )
+            return
+        
         await callback.message.answer(
-            "Напишите имя варианта которую вы хотите добавить."
-        )
-        return
-    except ValueError:
-        await callback.message.answer(
-            f"Почему то мы не нашли продукт по id {text} в базе данных."
+            "Почему то parent_id пуст"
         )
         await state.clear()
+    except AbsenseError as e:
+        await callback.message.answer(
+            f"Ошибка: {e}"
+        )
+        
+        await state.clear()
+    except SimpleValidationError as e:
+        await callback.message.answer(
+            f"Ошибка: {e}"
+        )
+
+
 
 @router.message(AddVariantFlow.waiting_for_variant_name)
-async def receiving_var_name(message : Message, variant_service : VariantRepository, state : FSMContext):
+async def receiving_var_name(message : Message, variant_service : VariantService, state : FSMContext):
     if not message.text: 
         await message.answer(
             "Напишите имя варианта!"
@@ -132,27 +162,31 @@ async def receiving_var_name(message : Message, variant_service : VariantReposit
         await state.clear()
         return
     
-    existing_variants = await variant_service.get_all_variant_names_ids(
-                                                        var_name = message.text, 
-                                                        parent_id = parent_id
-                                                        )
-    
-    if check_exist(names = existing_variants, name = message.text) == "exist":
-        await message.answer(
-            "Такой вариянт уже существует"
-        )
-        return
-        
-    await state.update_data(var_name = message.text)
+    try:
+        result = variant_service.get_VariantName(variant_name = message.text, 
+                                                 parent_id = parent_id
+                                                 )
+        if result:
+            
+            await state.update_data(var_name = message.text)
 
-    await state.set_state(AddVariantFlow.waiting_for_price)
-    await message.answer(
-        "Теперь напишите цену варианта."
-    )
-    
+            await state.set_state(AddVariantFlow.waiting_for_price)
+            await message.answer(
+                "Теперь напишите цену варианта."
+            )
+            return
+        await message.answer(
+            "Ошибка: Почему то result получисля False"
+        )
+    except BotError as e:
+        await message.answer(
+            f"{e}"
+        )
 
 @router.message(AddVariantFlow.waiting_for_price)
-async def receiving_var_price(message : Message, state : FSMContext):
+async def receiving_var_price(message : Message, 
+                              variant_service : VariantService,
+                              state : FSMContext):
     if message.text is None:
         await message.answer(
             "Вы не написали цену!"
@@ -160,22 +194,19 @@ async def receiving_var_price(message : Message, state : FSMContext):
         return
     
     try:
-        price_text = message.text.replace(",", ".")
-        price = float(price_text)
-        if price < 0.0:
+        variant_price = variant_service.get_VariantPrice(input_price = message.text)
+        
+        if variant_price:
+            await state.update_data(variant_price = variant_price)
+            await state.set_state(AddVariantFlow.waiting_for_quantity)
             await message.answer(
-                "Надо написать число равно или больше нуля!"
+                "Теперь напишите количество варианта."
             )
             return
         
-        await state.update_data(price = price)
-        await state.set_state(AddVariantFlow.waiting_for_quantity)
+    except BotError as e:
         await message.answer(
-            "Теперь напишите количество варианта."
-        )
-    except ValueError:
-        await message.answer(
-            "Напишите дробно число например как 100 или 10.50!"
+            f"{e}"
         )
         
 @router.message(AddVariantFlow.waiting_for_quantity)
@@ -268,7 +299,7 @@ async def receiving_var_quantity(message : Message,
         return
     except Exception as e:
         await message.answer(
-            f"Ошибка типа {e}"
+            f"Ошибка типа "
         )
         await state.clear()
         return

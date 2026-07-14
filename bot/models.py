@@ -1,5 +1,6 @@
 from enum import Enum
 from decimal import Decimal
+from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, Numeric, BigInteger
 from sqlalchemy import Enum as SAENUM
@@ -33,15 +34,21 @@ class Variants(Base):
     __tablename__ = "Variants"
 
     var_id : Mapped[int] = mapped_column(primary_key = True, index = True)
-    var_name : Mapped[str] = mapped_column(nullable = False, unique = True)
+    var_name : Mapped[str] = mapped_column(nullable = False)
     parent_id : Mapped[int] = mapped_column(ForeignKey("Parent_Products.parent_id"), nullable = True, index = True)
     var_price : Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable = True)
     parent : Mapped["Parent_Products"] = relationship("Parent_Products", back_populates = "variants")
+
+    __table_args__ = (
+        UniqueConstraint("parent_id", "var_name", name = "var_name_parent_id")
+    )
     
     stocks : Mapped[list["Stocks"]] = relationship(
         "Stocks", 
         back_populates = "variant",
         cascade = "all, delete-orphan")
+
+
 
 
 
