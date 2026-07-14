@@ -46,3 +46,8 @@ class BuisnessLogicError(BotError):
     """
     The error which is related to every buissnes logic error.
     """
+
+class NoneError(BotError):
+    """
+    The error which is caused when nullable data is None.
+    """

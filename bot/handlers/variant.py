@@ -9,7 +9,9 @@ from bot.services.product_services import ProductService
 from bot.errors.common_errors import (
     BotError,
     AbsenseError,
-    SimpleValidationError
+    SimpleValidationError,
+    NoneError,
+
     )
 from bot.keyboard.products import create_product_buttons
 from bot.tools.exist import check_exist
@@ -204,6 +206,9 @@ async def receiving_var_price(message : Message,
             )
             return
         
+        await message.answer(
+            "Почему из сервиса вариянта и из метода .get_VariantPrice не вернулся цена."
+        )
     except BotError as e:
         await message.answer(
             f"{e}"
@@ -211,8 +216,8 @@ async def receiving_var_price(message : Message,
         
 @router.message(AddVariantFlow.waiting_for_quantity)
 async def receiving_var_quantity(message : Message, 
-                                 variant_service : VariantRepository, 
-                                 product_service : ProductRepository,
+                                 variant_service : VariantService, 
+                                 product_service : ProductService,
                                  state : FSMContext):
     if not message.text:
         await message.answer(
@@ -222,13 +227,6 @@ async def receiving_var_quantity(message : Message,
     
     
     try:
-        quantity = int(message.text)
-        if quantity < 0:
-            await message.answer(
-                "Надо написать число равно или больше нуля!"
-            )
-            return
-        
         admin_data = await state.get_data()
         if not admin_data:
             await message.answer(
@@ -236,70 +234,29 @@ async def receiving_var_quantity(message : Message,
             )
             return
         
-        parent_id = admin_data.get("parent_id", None)
-
-        if parent_id is None:
-            await message.answer(
-                "Мы не смогли найти товар, проблема с БД"
-            )
-            await state.clear()
-            return
         
-        var_name = admin_data.get("var_name", "")
-
-        if not var_name:
-            await message.answer(
-                "Название варианта не нашли, что-то ту не в порядке."
-            )
-            await state.clear()
-            return
-        
-        var_price = admin_data.get("price", None)
-        if var_price is None:
-            await message.answer(
-                "Не правильная цена!"
-            )
-            await state.clear()
-            return
-        
-        parent_obj = await product_service.search_product_byid(parent_id = parent_id)
-
-        if parent_obj is None:
-            await message.answer(
-                "Не смогли найти продукт в базе данных!"
-            )
-            await state.clear()
-            return
-        
-        new_variant = await variant_service.create_variant(
-                                     parent_product = parent_obj,
-                                     var_name = var_name,
-                                     var_price = var_price,
-                                     quantity = quantity
-                                     )
-        
-        if new_variant is None:
-            await message.answer(
-                "Что то пошло не так вариант не создался"
-            )
-            await state.clear()
-            return
-        
-
+    
+    except NoneError as e:
         await message.answer(
-            f"Продукт {var_name} с ценой: {var_price} и с количеством {quantity} создался"
+            f"{e}"
         )
         await state.clear()
+        return
+    except AbsenseError as e:
+        await message.answer(
+            f"{e}"
+        )
+        await state.clear()
+        
+    except BotError as e:
+        await message.answer(
+            f"{e}"
+        )
         return
     
-    except ValueError:
-        await message.answer(
-            "Отправьте целое число которое будет отображать количество варианта котрого вы хотите добавить."
-        )
-        return
-    except Exception as e:
-        await message.answer(
-            f"Ошибка типа "
-        )
-        await state.clear()
-        return
+"""
+TO DO: 
+finish handler and check it,
+also learn to work with real interpretator in python and read mistakes which interpretator displays.
+also test all layer for my commands in tg.
+"""

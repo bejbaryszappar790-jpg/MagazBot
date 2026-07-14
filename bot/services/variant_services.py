@@ -1,3 +1,4 @@
+from decimal import Decimal
 from sqlalchemy.exc import SQLAlchemyError
 from pydantic import ValidationError
 from bot.repositories.variant import VariantRepository
@@ -11,10 +12,15 @@ from bot.errors.common_errors import (
     AbsenseError,
     SimpleValidationError,
     DuplicateError,
-    BuisnessLogicError
+    BuisnessLogicError,
+    NoneError,
 )
 from bot.models import UserRole
 from bot.tools.exist import check_exist
+from bot.models import Variants
+
+
+
 class VariantService:
     
     def __init__(self, variant_repo : VariantRepository):
@@ -99,3 +105,53 @@ class VariantService:
             return variant_price
         except ValueError:
             raise SimpleValidationError("Введите число как: 100, 100.0, 100,0")
+        
+
+
+    async def finishCreatingVariant(self, 
+                                    product_repo : ProductRepository,
+                                    quantity : str,
+                                    parent_id : int,
+                                    var_name : str,
+                                    var_price : float,
+             
+                               ) -> Variants:
+        try:
+            if not quantity:
+                raise NoneError("Вы не написали количество.")
+            
+            var_quantity = int(quantity)
+            
+            if var_quantity < 0:
+                raise BuisnessLogicError("Напишите целое число которое больше и равно нулю.")
+            
+            if parent_id is None:
+                raise NoneError("Почему id продукта исчез в сервисах вариянта и методе finishCreatingVariant")
+            
+            if not var_name:
+                raise NoneError("Почему то имя продукта пустой в сервисах вариянта и в методе finishCreatingVariant")
+            
+            if var_price is None:
+                raise NoneError("Почему цена вариянта пустой в сервисах вариянта и методе finishCreatingVariant")
+            
+
+            parent_obj = await product_repo.search_product_byid(parent_id = parent_id)
+            
+            if parent_obj is None:
+                raise AbsenseError("Почему то мы не нашли продукт по его id в сервисах вариянта и в методе finishCreatingVariant")
+            
+            new_variant = await self.variant_repo.create_variant(
+                                                    parent_product = parent_obj,
+                                                    var_name = var_name,
+                                                    var_price = Decimal(str(var_price)),
+                                                    quantity = var_quantity
+                                                                 )
+            
+            if new_variant is None:
+                raise AbsenseError("Почему то новый вариянт не создался в сервисах вариянта и в методе finishCreatingVariant.")
+            
+            return new_variant
+        except ValueError:
+            raise SimpleValidationError("Напишите целое число для количество которое больше или равно нулю.")
+
+
