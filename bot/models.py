@@ -40,7 +40,7 @@ class Variants(Base):
     parent : Mapped["Parent_Products"] = relationship("Parent_Products", back_populates = "variants")
 
     __table_args__ = (
-        UniqueConstraint("parent_id", "var_name", name = "var_name_parent_id")
+        UniqueConstraint("parent_id", "var_name", name = "var_name_parent_id"),
     )
     
     stocks : Mapped[list["Stocks"]] = relationship(
