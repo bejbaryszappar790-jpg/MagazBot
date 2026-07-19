@@ -35,7 +35,7 @@ class Variants(Base):
 
     var_id : Mapped[int] = mapped_column(primary_key = True, index = True)
     var_name : Mapped[str] = mapped_column(nullable = False)
-    parent_id : Mapped[int] = mapped_column(ForeignKey("Parent_Products.parent_id"), nullable = True, index = True)
+    parent_id : Mapped[int] = mapped_column(ForeignKey("Parent_Products.parent_id"), nullable = False, index = True)
     var_price : Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable = True)
     parent : Mapped["Parent_Products"] = relationship("Parent_Products", back_populates = "variants")
 

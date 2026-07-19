@@ -51,16 +51,16 @@ class VariantService:
 
     async def get_ProductNameForVariant(self, parent_name : str, product_repo : ProductRepository) -> dict:
         try:
-            product_data =  await product_repo.get_all_parent_names_ids(parent_name = parent_name)
+            product_names_ids =  await product_repo.get_all_parent_names_ids(parent_name = parent_name)
             
-            if not product_data:
+            if not product_names_ids:
                 raise AbsenseError("Отменяем действие!\nСловарь с именами и id продуктов пуст в сервисах вариянта и в методе get_ProductNameForVariant")
             
-            if not check_exist(names = product_data, name = parent_name):
+            if not check_exist(names = product_names_ids, name = parent_name):
                 raise AbsenseError("Продута не существует!")
             
 
-            return product_data
+            return product_names_ids
         except SQLAlchemyError:
             raise DataBaseError("Почему то БД упало в сервисах вариянта и в методе get_ProductNameForVariant")
     
@@ -86,12 +86,12 @@ class VariantService:
 
     async def get_VariantName(self, variant_name : str, parent_id : int) -> bool:
         try:
-            variant_data = await self.variant_repo.get_all_variant_names_ids(var_name = variant_name, parent_id = parent_id)
+            variant_names_ids = await self.variant_repo.get_all_variant_names_ids(var_name = variant_name, parent_id = parent_id)
 
-            if not variant_data:
+            if not variant_names_ids:
                 return True
             
-            if check_exist(names = variant_data, name = variant_name):
+            if check_exist(names = variant_names_ids, name = variant_name):
                 raise DuplicateError("Такой вариянт существует!")
             
             return True
@@ -123,9 +123,9 @@ class VariantService:
             if not quantity:
                 raise NoneError("Вы не написали количество.")
             
-            var_quantity = int(quantity)
+            variant_quantity = int(quantity)
             
-            if var_quantity < 0:
+            if variant_quantity < 0:
                 raise BuisnessLogicError("Напишите целое число которое больше и равно нулю.")
             
             if parent_id is None:
@@ -147,7 +147,7 @@ class VariantService:
                                                     parent_product = parent_obj,
                                                     var_name = var_name,
                                                     var_price = Decimal(str(var_price)),
-                                                    quantity = var_quantity
+                                                    quantity = variant_quantity
                                                                  )
             
             if new_variant is None:

@@ -197,7 +197,7 @@ async def receiving_var_price(message : Message,
     try:
         variant_price = variant_service.get_VariantPrice(input_price = message.text)
         
-        if variant_price:
+        if variant_price is not None:
             await state.update_data(var_price = variant_price)
             await state.set_state(AddVariantFlow.waiting_for_quantity)
             await message.answer(

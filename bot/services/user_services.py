@@ -6,6 +6,7 @@ from bot.errors.common_errors import (
     DataBaseError,
     PydanticError
     )
+from bot.enums import UserType
 class UserService:
 
     def __init__(self, user_repo : UserRepository) -> None:
@@ -16,20 +17,20 @@ class UserService:
         self.user_repo = user_repo
 
     
-    async def process_user_start(self, admin_id : int) -> bool:
+    async def process_user_start(self, admin_id : int) -> UserType:
         
         try:
 
             input = Id_In(admin_id = admin_id)
-            user = await self.user_repo.search_user(user_id = input.admin_id)
+            existing_user = await self.user_repo.search_user(user_id = input.admin_id)
 
-            if user:
-                return True
+            if existing_user:
+                return UserType.EXISTING
             
             new_user = await self.user_repo.register_user(user_id = input.admin_id)
             
             if new_user:
-                return False
+                return UserType.NEW
             
             raise DataBaseError("Почему то БД не создал пользователя.")
         except SQLAlchemyError:

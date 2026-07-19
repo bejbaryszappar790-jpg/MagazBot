@@ -3,6 +3,7 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message
 from bot.services.user_services import UserService
 from bot.errors.common_errors import BotError
+from bot.enums import UserType
 
 router = Router()
 
@@ -15,13 +16,13 @@ async def start_session(message : Message, user_service : UserService):
         return
     
     try:
-        answer = await user_service.process_user_start(admin_id = message.from_user.id)
+        user_type = await user_service.process_user_start(admin_id = message.from_user.id)
 
-        if answer:
+        if user_type == UserType.EXISTING:
             await message.answer(
                 "Добро Пожаловать снова!"
             )  
-        else:
+        elif user_type == UserType.NEW:
             await message.answer(
                 "Добро Пожаловать."
             )

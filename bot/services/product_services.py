@@ -44,16 +44,16 @@ class ProductService:
 
     async def creating_product(self, parent_name : str) -> bool:
         try:
-            product_dict = await self.product_repo.get_all_parent_names_ids(parent_name = parent_name)
+            product_names_ids = await self.product_repo.get_all_parent_names_ids(parent_name = parent_name)
 
-            if not product_dict:
+            if not product_names_ids:
                 new_product = await self.product_repo.create_product(parent_name = parent_name)
                 if not new_product:
                     raise DataBaseError("Почему то новый продукт не создался")
                 
                 return True
             
-            if check_exist(names = product_dict, name = parent_name):
+            if check_exist(names = product_names_ids, name = parent_name):
                 raise DuplicateError(f"Продукт: {parent_name} уже существует")
                 
             new_product = await self.product_repo.create_product(parent_name = parent_name)
