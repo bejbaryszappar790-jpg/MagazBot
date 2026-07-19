@@ -1,9 +1,11 @@
 import os
+from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from bot.models import Users, UserRole
 
 
+load_dotenv()
 
 
 admin_str = os.getenv("ADMIN_IDS")

@@ -164,7 +164,7 @@ async def receiving_var_name(message : Message, variant_service : VariantService
         return
     
     try:
-        result = variant_service.get_VariantName(variant_name = message.text, 
+        result = await variant_service.get_VariantName(variant_name = message.text, 
                                                  parent_id = parent_id
                                                  )
         if result:
@@ -198,7 +198,7 @@ async def receiving_var_price(message : Message,
         variant_price = variant_service.get_VariantPrice(input_price = message.text)
         
         if variant_price:
-            await state.update_data(variant_price = variant_price)
+            await state.update_data(var_price = variant_price)
             await state.set_state(AddVariantFlow.waiting_for_quantity)
             await message.answer(
                 "Теперь напишите количество варианта."
@@ -231,10 +231,33 @@ async def receiving_var_quantity(message : Message,
             await message.answer(
                 "Словарь состояинй пуст"
             )
+            await state.clear()
             return
         
+        quantity = message.text
+        parent_id = admin_data.get("parent_id")
+        var_name = admin_data.get("var_name")
+        var_price = admin_data.get("var_price")
         
-    
+        new_variant = await variant_service.finishCreatingVariant(product_repo = product_service.product_repo,
+                                                                  quantity = quantity,
+                                                                  parent_id = parent_id,
+                                                                  var_name = var_name,
+                                                                  var_price = var_price
+                                                                  )
+        
+        if new_variant:
+            await message.answer(
+                f"Вариянт по имени {var_name} успешно создался"
+            )
+            
+        else:
+            await message.answer(
+                f"Вариянта по имени {var_name} не создался"
+            )
+        
+        await state.clear()
+
     except NoneError as e:
         await message.answer(
             f"{e}"

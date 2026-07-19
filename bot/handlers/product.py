@@ -51,7 +51,7 @@ async def create_parent(message : Message, product_service : ProductService, sta
     
 
     try:
-        result = product_service.creating_product(parent_name = message.text)
+        result = await product_service.creating_product(parent_name = message.text)
         if result:
             await message.answer(
                 f"Продукт по имени {message.text} создался!"
@@ -61,8 +61,3 @@ async def create_parent(message : Message, product_service : ProductService, sta
             f"Ошибка: {e}"
         )
 
-
-
-
-    
-    

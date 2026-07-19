@@ -47,17 +47,22 @@ class ProductService:
             product_dict = await self.product_repo.get_all_parent_names_ids(parent_name = parent_name)
 
             if not product_dict:
+                new_product = await self.product_repo.create_product(parent_name = parent_name)
+                if not new_product:
+                    raise DataBaseError("Почему то новый продукт не создался")
+                
                 return True
             
             if check_exist(names = product_dict, name = parent_name):
                 raise DuplicateError(f"Продукт: {parent_name} уже существует")
-            
+                
             new_product = await self.product_repo.create_product(parent_name = parent_name)
             
-            if new_product is None:
+            if not new_product:
                 raise DataBaseError("Почему то новый продукт не создался")
             
             return True
+            
         except SQLAlchemyError:
             raise DataBaseError("Почему то база данных не работает в сервисах продукта и в методе создание продукта.")
         

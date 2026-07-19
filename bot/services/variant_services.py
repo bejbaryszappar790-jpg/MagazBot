@@ -69,7 +69,7 @@ class VariantService:
     async def get_ProductIdForVariant(self, callback_data : str,
                                       product_repo : ProductRepository,
                                       ) -> int:
-        text = callback_data.split("-")[1]
+        text = callback_data.split("_")[1]
 
         try:
             parent_id = int(text)
@@ -88,6 +88,9 @@ class VariantService:
         try:
             variant_data = await self.variant_repo.get_all_variant_names_ids(var_name = variant_name, parent_id = parent_id)
 
+            if not variant_data:
+                return True
+            
             if check_exist(names = variant_data, name = variant_name):
                 raise DuplicateError("Такой вариянт существует!")
             
@@ -110,10 +113,10 @@ class VariantService:
 
     async def finishCreatingVariant(self, 
                                     product_repo : ProductRepository,
-                                    quantity : str,
-                                    parent_id : int,
-                                    var_name : str,
-                                    var_price : float,
+                                    quantity : str | None,
+                                    parent_id : int | None,
+                                    var_name : str | None,
+                                    var_price : float | None,
              
                                ) -> Variants:
         try:
