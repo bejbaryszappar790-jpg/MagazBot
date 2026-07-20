@@ -17,16 +17,22 @@ from bot.tools.exist import check_exist
 
 class ProductService:
     
-    def __init__(self, product_repo : ProductRepository) -> None:
-        "Класс для сервиса продукта."
+    def __init__(self, 
+                 product_repo : ProductRepository,
+                 user_repo : UserRepository
+                 ) -> None:
+        """
+        Class for the service of the product.
+        """
         self.product_repo = product_repo
+        self.user_repo = user_repo
 
-    async def start_asking_name(self, admin_id : int, user_repo : UserRepository) -> bool:
+    async def start_asking_name(self, admin_id : int) -> bool:
         
         try:
             input = Id_In(admin_id = admin_id)
             
-            admin_role = await user_repo.check_user_role(admin_id = input.admin_id)
+            admin_role = await self.user_repo.check_user_role(admin_id = input.admin_id)
 
             if admin_role is None:
                 raise DataBaseError("Почему то роль пользователя нету в сервисах продукта и в методе start_asking_name")

@@ -27,9 +27,16 @@ class DbSessionMiddleware(BaseMiddleware):
                 
                 
                 
-                data["product_service"] = ProductService(product_repo = product_repo)
+                data["product_service"] = ProductService(product_repo = product_repo,
+                                                         user_repo = user_repo
+                                                         )
+                
                 data["user_service"] = UserService(user_repo = user_repo)
-                data["variant_service"] = VariantService(variant_repo = variant_repo)
+                data["variant_service"] = VariantService(variant_repo = variant_repo,
+                                                         product_repo = product_repo,
+                                                         user_repo = user_repo
+                                                         )
+                
                 try:
                     result = await handler(event, data)
                     await session.commit()

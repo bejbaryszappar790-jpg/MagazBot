@@ -23,17 +23,23 @@ from bot.models import Variants
 
 class VariantService:
     
-    def __init__(self, variant_repo : VariantRepository):
+    def __init__(self, 
+                variant_repo : VariantRepository,
+                product_repo : ProductRepository,
+                user_repo : UserRepository 
+                ):
         self.variant_repo = variant_repo
+        self.product_repo = product_repo
+        self.user_repo = user_repo
 
 
     
-    async def start_creating_variant(self, admin_id : int, user_repo : UserRepository) -> bool:
+    async def start_creating_variant(self, admin_id : int) -> bool:
         
         try:
             input = Id_In(admin_id = admin_id)
             
-            admin_role = await user_repo.check_user_role(admin_id = input.admin_id)
+            admin_role = await self.user_repo.check_user_role(admin_id = input.admin_id)
 
             if admin_role is None:
                 raise DataBaseError("Почему то БД не вернуло роль в сервиса вариянта и в методе start_creating_variant")
@@ -49,9 +55,9 @@ class VariantService:
         
 
 
-    async def get_ProductNameForVariant(self, parent_name : str, product_repo : ProductRepository) -> dict:
+    async def get_ProductNameForVariant(self, parent_name : str) -> dict:
         try:
-            product_names_ids =  await product_repo.get_all_parent_names_ids(parent_name = parent_name)
+            product_names_ids =  await self.product_repo.get_all_parent_names_ids(parent_name = parent_name)
             
             if not product_names_ids:
                 raise AbsenseError("Отменяем действие!\nСловарь с именами и id продуктов пуст в сервисах вариянта и в методе get_ProductNameForVariant")
@@ -67,13 +73,12 @@ class VariantService:
     
 
     async def get_ProductIdForVariant(self, callback_data : str,
-                                      product_repo : ProductRepository,
                                       ) -> int:
         text = callback_data.split("_")[1]
 
         try:
             parent_id = int(text)
-            existing_product = await product_repo.search_product_byid(parent_id)
+            existing_product = await self.product_repo.search_product_byid(parent_id)
             if not existing_product:
                 raise AbsenseError("Почему то продукт которую мы получили при создание нового вариянта не существует.")
             
@@ -111,8 +116,7 @@ class VariantService:
         
 
 
-    async def finishCreatingVariant(self, 
-                                    product_repo : ProductRepository,
+    async def finishCreatingVariant(self,
                                     quantity : str | None,
                                     parent_id : int | None,
                                     var_name : str | None,
@@ -138,7 +142,7 @@ class VariantService:
                 raise NoneError("Почему цена вариянта пустой в сервисах вариянта и методе finishCreatingVariant")
             
 
-            parent_obj = await product_repo.search_product_byid(parent_id = parent_id)
+            parent_obj = await self.product_repo.search_product_byid(parent_id = parent_id)
             
             if parent_obj is None:
                 raise AbsenseError("Почему то мы не нашли продукт по его id в сервисах вариянта и в методе finishCreatingVariant")

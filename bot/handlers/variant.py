@@ -37,8 +37,7 @@ async def check_parent_name(message : Message,
     
 
     try:
-        result = await variant_service.start_creating_variant(admin_id = message.from_user.id, 
-                                                              user_repo = user_service.user_repo
+        result = await variant_service.start_creating_variant(admin_id = message.from_user.id
                                                               )
         if result:
             await state.set_state(AddVariantFlow.waiting_for_parent_name)
@@ -74,7 +73,6 @@ async def receiving_parent_name(message : Message,
     
     try:
         product_data = await variant_service.get_ProductNameForVariant(parent_name = message.text, 
-                                                       product_repo = product_service.product_repo
                                                        )
         
         if product_data:
@@ -115,7 +113,6 @@ async def receiving_parent_id(callback : CallbackQuery,
     
     try:
         parent_id = variant_service.get_ProductIdForVariant(callback_data = callback.data,
-                                                            product_repo = product_service.product_repo
                                                             )
         
         if parent_id:
@@ -239,8 +236,7 @@ async def receiving_var_quantity(message : Message,
         var_name = admin_data.get("var_name")
         var_price = admin_data.get("var_price")
         
-        new_variant = await variant_service.finishCreatingVariant(product_repo = product_service.product_repo,
-                                                                  quantity = quantity,
+        new_variant = await variant_service.finishCreatingVariant(quantity = quantity,
                                                                   parent_id = parent_id,
                                                                   var_name = var_name,
                                                                   var_price = var_price

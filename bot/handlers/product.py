@@ -27,8 +27,7 @@ async def ask_name(message : Message,
    
     try:
     
-        result = await product_service.start_asking_name(admin_id = message.from_user.id, 
-                                                        user_repo = user_service.user_repo)
+        result = await product_service.start_asking_name(admin_id = message.from_user.id)
         
         if result:
             await state.set_state(AddProductFlow.waiting_for_name)
@@ -56,6 +55,7 @@ async def create_parent(message : Message, product_service : ProductService, sta
             await message.answer(
                 f"Продукт по имени {message.text} создался!"
             )
+            await state.clear()
     except BotError as e:
         await message.answer(
             f"Ошибка: {e}"
