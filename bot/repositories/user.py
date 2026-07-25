@@ -1,4 +1,5 @@
 import os
+import logging
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -16,11 +17,22 @@ if admin_str is None:
 
 admin_ids = list(map(int, admin_str.split(",")))
 
+logger = logging.getLogger(__name__)
+
+"""
+Repository for Users which works with DB.
+"""
 
 class UserRepository:
     
     def __init__(self, session : AsyncSession):
         self.session = session
+        if self.session is None:
+            logger.error("Session is None in User Repo constructor.")
+        else:
+            logger.info("Product Constructor finished succesfully.")
+
+
 
     async def search_user(self, user_id):
         query = (
@@ -30,6 +42,7 @@ class UserRepository:
 
         result = await self.session.execute(query)
         
+        logger.info("Function finished succesfully!")
         return result.scalars().first()
 
 
@@ -42,6 +55,11 @@ class UserRepository:
         
         self.session.add(new_user)
         await self.session.flush()
+        if new_user is None:
+            logger.error("New user wasn't created!")
+        else:
+            logger.info("Function finished succesfully!")
+
         return new_user
     
     async def check_user_role(self, admin_id: int):
@@ -51,4 +69,5 @@ class UserRepository:
         )
 
         result = await self.session.execute(query)
+        logger.info("Function finished succesfully!")
         return result.scalar_one_or_none()

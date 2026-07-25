@@ -272,9 +272,3 @@ async def receiving_var_quantity(message : Message,
         )
         return
     
-"""
-TO DO: 
-finish handler and check it,
-also learn to work with real interpretator in python and read mistakes which interpretator displays.
-also test all layer for my commands in tg.
-"""
