@@ -1,11 +1,10 @@
-import logging
 from pydantic import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
 from bot.repositories.product import (
     ProductRepository,
     )
 from bot.repositories.user import UserRepository
-from bot.errors.common_errors import (
+from bot.errors.server_error import (
     RoleError,
     DataBaseError,
     PydanticError,
@@ -16,11 +15,9 @@ from bot.models import UserRole
 from bot.tools.exist import check_exist
 
 
-logger = logging.getLogger(__name__)
 
-"""
-Finish loggers!!!
-"""
+
+
 class ProductService:
     
     def __init__(self, 
@@ -32,14 +29,6 @@ class ProductService:
         """
         self.product_repo = product_repo
         self.user_repo = user_repo
-        if self.product_repo is None and self.user_repo is None:
-            logger.error("User and Product Repo instances is None")
-        elif self.product_repo is None:
-            logger.error("Product Repo instance is None")
-        elif self.user_repo is None:
-            logger.error("User Repo instance is None")
-        else:
-            logger.info("ProductService constructor finished succesfully.")
 
 
 
@@ -51,17 +40,15 @@ class ProductService:
             admin_role = await self.user_repo.check_user_role(admin_id = input.admin_id)
 
             if admin_role is None:
-                logger.error("admin_role is None.")
                 raise DataBaseError("Почему то роль пользователя нету в сервисах продукта и в методе start_asking_name")
             
             
             if admin_role != UserRole.ADMIN:
-                logger.warning("User is not admin.")
                 raise RoleError("В сервисе продукта и в методе start_asking_name роль пользователя не подходит админу")
-            
+
+
             return True
         except SQLAlchemyError:
-            logger.error("Sqlalchemy doesn't work")
             raise DataBaseError("Почему то alchemy гонит в сервисе продукта и в методе start_asking_name")
         except ValidationError:
             raise PydanticError("Почему то pydantic не смог изменить тип id в сервисе продуктах.")
@@ -85,7 +72,7 @@ class ProductService:
             
             if not new_product:
                 raise DataBaseError("Почему то новый продукт не создался")
-            
+
             return True
             
         except SQLAlchemyError:

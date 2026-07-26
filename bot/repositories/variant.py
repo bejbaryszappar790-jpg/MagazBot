@@ -1,4 +1,4 @@
-import logging
+
 from decimal import Decimal
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -8,7 +8,7 @@ from bot.models import (
     Stocks,
     )
 
-logger = logging.getLogger(__name__)
+
 
 """
 Repository for Variants which works with DB.
@@ -17,10 +17,6 @@ Repository for Variants which works with DB.
 class VariantRepository:
     def __init__(self, session : AsyncSession):
         self.session = session
-        if self.session is None:
-            logger.error("Session is None in Product Repo constructor.")
-        else:
-            logger.info("Product Constructor finished succesfully.")
 
 
     async def create_variant(self,
@@ -38,14 +34,6 @@ class VariantRepository:
         await self.session.flush()
         new_stock = Stocks(var_id = new_var.var_id, stock_quantity = quantity)
 
-        if new_stock is None and new_var is None:
-            logger.error("New variant and New stock is None.")
-        elif new_stock is None:
-            logger.error("New stock is None.")
-        elif new_var is None:
-            logger.error("New variant is None.")
-        else:
-            logger.info("Function finished succesfully.")
 
         self.session.add(new_stock)
         
@@ -66,5 +54,4 @@ class VariantRepository:
         for row in rows:
             answer[row[0]] = row[1]
 
-        logger.info("Function finished succesfully.")
         return answer

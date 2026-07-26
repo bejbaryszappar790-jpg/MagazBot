@@ -2,7 +2,7 @@ from bot.repositories.user import UserRepository
 from bot.schemas.id import Id_In
 from sqlalchemy.exc import SQLAlchemyError
 from pydantic import ValidationError
-from bot.errors.common_errors import (
+from bot.errors.server_error import (
     DataBaseError,
     PydanticError
     )

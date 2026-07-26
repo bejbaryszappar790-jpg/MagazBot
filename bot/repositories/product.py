@@ -1,11 +1,10 @@
-import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from bot.models import (
     Parent_Products,
     )
 
-logger = logging.getLogger(__name__)
+
 
 """
 Repository for product which works with DB.
@@ -14,20 +13,12 @@ class ProductRepository:
 
     def __init__(self, session : AsyncSession):
         self.session = session
-        if self.session is None:
-            logger.error("Session is None in Product Repo constructor.")
-        else:
-            logger.info("Product Constructor finished succesfully.")
 
 
     async def create_product(self, parent_name : str):
         new_product = Parent_Products(parent_name = parent_name)
         self.session.add(new_product)
         await self.session.flush()
-        if new_product is None:
-            logger.info("Product wasn't created.")
-        else:
-            logger.info("Function finished succesfully!")
         return new_product
 
 
@@ -52,7 +43,6 @@ class ProductRepository:
         for row in rows:
             answer[row[0]] = row[1]
 
-        logger.info("Function finished succesfully!")
         return answer 
 
 
@@ -65,7 +55,6 @@ class ProductRepository:
         )
 
         result = await self.session.execute(query)
-        logger.info("Function finished succesfully!")
         return result.scalars().first()
 
 

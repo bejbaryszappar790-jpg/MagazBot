@@ -6,13 +6,12 @@ from bot.states.add_variant import AddVariantFlow
 from bot.services.variant_services import VariantService
 from bot.services.user_services import UserService
 from bot.services.product_services import ProductService
-from bot.errors.common_errors import (
-    BotError,
-    AbsenseError,
-    SimpleValidationError,
-    NoneError,
-
+from bot.errors.server_error import (
+    ServerError
     )
+from bot.errors.client_error import (
+    ClientError
+)
 from bot.keyboard.products import create_product_buttons
 
 
@@ -51,7 +50,7 @@ async def check_parent_name(message : Message,
             "Почему то в хэндлере с командой /add_variant сервис не вернула True."
         )
         await state.clear()
-    except BotError as e:
+    except ServerError as e:
         await message.answer(
             f"Ошибка: {e}"
         )
@@ -88,7 +87,7 @@ async def receiving_parent_name(message : Message,
             "Почему то product_data пуст."
         )
         await state.clear()
-    except BotError as e:
+    except ServerError as e:
         await message.answer(
             f"Ошибка: {e}"
         )
@@ -128,17 +127,12 @@ async def receiving_parent_id(callback : CallbackQuery,
             "Почему то parent_id пуст"
         )
         await state.clear()
-    except AbsenseError as e:
+    except ClientError as e:
         await callback.message.answer(
             f"Ошибка: {e}"
         )
         
         await state.clear()
-    except SimpleValidationError as e:
-        await callback.message.answer(
-            f"Ошибка: {e}"
-        )
-
 
 
 @router.message(AddVariantFlow.waiting_for_variant_name)
@@ -176,7 +170,7 @@ async def receiving_var_name(message : Message, variant_service : VariantService
         await message.answer(
             "Ошибка: Почему то result получисля False"
         )
-    except BotError as e:
+    except ServerError as e:
         await message.answer(
             f"{e}"
         )
@@ -205,7 +199,7 @@ async def receiving_var_price(message : Message,
         await message.answer(
             "Почему из сервиса вариянта и из метода .get_VariantPrice не вернулся цена."
         )
-    except BotError as e:
+    except ServerError as e:
         await message.answer(
             f"{e}"
         )
@@ -254,19 +248,9 @@ async def receiving_var_quantity(message : Message,
         
         await state.clear()
 
-    except NoneError as e:
-        await message.answer(
-            f"{e}"
-        )
-        await state.clear()
-        return
-    except AbsenseError as e:
-        await message.answer(
-            f"{e}"
-        )
-        await state.clear()
+    
         
-    except BotError as e:
+    except ServerError as e:
         await message.answer(
             f"{e}"
         )

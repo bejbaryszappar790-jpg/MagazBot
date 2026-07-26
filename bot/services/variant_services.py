@@ -5,22 +5,29 @@ from bot.repositories.variant import VariantRepository
 from bot.repositories.user import UserRepository
 from bot.repositories.product import ProductRepository
 from bot.schemas.id import Id_In
-from bot.errors.common_errors import (
+from bot.errors.server_error import (
     DataBaseError,
-    PydanticError,
+    ServerPydanticError,
+)
+from bot.errors.client_error import (
+    ClientPydanticError,
     RoleError,
     AbsenseError,
     SimpleValidationError,
     DuplicateError,
     BuisnessLogicError,
-    NoneError,
+    MissingDataError,
 )
 from bot.models import UserRole
 from bot.tools.exist import check_exist
 from bot.models import Variants
 
 
-
+"""
+TO DO: 
+create server error classes which will be similar to client error classes 
+but which are caused by server fault.
+"""
 class VariantService:
     
     def __init__(self, 
@@ -45,13 +52,13 @@ class VariantService:
                 raise DataBaseError("Почему то БД не вернуло роль в сервиса вариянта и в методе start_creating_variant")
             
             if admin_role != UserRole.ADMIN:
-                raise RoleError("В сервисе вариянта и в методе start_creating_variant ")
+                raise RoleError("Вы не админ", f"Пользователь {admin_id} пытается создать вариянт не имея роли админа!")
 
             return True
         except SQLAlchemyError:
             raise DataBaseError("Почему то Бд упал в сервисах вариянта и в методе start_creating_variant")
         except ValidationError:
-            raise PydanticError("Почему то валидация не прошла успешно в сервисах вариянта внутри метода start_creating_variant")
+            raise ServerPydanticError(f"Почему то pydantic вызвал ошибку при валидаций id {admin_id} хотя это id от телеграмма.")
         
 
 
@@ -60,10 +67,14 @@ class VariantService:
             product_names_ids =  await self.product_repo.get_all_parent_names_ids(parent_name = parent_name)
             
             if not product_names_ids:
-                raise AbsenseError("Отменяем действие!\nСловарь с именами и id продуктов пуст в сервисах вариянта и в методе get_ProductNameForVariant")
+                raise AbsenseError("Словарь с именами и id продуктов пуст в сервисах вариянта и в методе get_ProductNameForVariant", 
+                                   "Такого товара не существует!"
+                                   )
             
             if not check_exist(names = product_names_ids, name = parent_name):
-                raise AbsenseError("Продута не существует!")
+                raise AbsenseError(f"Продукт с именем {parent_name} не найден среди словарей с похожими продуктами", 
+                                   f"Продукт по имени {parent_name} не существует."
+                                                       )
             
 
             return product_names_ids
@@ -80,12 +91,12 @@ class VariantService:
             parent_id = int(text)
             existing_product = await self.product_repo.search_product_byid(parent_id)
             if not existing_product:
-                raise AbsenseError("Почему то продукт которую мы получили при создание нового вариянта не существует.")
+                raise AbsenseError(f"Продукт по имени {parent_id} нету.", "Продукт которого вы выбрали не существует.")
             
             
             return parent_id
         except ValueError:
-            raise SimpleValidationError(f"{text} не может привсти к типу int.")
+            raise SimpleValidationError(f"{text} не может привсти к типу int.", "")
 
 
 
@@ -125,7 +136,7 @@ class VariantService:
                                ) -> Variants:
         try:
             if not quantity:
-                raise NoneError("Вы не написали количество.")
+                raise MisssingDataError("Вы не написали количество.")
             
             variant_quantity = int(quantity)
             
@@ -133,13 +144,13 @@ class VariantService:
                 raise BuisnessLogicError("Напишите целое число которое больше и равно нулю.")
             
             if parent_id is None:
-                raise NoneError("Почему id продукта исчез в сервисах вариянта и методе finishCreatingVariant")
+                raise MisssingDataError("Почему id продукта исчез в сервисах вариянта и методе finishCreatingVariant")
             
             if not var_name:
-                raise NoneError("Почему то имя продукта пустой в сервисах вариянта и в методе finishCreatingVariant")
+                raise MisssingDataError("Почему то имя продукта пустой в сервисах вариянта и в методе finishCreatingVariant")
             
             if var_price is None:
-                raise NoneError("Почему цена вариянта пустой в сервисах вариянта и методе finishCreatingVariant")
+                raise MisssingDataError("Почему цена вариянта пустой в сервисах вариянта и методе finishCreatingVariant")
             
 
             parent_obj = await self.product_repo.search_product_byid(parent_id = parent_id)

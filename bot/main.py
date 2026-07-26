@@ -2,8 +2,7 @@ import asyncio
 import os
 import logging
 from aiogram import Bot, Dispatcher
-from aiogram.types import BotCommand, Message
-from aiogram.filters import Command
+from aiogram.types import BotCommand
 from dotenv import load_dotenv
 from bot.middleware.db import DbSessionMiddleware
 from bot.handlers.user import router as user_router

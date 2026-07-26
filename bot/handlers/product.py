@@ -1,14 +1,19 @@
+import logging
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from bot.states.add_product import AddProductFlow
 from bot.services.product_services import ProductService
-from bot.services.user_services import UserService
-from bot.errors.common_errors import BotError
+from bot.errors.server_error import (
+    ServerError,
+    )
+from bot.errors.client_error import (
+    ClientError
+)
 
 
-
+logger = logging.getLogger(__name__)
 
 router = Router()
 
@@ -16,7 +21,6 @@ router = Router()
 @router.message(Command("add_product"))
 async def ask_name(message : Message, 
                    product_service : ProductService,
-                   user_service : UserService,
                     state : FSMContext):
 
 
@@ -33,9 +37,15 @@ async def ask_name(message : Message,
             await state.set_state(AddProductFlow.waiting_for_name)
             await message.reply("Введите имя товара:")
             return
-    except BotError as e:
+    except ClientError as e:
+        logger.warning(f"{e}")
         await message.answer(
-            f"Ошибка: {e}"
+            f"{e}"
+        )
+    except ServerError as e:
+        logger.exception(f"{e}")
+        await message.answer(
+            "Ошибка со стороны сервера."
         )
 
 
@@ -56,8 +66,15 @@ async def create_parent(message : Message, product_service : ProductService, sta
                 f"Продукт по имени {message.text} создался!"
             )
             await state.clear()
-    except BotError as e:
+    except ClientError as e:
+        logger.warning(f"{e}", exc_info = True)
         await message.answer(
             f"Ошибка: {e}"
+        )
+        
+    except ServerError as e:
+        logger.exception(f"{e}")
+        await message.answer(
+            "Ошибка со стороны сервера."
         )
 
