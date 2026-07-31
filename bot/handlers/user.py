@@ -1,12 +1,14 @@
+import logging
 from aiogram import Router
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 from bot.services.user_services import UserService
-from bot.errors.server_error import BotError
+from bot.errors.server_error import ServerError
 from bot.enums import UserType
 
 router = Router()
 
+logger = logging.getLogger(__name__)
 
 @router.message(CommandStart())
 async def start_session(message : Message, user_service : UserService):
@@ -27,9 +29,10 @@ async def start_session(message : Message, user_service : UserService):
                 "Добро Пожаловать."
             )
             
-    except BotError as e:
+    except ServerError:
+        logger.exception("Ошибка в хэндлере start_session")
         await message.answer(
-            f"Ошибка: {e}"
+            "Ошибка сервера."
         )
 
     

@@ -38,15 +38,16 @@ async def ask_name(message : Message,
             await message.reply("Введите имя товара:")
             return
     except ClientError as e:
-        logger.warning(f"{e}")
+        logger.warning(f"{e.log_message}", exc_info = True)
         await message.answer(
-            f"{e}"
+            f"{e.user_message}"
         )
-    except ServerError as e:
-        logger.exception(f"{e}")
+    except ServerError:
+        logger.exception("Ошибка в хэндлере для старта создание продукта.")
         await message.answer(
-            "Ошибка со стороны сервера."
+            "Ошибка сервера."
         )
+        await state.clear()
 
 
 
@@ -54,26 +55,33 @@ async def ask_name(message : Message,
 
 @router.message(AddProductFlow.waiting_for_name)
 async def create_parent(message : Message, product_service : ProductService, state : FSMContext):
+    if message.from_user is None:
+        await message.answer("Ошибка сервера.")
+        logger.error("message.from_user пустой.")
+        await state.clear()
+        return
+    
     if not message.text:
         await message.answer("Вы отправили пустую строку. Напишите имя продукта!")
         return
-    
+
 
     try:
-        result = await product_service.creating_product(parent_name = message.text)
+        admin_id = message.from_user.id
+        result = await product_service.creating_product(parent_name = message.text, admin_id = admin_id)
         if result:
             await message.answer(
                 f"Продукт по имени {message.text} создался!"
             )
             await state.clear()
     except ClientError as e:
-        logger.warning(f"{e}", exc_info = True)
+        logger.warning(f"{e.log_message}", exc_info = True)
         await message.answer(
-            f"Ошибка: {e}"
+            f"Ошибка: {e.user_message}"
         )
         
-    except ServerError as e:
-        logger.exception(f"{e}")
+    except ServerError:
+        logger.exception("Ошибка в хэндлере create_parent.")
         await message.answer(
             "Ошибка со стороны сервера."
         )

@@ -5,9 +5,12 @@ from bot.repositories.product import (
     )
 from bot.repositories.user import UserRepository
 from bot.errors.server_error import (
-    RoleError,
     DataBaseError,
-    PydanticError,
+    ServerPydanticError
+)
+
+from bot.errors.client_error import (
+    RoleError,
     DuplicateError
 )
 from bot.schemas.id import Id_In
@@ -44,34 +47,34 @@ class ProductService:
             
             
             if admin_role != UserRole.ADMIN:
-                raise RoleError("В сервисе продукта и в методе start_asking_name роль пользователя не подходит админу")
+                raise RoleError("Вы не являетесь админом что бы создать продукт!", f"Пользователь {admin_id} не является админом но пытается создать продукт!")
 
 
             return True
         except SQLAlchemyError:
             raise DataBaseError("Почему то alchemy гонит в сервисе продукта и в методе start_asking_name")
         except ValidationError:
-            raise PydanticError("Почему то pydantic не смог изменить тип id в сервисе продуктах.")
+            raise ServerPydanticError(f"Pydantic почему не смог валидировать {admin_id}.")
         
 
-    async def creating_product(self, parent_name : str) -> bool:
+    async def creating_product(self, parent_name : str, admin_id : int) -> bool:
         try:
             product_names_ids = await self.product_repo.get_all_parent_names_ids(parent_name = parent_name)
 
             if not product_names_ids:
                 new_product = await self.product_repo.create_product(parent_name = parent_name)
                 if not new_product:
-                    raise DataBaseError("Почему то новый продукт не создался")
+                    raise DataBaseError(f"Продукт который пользователя {admin_id} с именем {parent_name} не был создан.")
                 
                 return True
             
             if check_exist(names = product_names_ids, name = parent_name):
-                raise DuplicateError(f"Продукт: {parent_name} уже существует")
+                raise DuplicateError(f"Продукт: {parent_name} уже существует", f"Пользователь {admin_id} пытался создать существующий продукт с именем {parent_name}")
                 
             new_product = await self.product_repo.create_product(parent_name = parent_name)
             
             if not new_product:
-                raise DataBaseError("Почему то новый продукт не создался")
+                raise DataBaseError(f"Продукт который пользователя {admin_id} с именем {parent_name} не был создан.")
 
             return True
             

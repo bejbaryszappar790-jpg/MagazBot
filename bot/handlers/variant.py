@@ -1,3 +1,4 @@
+import logging
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -10,13 +11,13 @@ from bot.errors.server_error import (
     ServerError
     )
 from bot.errors.client_error import (
-    ClientError
+    ClientError,
 )
 from bot.keyboard.products import create_product_buttons
 
 
 
-
+logger = logging.getLogger(__name__)
 
 router = Router()
 
@@ -24,7 +25,6 @@ router = Router()
 @router.message(Command("add_variant"))
 async def check_parent_name(message : Message,  
                             variant_service : VariantService, 
-                            user_service : UserService,
                             state : FSMContext
                             ):
     if message.from_user is None:
@@ -47,23 +47,38 @@ async def check_parent_name(message : Message,
             return
         
         await message.answer(
-            "Почему то в хэндлере с командой /add_variant сервис не вернула True."
+            "Ошибка сервера"
+        )
+        logger.error("Метод start_creating_variant в сервисе вариянта вернула False.")
+        await state.clear()
+    except ClientError as e:
+        logger.warning(f"{e.log_message}")
+        await message.answer(
+            f"{e.user_message}"
         )
         await state.clear()
-    except ServerError as e:
+
+    except ServerError:
+        logger.exception("Ошибка в хэндлере который начинает создавать check_parent_name")
         await message.answer(
-            f"Ошибка: {e}"
+            "Ошибка сервера"
         )
-   
+        await state.clear()
     
 
 
 @router.message(AddVariantFlow.waiting_for_parent_name)
 async def receiving_parent_name(message : Message, 
                                 variant_service : VariantService,
-                                product_service: ProductService, 
                                 state : FSMContext
                                 ):
+
+    if message.from_user is None:
+            await message.answer("Ошибка сервера.")
+            logger.error("message.from_user пустой.")
+            await state.clear()
+            return
+    
     if not message.text:
         await message.answer(
             "Вы ничего не написали!"
@@ -71,7 +86,9 @@ async def receiving_parent_name(message : Message,
         return
     
     try:
+        admin_id = message.from_user.id
         product_data = await variant_service.get_ProductNameForVariant(parent_name = message.text, 
+                                                                       admin_id = admin_id
                                                        )
         
         if product_data:
@@ -87,11 +104,18 @@ async def receiving_parent_name(message : Message,
             "Почему то product_data пуст."
         )
         await state.clear()
-    except ServerError as e:
+    except ClientError as e:
+        logger.warning(f"{e.log_message}", exc_info = True)
         await message.answer(
-            f"Ошибка: {e}"
+            f"{e}"
         )
 
+    except ServerError:
+        logger.exception("Ошибка в хэндлере receiving_parent_name")
+        await message.answer(
+            "Ошибка сервера."
+        )
+        await state.clear()
 
 @router.callback_query(
     AddVariantFlow.waiting_for_parent_id,
@@ -99,9 +123,15 @@ async def receiving_parent_name(message : Message,
     )
 async def receiving_parent_id(callback : CallbackQuery, 
                               variant_service : VariantService, 
-                              product_service : ProductService,
                               state : FSMContext
                               ):
+
+    if callback.from_user is None:
+        callback.answer()
+        await callback.message.answer("Ошибка сервера.")
+        logger.error("message.from_user пустой.")
+        await state.clear()
+        return
     
     if callback.data is None or callback.message is None:
         await callback.answer("Что то пошло не так.", show_alert = False)
@@ -109,9 +139,11 @@ async def receiving_parent_id(callback : CallbackQuery,
         return
     
     await callback.answer()
-    
+    admin_id  = callback.from_user.id
+
     try:
         parent_id = variant_service.get_ProductIdForVariant(callback_data = callback.data,
+                                                            admin_id = admin_id
                                                             )
         
         if parent_id:
@@ -133,10 +165,23 @@ async def receiving_parent_id(callback : CallbackQuery,
         )
         
         await state.clear()
+    except ServerError:
+        logger.exception("Ошибка в хэндлере receiving_parent_id.")
+        await callback.message.answer(
+            "Ошибка сервера."
+        )
+        await state.clear()
 
 
 @router.message(AddVariantFlow.waiting_for_variant_name)
 async def receiving_var_name(message : Message, variant_service : VariantService, state : FSMContext):
+    if message.from_user is None:
+        await message.answer("Ошибка сервера.")
+        logger.error("message.from_user пустой.")
+        await state.clear()
+        return
+
+    
     if not message.text: 
         await message.answer(
             "Напишите имя варианта!"
@@ -153,10 +198,12 @@ async def receiving_var_name(message : Message, variant_service : VariantService
         )
         await state.clear()
         return
-    
+
+    admin_id = message.from_user.id
     try:
         result = await variant_service.get_VariantName(variant_name = message.text, 
-                                                 parent_id = parent_id
+                                                 parent_id = parent_id,
+                                                 admin_id = admin_id
                                                  )
         if result:
             
@@ -170,23 +217,44 @@ async def receiving_var_name(message : Message, variant_service : VariantService
         await message.answer(
             "Ошибка: Почему то result получисля False"
         )
-    except ServerError as e:
+    except ClientError as e:
+        logger.warning(f"{e.log_message}", exc_info = True)
         await message.answer(
-            f"{e}"
+            f"{e.user_message}"
         )
+
+    except ServerError:
+        logger.exception("Ошибка в хэндлере receiving_var_name")
+        await message.answer(
+            "Ошибка сервера."
+        )
+        await state.clear()
 
 @router.message(AddVariantFlow.waiting_for_price)
 async def receiving_var_price(message : Message, 
                               variant_service : VariantService,
                               state : FSMContext):
+
+    if message.from_user is None:
+        await message.answer("Ошибка сервера.")
+        logger.error("message.from_user пустой.")
+        await state.clear()
+        return
+
+    
     if message.text is None:
         await message.answer(
             "Вы не написали цену!"
         )
         return
     
+    admin_id = message.from_user.id
+
     try:
-        variant_price = variant_service.get_VariantPrice(input_price = message.text)
+        variant_price = variant_service.get_VariantPrice(
+            input_price = message.text,
+            admin_id = admin_id
+                                                         )
         
         if variant_price is not None:
             await state.update_data(var_price = variant_price)
@@ -199,16 +267,29 @@ async def receiving_var_price(message : Message,
         await message.answer(
             "Почему из сервиса вариянта и из метода .get_VariantPrice не вернулся цена."
         )
-    except ServerError as e:
+    except ClientError as e:
+        logger.warning(f"{e.log_message}")
         await message.answer(
-            f"{e}"
+            f"{e.user_message}"
         )
+    except ServerError:
+        logger.exception("Ошибка в хэндлере receiving_var_price")
+        await message.answer(
+            "Ошибка сервера."
+        )
+        await state.clear()
         
 @router.message(AddVariantFlow.waiting_for_quantity)
 async def receiving_var_quantity(message : Message, 
                                  variant_service : VariantService, 
-                                 product_service : ProductService,
                                  state : FSMContext):
+
+    if message.from_user is None:
+        await message.answer("Ошибка сервера.")
+        logger.error("message.from_user пустой.")
+        await state.clear()
+        return
+    
     if not message.text:
         await message.answer(
             "Вы не отправили количество"
@@ -224,7 +305,8 @@ async def receiving_var_quantity(message : Message,
             )
             await state.clear()
             return
-        
+
+        admin_id = message.from_user.id
         quantity = message.text
         parent_id = admin_data.get("parent_id")
         var_name = admin_data.get("var_name")
@@ -233,7 +315,8 @@ async def receiving_var_quantity(message : Message,
         new_variant = await variant_service.finishCreatingVariant(quantity = quantity,
                                                                   parent_id = parent_id,
                                                                   var_name = var_name,
-                                                                  var_price = var_price
+                                                                  var_price = var_price,
+                                                                  admin_id = admin_id
                                                                   )
         
         if new_variant:
@@ -249,10 +332,17 @@ async def receiving_var_quantity(message : Message,
         await state.clear()
 
     
-        
-    except ServerError as e:
+    except ClientError as e:
+        logger.warning(f"{e.log_message}")
         await message.answer(
-            f"{e}"
+            f"{e.user_message}"
+        )    
+        
+    except ServerError:
+        logger.exception("Ошибка в хэндлере receiving_var_quantity")
+        await message.answer(
+            "Ошибка сервера."
         )
-        return
+
+        await state.clear()
     

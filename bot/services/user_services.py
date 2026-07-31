@@ -4,8 +4,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from pydantic import ValidationError
 from bot.errors.server_error import (
     DataBaseError,
-    PydanticError
+    ServerPydanticError
     )
+
 from bot.enums import UserType
 class UserService:
 
@@ -32,9 +33,9 @@ class UserService:
             if new_user:
                 return UserType.NEW
             
-            raise DataBaseError("Почему то БД не создал пользователя.")
+            raise DataBaseError(f"Почему то БД не создал пользователя {admin_id}.")
         except SQLAlchemyError:
-            raise DataBaseError("Alchemy че то гонит в сервисе пользователя и в методе process_user_start.")
+            raise DataBaseError(f"Alchemy че то гонит в сервисе пользователя {admin_id} и в методе process_user_start.")
         except ValidationError:
-            raise PydanticError("Почему то pydantic не смог изменить тип id пользователя сервисе пользователя")
+            raise ServerPydanticError(f"Почему то pydantic не смог изменить тип id пользователя {admin_id} сервисе пользователя")
         
