@@ -147,7 +147,7 @@ class VariantService:
             variant_quantity = int(quantity)
             
             if variant_quantity < 0:
-                raise RecheckError(f"{variant_quantity} от {admin_id} которую мы получили до этого был правилен а теперь нет.")
+                raise BusinessLogicError("Напишите целое число больше или равно нулю.", f"Пользователь {admin_id}")
             
             if parent_id is None:
                 raise RecheckError(f"{parent_id} от {admin_id} которую мы получили до этого был правилен а теперь нет.")

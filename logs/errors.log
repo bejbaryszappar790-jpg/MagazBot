@@ -1,0 +1,11 @@
+2026-08-02 00:26:03,444 - bot.handlers.variant - ERROR - variant.py - receiving_var_quantity - Ошибка в хэндлере receiving_var_quantity
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/bot/handlers/variant.py", line 317, in receiving_var_quantity
+    new_variant = await variant_service.finish_creating_variant(quantity = quantity,
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+                                                              )
+                                                              ^
+  File "/Users/beybaris/BikoAiBot/bot/services/variant_services.py", line 150, in finish_creating_variant
+    raise RecheckError(f"{variant_quantity} от {admin_id} которую мы получили до этого был правилен а теперь нет.")
+bot.errors.server_error.RecheckError: -23423 от 6066556352 которую мы получили до этого был правилен а теперь нет.
