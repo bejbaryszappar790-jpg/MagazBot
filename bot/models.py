@@ -1,16 +1,13 @@
-from enum import Enum
 from decimal import Decimal
 from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, Numeric, BigInteger
 from sqlalchemy import Enum as SAENUM
 from bot.database import Base
+from bot.enums import UserRole
 
 
 
-class UserRole(str, Enum):
-    USER = "user"
-    ADMIN = "admin"
 
 class Users(Base):
     __tablename__ = "Users"
@@ -36,7 +33,7 @@ class Variants(Base):
     var_id : Mapped[int] = mapped_column(primary_key = True, index = True)
     var_name : Mapped[str] = mapped_column(nullable = False)
     parent_id : Mapped[int] = mapped_column(ForeignKey("Parent_Products.parent_id"), nullable = False, index = True)
-    var_price : Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable = True)
+    var_price : Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable = False)
     parent : Mapped["Parent_Products"] = relationship("Parent_Products", back_populates = "variants")
 
     __table_args__ = (

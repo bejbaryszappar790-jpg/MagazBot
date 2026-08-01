@@ -26,23 +26,25 @@ class DuplicateError(ClientError):
     pass
 
 
-class AbsenseError(ClientError):
+class AbsenceError(ClientError):
     """
     The error which is caused when user/admin searches not existing product/variant.
     """
 
 
 
-class BuisnessLogicError(ClientError):
+class BusinessLogicError(ClientError):
     """
     The error which is related to every buissnes logic error.
     """
+    pass
 
 
 class MissingDataError(ClientError):
     """
     The error which is caused when nullable data is None.
     """
+    pass
 
 class ClientPydanticError(ClientError):
     """
@@ -56,4 +58,9 @@ class SimpleValidationError(ClientError):
     """
     pass
 
+class UnknownUserError(ClientError):
+    """
+    Error which is caused when unauthorized user wants to do smth.
+    """
+    pass
 

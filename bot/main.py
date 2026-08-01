@@ -50,17 +50,17 @@ async def set_main_menu(bot : Bot):
 async def main():
     bot = Bot(token = bot_token)
     dp = Dispatcher()
-
-    dp.update.middleware(DbSessionMiddleware(session_pool = SessionLocal))
-
-
-    dp.include_router(user_router)
-    dp.include_router(variant_router)
-    dp.include_router(product_router)
-
-    dp.startup.register(set_main_menu)
-
     try:
+        dp.update.middleware(DbSessionMiddleware(session_pool = SessionLocal))
+
+
+        dp.include_router(user_router)
+        dp.include_router(variant_router)
+        dp.include_router(product_router)
+
+        dp.startup.register(set_main_menu)
+
+    
         await dp.start_polling(bot)
     except Exception as e:
         logger.error(f"Error: {e}")

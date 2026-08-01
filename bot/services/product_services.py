@@ -1,5 +1,5 @@
 from pydantic import ValidationError
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from bot.repositories.product import (
     ProductRepository,
     )
@@ -11,11 +11,13 @@ from bot.errors.server_error import (
 
 from bot.errors.client_error import (
     RoleError,
-    DuplicateError
+    DuplicateError,
+    UnknownUserError
 )
 from bot.schemas.id import Id_In
-from bot.models import UserRole
+from bot.enums import UserRole
 from bot.tools.exist import check_exist
+
 
 
 
@@ -43,7 +45,7 @@ class ProductService:
             admin_role = await self.user_repo.check_user_role(admin_id = input.admin_id)
 
             if admin_role is None:
-                raise DataBaseError("Почему то роль пользователя нету в сервисах продукта и в методе start_asking_name")
+                raise UnknownUserError("У вас нету прав админа что бы создать продукт!", f"Пользователь {admin_id} не зарегестрирован в базе данных но пытается создать продукт.")
             
             
             if admin_role != UserRole.ADMIN:
@@ -77,7 +79,9 @@ class ProductService:
                 raise DataBaseError(f"Продукт который пользователя {admin_id} с именем {parent_name} не был создан.")
 
             return True
-            
+
+        except IntegrityError:
+            raise DuplicateError("Такой продукт уже был создан!", f"Пользователь {admin_id} пытаслся создать продукт {parent_name} который уже был создан!")
         except SQLAlchemyError:
             raise DataBaseError("Почему то база данных не работает в сервисах продукта и в методе создание продукта.")
         

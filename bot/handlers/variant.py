@@ -87,7 +87,7 @@ async def receiving_parent_name(message : Message,
     
     try:
         admin_id = message.from_user.id
-        product_data = await variant_service.get_ProductNameForVariant(parent_name = message.text, 
+        product_data = await variant_service.get_product_name_for_variant(parent_name = message.text, 
                                                                        admin_id = admin_id
                                                        )
         
@@ -107,7 +107,7 @@ async def receiving_parent_name(message : Message,
     except ClientError as e:
         logger.warning(f"{e.log_message}", exc_info = True)
         await message.answer(
-            f"{e}"
+            f"{e.user_message}"
         )
 
     except ServerError:
@@ -127,7 +127,7 @@ async def receiving_parent_id(callback : CallbackQuery,
                               ):
 
     if callback.from_user is None:
-        callback.answer()
+        await callback.answer()
         await callback.message.answer("Ошибка сервера.")
         logger.error("message.from_user пустой.")
         await state.clear()
@@ -140,9 +140,9 @@ async def receiving_parent_id(callback : CallbackQuery,
     
     await callback.answer()
     admin_id  = callback.from_user.id
-
     try:
-        parent_id = variant_service.get_ProductIdForVariant(callback_data = callback.data,
+        text = callback.data.split("_")[1]
+        parent_id = await variant_service.get_product_id_for_variant(text = text,
                                                             admin_id = admin_id
                                                             )
         
@@ -160,8 +160,9 @@ async def receiving_parent_id(callback : CallbackQuery,
         )
         await state.clear()
     except ClientError as e:
+        logger.warning(f"{e.log_message}")
         await callback.message.answer(
-            f"Ошибка: {e}"
+            f"Ошибка: {e.user_message}"
         )
         
         await state.clear()
@@ -201,7 +202,7 @@ async def receiving_var_name(message : Message, variant_service : VariantService
 
     admin_id = message.from_user.id
     try:
-        result = await variant_service.get_VariantName(variant_name = message.text, 
+        result = await variant_service.get_variant_name(variant_name = message.text, 
                                                  parent_id = parent_id,
                                                  admin_id = admin_id
                                                  )
@@ -217,6 +218,7 @@ async def receiving_var_name(message : Message, variant_service : VariantService
         await message.answer(
             "Ошибка: Почему то result получисля False"
         )
+
     except ClientError as e:
         logger.warning(f"{e.log_message}", exc_info = True)
         await message.answer(
@@ -251,7 +253,7 @@ async def receiving_var_price(message : Message,
     admin_id = message.from_user.id
 
     try:
-        variant_price = variant_service.get_VariantPrice(
+        variant_price = variant_service.get_variant_price(
             input_price = message.text,
             admin_id = admin_id
                                                          )
@@ -312,7 +314,7 @@ async def receiving_var_quantity(message : Message,
         var_name = admin_data.get("var_name")
         var_price = admin_data.get("var_price")
         
-        new_variant = await variant_service.finishCreatingVariant(quantity = quantity,
+        new_variant = await variant_service.finish_creating_variant(quantity = quantity,
                                                                   parent_id = parent_id,
                                                                   var_name = var_name,
                                                                   var_price = var_price,

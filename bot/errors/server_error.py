@@ -21,7 +21,7 @@ class ServerPydanticError(ServerError):
     pass
 
 
-class ServerAbsenseError(ServerError):
+class ServerAbsenceError(ServerError):
     """
     Error which is caused when some data is None by server's fault 
     """
@@ -37,3 +37,4 @@ class RecheckError(ServerError):
     """
     Caused when we get error during the rechecking already checked data, variables. 
     """
+    pass
