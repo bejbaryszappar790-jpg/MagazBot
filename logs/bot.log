@@ -69,3 +69,74 @@ bot.errors.server_error.RecheckError: -23423 от 6066556352 которую мы
 2026-08-02 00:34:10,077 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
 2026-08-02 00:34:10,078 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
 2026-08-02 00:34:10,330 - __main__ - INFO - main.py - main - Bot stopped.
+2026-08-02 00:35:49,383 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Start polling
+2026-08-02 00:35:49,515 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Run polling for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-02 00:35:58,108 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689187 is handled. Duration 525 ms by bot id=8929833040
+2026-08-02 00:36:00,986 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689188 is handled. Duration 172 ms by bot id=8929833040
+2026-08-02 00:36:04,991 - bot.handlers.product - WARNING - product.py - create_parent - Пользователь 6066556352 пытался создать существующий продукт с именем мама
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/bot/handlers/product.py", line 71, in create_parent
+    result = await product_service.creating_product(parent_name = message.text, admin_id = admin_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/bot/services/product_services.py", line 74, in creating_product
+    raise DuplicateError(f"Продукт: {parent_name} уже существует", f"Пользователь {admin_id} пытался создать существующий продукт с именем {parent_name}")
+bot.errors.client_error.DuplicateError: ('Продукт: мама уже существует', 'Пользователь 6066556352 пытался создать существующий продукт с именем мама')
+2026-08-02 00:36:05,157 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689189 is handled. Duration 172 ms by bot id=8929833040
+2026-08-02 00:36:08,305 - bot.handlers.product - WARNING - product.py - create_parent - Пользователь 6066556352 пытался создать существующий продукт с именем маМа
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/bot/handlers/product.py", line 71, in create_parent
+    result = await product_service.creating_product(parent_name = message.text, admin_id = admin_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/bot/services/product_services.py", line 74, in creating_product
+    raise DuplicateError(f"Продукт: {parent_name} уже существует", f"Пользователь {admin_id} пытался создать существующий продукт с именем {parent_name}")
+bot.errors.client_error.DuplicateError: ('Продукт: маМа уже существует', 'Пользователь 6066556352 пытался создать существующий продукт с именем маМа')
+2026-08-02 00:36:08,467 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689190 is handled. Duration 165 ms by bot id=8929833040
+2026-08-02 00:36:13,273 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689191 is handled. Duration 170 ms by bot id=8929833040
+2026-08-02 00:36:16,650 - bot.handlers.variant - WARNING - variant.py - receiving_parent_name - Словарь с именами и id продуктов пуст в сервисах вариянта и в методе get_ProductNameForVariant
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/bot/handlers/variant.py", line 90, in receiving_parent_name
+    product_data = await variant_service.get_product_name_for_variant(parent_name = message.text,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                                                   admin_id = admin_id
+                                                                   ^^^^^^^^^^^^^^^^^^^
+                                                   )
+                                                   ^
+  File "/Users/beybaris/BikoAiBot/bot/services/variant_services.py", line 69, in get_product_name_for_variant
+    raise AbsenceError("Такого товара не существует!\nНапишите другое имя или же нажмите на кнопку отмена!",
+                       "Словарь с именами и id продуктов пуст в сервисах вариянта и в методе get_ProductNameForVariant"
+                       )
+bot.errors.client_error.AbsenceError: ('Такого товара не существует!\nНапишите другое имя или же нажмите на кнопку отмена!', 'Словарь с именами и id продуктов пуст в сервисах вариянта и в методе get_ProductNameForVariant')
+2026-08-02 00:36:16,826 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689192 is handled. Duration 178 ms by bot id=8929833040
+2026-08-02 00:36:22,461 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689193 is handled. Duration 170 ms by bot id=8929833040
+2026-08-02 00:36:24,934 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689194 is handled. Duration 328 ms by bot id=8929833040
+2026-08-02 00:36:42,250 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689195 is handled. Duration 171 ms by bot id=8929833040
+2026-08-02 00:36:52,957 - bot.handlers.variant - WARNING - variant.py - receiving_var_price - Пользователь пытался написать цену меньше нуля написав -2343
+2026-08-02 00:36:53,181 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689196 is handled. Duration 225 ms by bot id=8929833040
+2026-08-02 00:36:55,841 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689197 is handled. Duration 166 ms by bot id=8929833040
+2026-08-02 00:36:58,347 - bot.handlers.variant - WARNING - variant.py - receiving_var_quantity - Пользователь 6066556352
+2026-08-02 00:36:58,550 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689198 is handled. Duration 204 ms by bot id=8929833040
+2026-08-02 00:37:06,238 - bot.handlers.variant - WARNING - variant.py - receiving_var_quantity - Пользователь 6066556352 написал не правильную количество в виде дыалптвап
+2026-08-02 00:37:06,420 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689199 is handled. Duration 184 ms by bot id=8929833040
+2026-08-02 00:37:11,720 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689200 is handled. Duration 187 ms by bot id=8929833040
+2026-08-02 00:37:16,407 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689201 is handled. Duration 164 ms by bot id=8929833040
+2026-08-02 00:37:25,902 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689202 is handled. Duration 174 ms by bot id=8929833040
+2026-08-02 00:37:28,318 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689203 is handled. Duration 396 ms by bot id=8929833040
+2026-08-02 00:37:38,375 - bot.handlers.variant - WARNING - variant.py - receiving_var_name - Пользователь 6066556352 пытался создать существующий продукт с именем бала у продукта с id 3
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/bot/handlers/variant.py", line 205, in receiving_var_name
+    result = await variant_service.get_variant_name(variant_name = message.text,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+                                             )
+                                             ^
+  File "/Users/beybaris/BikoAiBot/bot/services/variant_services.py", line 113, in get_variant_name
+    raise DuplicateError("Такой вариянт существует, напишите другое имя или нажмите на кнопку отмена!", f"Пользователь {admin_id} пытался создать существующий продукт с именем {variant_name} у продукта с id {parent_id}")
+bot.errors.client_error.DuplicateError: ('Такой вариянт существует, напишите другое имя или нажмите на кнопку отмена!', 'Пользователь 6066556352 пытался создать существующий продукт с именем бала у продукта с id 3')
+2026-08-02 00:37:38,635 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689204 is handled. Duration 263 ms by bot id=8929833040
+2026-08-02 00:37:44,843 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689205 is handled. Duration 195 ms by bot id=8929833040
+2026-08-02 00:37:46,836 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689206 is handled. Duration 172 ms by bot id=8929833040
+2026-08-02 00:37:48,281 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689207 is handled. Duration 174 ms by bot id=8929833040
+2026-08-02 00:38:01,062 - aiogram.dispatcher - WARNING - dispatcher.py - _signal_stop_polling - Received SIGINT signal
+2026-08-02 00:38:01,064 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-02 00:38:01,064 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
+2026-08-02 00:38:01,317 - __main__ - INFO - main.py - main - Bot stopped.

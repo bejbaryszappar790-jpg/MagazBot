@@ -55,3 +55,35 @@ class VariantRepository:
             answer[row[0]] = row[1]
 
         return answer
+
+    async def get_variants(self, parent_id : int):
+        query = (
+            select(Variants.var_name,
+                   Variants.var_id
+                   )
+            .where(Variants.parent_id == parent_id)
+        )
+
+
+        result = await self.session.execute(query)
+        rows  = result.all()
+        answer = {}
+
+        for row in rows:
+            answer[rows[0]] = row[1]
+
+        return answer
+
+
+    async def get_variant(self, variant_id : int) -> Variants:
+        query = (
+            select(
+                Variants
+            )
+            .where(Variants.var_id == variant_id)
+        )
+
+
+        result = await self.session.execute(query)
+
+        return result.scalars().first()

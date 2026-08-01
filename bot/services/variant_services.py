@@ -184,3 +184,28 @@ class VariantService:
             raise DataBaseError("Почему БД упал в сервисе вариянта и в методе finish_creating_variant")
 
 
+    async def get_parent_name_for_get_variant(self, parent_name : str, admin_id : int):
+        try:
+            product_names_ids = await self.product_repo.get_all_parent_names_ids(parent_name = parent_name)
+
+            if not product_names_ids:
+                AbsenceError("Такого продукта не существует!\nНапишите другой продкут или же нажмите на кнопку отмена!", 
+                             f"Пользователь {admin_id} пытался увидеть продукт {parent_name} который не существует."
+                             )
+
+
+            if not check_exist(names = product_names_ids, name = parent_name):
+                AbsenceError("Такого продукта не сущетсвует!\nНапишите другой продукт или же нажмите на кнопку отмена",
+                             f"Пользователь {admin_id} пытался увидеть продукт {parent_name} который не существует."
+                             )
+
+            return product_names_ids
+        except SQLAlchemyError:
+            raise DataBaseError("Почему БД упал в сервисе вариянта и в методе get_parent_name_for_get_variant")
+
+
+    """
+    To Do:
+    finish command getting varinat
+    """
+
