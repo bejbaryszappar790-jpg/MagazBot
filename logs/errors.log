@@ -9,3 +9,12 @@ Traceback (most recent call last):
   File "/Users/beybaris/BikoAiBot/bot/services/variant_services.py", line 150, in finish_creating_variant
     raise RecheckError(f"{variant_quantity} от {admin_id} которую мы получили до этого был правилен а теперь нет.")
 bot.errors.server_error.RecheckError: -23423 от 6066556352 которую мы получили до этого был правилен а теперь нет.
+2026-08-02 16:44:53,294 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-02 17:19:54,106 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-02 17:52:18,197 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-02 18:09:13,123 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-02 18:47:51,510 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-02 19:27:44,138 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-02 19:47:45,489 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-02 20:11:59,554 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-02 21:03:55,401 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error

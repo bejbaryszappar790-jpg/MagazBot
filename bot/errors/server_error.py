@@ -38,3 +38,9 @@ class RecheckError(ServerError):
     Caused when we get error during the rechecking already checked data, variables. 
     """
     pass
+
+class ServerMissingDataError(ServerError):
+    """
+    MissinDataError but caused the side of server
+    """
+    pass

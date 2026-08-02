@@ -5,15 +5,15 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from bot.states.add_variant import AddVariantFlow
 from bot.services.variant_services import VariantService
-from bot.services.user_services import UserService
-from bot.services.product_services import ProductService
 from bot.errors.server_error import (
     ServerError
     )
 from bot.errors.client_error import (
     ClientError,
+    AbsenceError
 )
-from bot.keyboard.products import create_product_buttons
+from bot.keyboard.item_table import create_item_table_buttons
+from bot.states.show_variant import ShowVariantFlow
 
 
 
@@ -92,7 +92,7 @@ async def receiving_parent_name(message : Message,
                                                        )
         
         if product_data:
-            kb = create_product_buttons(data = product_data)
+            kb = create_item_table_buttons(data = product_data)
             await state.set_state(AddVariantFlow.waiting_for_parent_id)
 
             await message.answer(
@@ -119,7 +119,7 @@ async def receiving_parent_name(message : Message,
 
 @router.callback_query(
     AddVariantFlow.waiting_for_parent_id,
-    F.data.startswith("product_")
+    F.data.startswith("item_")
     )
 async def receiving_parent_id(callback : CallbackQuery, 
                               variant_service : VariantService, 
@@ -347,4 +347,167 @@ async def receiving_var_quantity(message : Message,
         )
 
         await state.clear()
+    
+
+@router.message(Command("show_variant"))
+async def start_showing_variant(message : Message, state : FSMContext):
+    if message.from_user is None:
+        logger.warning("Неизвестный пользователь без телеграм id пытался увидеть вариант.")
+        await message.answer(
+            "Вы не зарегестрированы."
+        )
+        await state.clear()
+        return
+
+    user_id = message.from_user.id
+    logger.info(f"Пользователь {user_id} успешно начал команду /show_variant.")
+    await message.answer(
+        "Теперь напишите имя продукта чьей вариант хотите увидеть!"
+    )
+
+    await state.set_state(ShowVariantFlow.waiting_for_parent_name)
+
+
+
+@router.message(ShowVariantFlow.waiting_for_parent_name)
+async def get_parent_name_to_show_variant(message : Message, variant_service : VariantService, state : FSMContext):
+    if message.from_user is None:
+        await message.answer("Ошибка сервера.")
+        logger.error("message.from_user пустой.")
+        await state.clear()
+        return
+
+    user_id = message.from_user.id
+    try:
+        product_data = await variant_service.get_parent_name_for_get_variant(parent_name = message.text, user_id = user_id)
+
+        product_kb = create_item_table_buttons(data = product_data)
+
+        await message.answer(
+            "Теперь выберите продукт чей варианты вы хотите увидеть.",
+            reply_markup = product_kb
+        )
+
+        await state.update_data(parent_name = message.text)
+        await state.set_state(ShowVariantFlow.waiting_for_parent_id)
+    except ClientError as e:
+        logger.warning(f"{e.log_message}", exc_info = True)
+        await message.answer(
+            f"{e.user_message}"
+        )
+    except ServerError:
+        logger.exception("Ошибка в хэндлере get_parent_name_to_show_variant.")
+        await message.answer(
+            "Ошибка сервера."
+        )
+        await state.clear()
+
+@router.callback_query(ShowVariantFlow.waiting_for_parent_id,
+                       F.data.startswith("item_")
+                       )
+async def get_parent_id_to_show_variant(callback : CallbackQuery, 
+                                        variant_service : VariantService,
+                                        state : FSMContext
+                                        ):
+    
+    if callback.from_user is None:
+            await callback.answer()
+            await callback.message.answer("Ошибка сервера.")
+            logger.error("callback.from_user пустой.")
+            await state.clear()
+            return 
+
+
+    if callback.data is None or callback.message is None:
+            await callback.answer("Что то пошло не так.", show_alert = False)
+            await state.clear()
+            return
+
+    try:
+
+        show_variant_data = await state.get_data()
+        parent_name = show_variant_data.get("parent_name")
+        text = callback.data.split("_")[1]
+        user_id = callback.from_user.id
+        variant_data = await variant_service.get_parent_id_for_get_variant(parent_name = parent_name,
+                                                                           text = text,
+                                                                           user_id = user_id
+                                                                           )
+
+        await callback.answer()
+        variant_kb = create_item_table_buttons(data = variant_data)
+        await state.update_data(parent_id = int(text))
+        await state.set_state(ShowVariantFlow.waiting_for_variant_id)
+
+        await callback.message.answer(
+            "Теперь выберите вариянт продукта чьи данные вы хотите увидеть.",
+            reply_markup = variant_kb
+        )
+    except AbsenceError as e:
+            await callback.answer()
+            logger.warning(f"{e.log_message}", exc_info = True)
+            await callback.message.answer(
+                f"{e.user_message}"
+            )
+            await state.clear()
+
+    except ClientError as e:
+        await callback.answer()
+        logger.warning(f"{e.log_message}", exc_info = True)
+        await callback.message.answer(
+            f"{e.user_message}"
+        )
+    except ServerError:
+        await callback.answer()
+        logger.exception("Ошибка в хэндлере get_parent_id_to_show_variant.")
+        await callback.message.answer(
+            "Ошибка сервера."
+        )
+        await state.clear()
+
+@router.callback_query(
+    ShowVariantFlow.waiting_for_variant_id,
+    F.data.startswith("item_")
+)
+async def finish_showing_variant(callback : CallbackQuery, variant_service : VariantService, state : FSMContext):
+
+    if callback.from_user is None:
+                await callback.answer()
+                await callback.message.answer("Ошибка сервера.")
+                logger.error("callback.from_user пустой.")
+                await state.clear()
+                return 
+    
+    
+    if callback.data is None or callback.message is None:
+            await callback.answer("Что то пошло не так.", show_alert = False)
+            await state.clear()
+            return
+    
+    await callback.answer()
+    try:
+        text = callback.data.split("_")[1]
+        show_variant_data = await state.get_data()
+        parent_id = show_variant_data.get("parent_id")
+        parent_name = show_variant_data.get("parent_name")
+        user_id = callback.from_user.id
+
+        found_variant = await variant_service.get_variant_to_show(parent_id = parent_id,
+                                                                  parent_name = parent_name,
+                                                                  text = text,
+                                                                  user_id = user_id)
+
+        await callback.message.answer(
+            f"Продукт: {parent_name}\nВариант: {found_variant.var_name}\nЦена варианта: {found_variant.var_price}\nКоличество варианта {found_variant.stock_quantity}"
+        )
+
+        await state.clear()
+    except ServerError:
+        logger.exception("Ошибка в хэндлере finish_showing_variant")
+        await callback.message.answer(
+            "Ошибка сервера."
+        )
+        await state.clear()
+
+    
     

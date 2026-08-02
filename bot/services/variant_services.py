@@ -10,7 +10,8 @@ from bot.errors.server_error import (
     ServerPydanticError,
     ServerAbsenceError,
     ServerValidationError,
-    RecheckError
+    RecheckError,
+    ServerMissingDataError
 )
 from bot.errors.client_error import (
     RoleError,
@@ -63,6 +64,10 @@ class VariantService:
 
     async def get_product_name_for_variant(self, admin_id : int, parent_name : str) -> dict:
         try:
+            if not parent_name:
+                MissingDataError("Вы не написали имя!\nЛибо напиши имя продукта либо нажмите на кнопку отмена!", 
+                                 f"Пользователь {admin_id} отправил пустую строку вместо того что бы написать имя продукта!"
+                                 )
             product_names_ids =  await self.product_repo.get_all_parent_names_ids(parent_name = parent_name)
             
             if not product_names_ids:
@@ -87,10 +92,16 @@ class VariantService:
                                       ) -> int:
         
         try:
+            if admin_id is None:
+                raise ServerMissingDataError("Почему то admin_id нету в сервисах вариянта и в методе get_product_id_for_variant")
+
+            if not text:
+                raise ServerMissingDataError("Почему то текст parent_id нету в сервисах вариянта и в методе get_product_id_for_variant")
+            
             parent_id = int(text)
             existing_product = await self.product_repo.search_product_byid(parent_id)
             if not existing_product:
-                raise ServerAbsenceError(f"Пользователь {admin_id} выбрал callback продукт  {parent_id} нету.")
+                raise ServerMissingDataError(f"Пользователь {admin_id} выбрал callback продукт  {parent_id} нету.")
             
             
             return parent_id
@@ -104,6 +115,13 @@ class VariantService:
 
     async def get_variant_name(self, variant_name : str, parent_id : int, admin_id : int) -> bool:
         try:
+            
+            if not variant_name:
+                MissingDataError("Вы не написали имя!\nЛибо напиши имя варианта либо нажмите на кнопку отмена!", 
+                                    f"Пользователь {admin_id} отправил пустую строку вместо того что бы написать имя варианта!"
+                                    )
+
+                
             variant_names_ids = await self.variant_repo.get_all_variant_names_ids(var_name = variant_name, parent_id = parent_id)
 
             if not variant_names_ids:
@@ -172,7 +190,7 @@ class VariantService:
                                                                  )
             
             if new_variant is None:
-                raise ServerAbsenceError("Почему то новый вариянт не создался в сервисах вариянта и в методе finishCreatingVariant.")
+                raise ServerMissingDataError("Почему то новый вариянт не создался в сервисах вариянта и в методе finishCreatingVariant.")
             
             return new_variant
         
@@ -184,19 +202,27 @@ class VariantService:
             raise DataBaseError("Почему БД упал в сервисе вариянта и в методе finish_creating_variant")
 
 
-    async def get_parent_name_for_get_variant(self, parent_name : str, admin_id : int):
+    async def get_parent_name_for_get_variant(self, parent_name : str | None, user_id : int):
         try:
+            if user_id is None:
+                raise ServerMissingDataError("Нету admind_id в сервисах варианта в методе get_parent_name_for_get_variant.")
+
+            if not parent_name:
+                raise MissingDataError("Вы не написали имя!\nЛибо напиши имя продукта либо нажмите на кнопку отмена!", 
+                                    f"Пользователь {user_id} отправил пустую строку вместо того что бы написать имя продукта!"
+                                    )    
+
             product_names_ids = await self.product_repo.get_all_parent_names_ids(parent_name = parent_name)
 
             if not product_names_ids:
-                AbsenceError("Такого продукта не существует!\nНапишите другой продкут или же нажмите на кнопку отмена!", 
-                             f"Пользователь {admin_id} пытался увидеть продукт {parent_name} который не существует."
+                raise AbsenceError("Такого продукта не существует!\nНапишите другой продкут или же нажмите на кнопку отмена!", 
+                             f"Пользователь {user_id} пытался увидеть продукт {parent_name} который не существует."
                              )
 
 
             if not check_exist(names = product_names_ids, name = parent_name):
-                AbsenceError("Такого продукта не сущетсвует!\nНапишите другой продукт или же нажмите на кнопку отмена",
-                             f"Пользователь {admin_id} пытался увидеть продукт {parent_name} который не существует."
+                raise AbsenceError("Такого продукта не сущетсвует!\nНапишите другой продукт или же нажмите на кнопку отмена",
+                             f"Пользователь {user_id} пытался увидеть продукт {parent_name} который не существует."
                              )
 
             return product_names_ids
@@ -204,8 +230,57 @@ class VariantService:
             raise DataBaseError("Почему БД упал в сервисе вариянта и в методе get_parent_name_for_get_variant")
 
 
-    """
-    To Do:
-    finish command getting varinat
-    """
+    async def get_parent_id_for_get_variant(self, parent_name : str | None, text : str, user_id : int):
+        try:
+            if not parent_name:
+                raise RecheckError(f"parent_name от пользователя {user_id} пуст хотя до этого мы проверяли он не был таким.")
+            parent_id = int(text)
+            
+            variant_names_ids = await self.variant_repo.get_all_variant_names_ids_by_parent_id(parent_id = parent_id)
 
+            if not variant_names_ids:
+                raise AbsenceError(f"У продукта {parent_name} пока нету вариантов.",
+                                   f"Пользователь {user_id} пытался увидеть вариант продукт {parent_name} у которого их нет."
+                                    )
+
+            return variant_names_ids
+        except ValueError:
+            raise ServerValidationError(f"Мы не смогли привести тип {text} в int.")
+        except SQLAlchemyError:
+            raise DataBaseError("Почему БД упал в сервисе вариянта и в методе get_parent_id_for_get_variant")
+            
+    async def get_variant_to_show(self, parent_name : str | None, 
+                                  parent_id : int | None, 
+                                  text : str, 
+                                  user_id : int | None
+                                  ):
+
+        try:
+            variant_id = int(text)
+            if variant_id is None:
+                ServerMissingDataError(f"id варията который выбрал пользователь {user_id} пуст.")
+
+            if user_id is None:
+                raise RecheckError(f"Почему то id пользователя который выбирал ранее продукт {parent_id} и писал {parent_name} пуст.")   
+            if parent_id is None:
+                raise RecheckError(f" {parent_id} продукта {parent_id} от пользователя {user_id} стал пустым почему то.")
+
+            
+            if not parent_name:
+                raise RecheckError(f"Продукт {parent_name} c {parent_id} от пользователя {user_id} стал пустым почему то.")
+
+            found_variant = await self.variant_repo.get_variant(variant_id = variant_id)
+
+            if not found_variant:
+                raise ServerAbsenceError(f"Почему то база данных не нашел вариянт с id {variant_id} продукта {parent_name} с id {parent_id} которого искал пользовалье {user_id}")
+
+            return found_variant
+        except ValueError:
+            raise ServerValidationError(f"Произошла ошибка когда сервер пытался привести тип id варианта {text} к int.")
+        except SQLAlchemyError:
+            raise DataBaseError("Почему БД упал в сервисе вариянта и в методе get_variant_to_show")
+        
+
+
+
+        

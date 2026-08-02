@@ -38,10 +38,7 @@ async def set_main_menu(bot : Bot):
     main_menu_commands = [
         BotCommand(command = "add_product", description = "Добавляет новый продукт"),
         BotCommand(command = "add_variant", description = "Добавляет новый вариант"),
-        BotCommand(command = "show_var_price", description = "Показывает цену варианта"),
-        BotCommand(command = "change_var_price", description = "Меняет цену варианта."),
-        BotCommand(command = "show_var_quantity", description = "Показывает количество варианта"),
-        BotCommand(command = "change_var_quantity", description = "Меняет количество варианта"),
+        BotCommand(command = "show_variant", description = "Показывает цену и количество варианта")
     ]
 
     await bot.set_my_commands(main_menu_commands)

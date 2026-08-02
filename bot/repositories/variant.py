@@ -75,10 +75,12 @@ class VariantRepository:
         return answer
 
 
-    async def get_variant(self, variant_id : int) -> Variants:
+    async def get_variant(self, variant_id : int):
         query = (
             select(
-                Variants
+                Variants.var_name,
+                Variants.var_price,
+                Stocks.stock_quantity
             )
             .where(Variants.var_id == variant_id)
         )
@@ -86,4 +88,25 @@ class VariantRepository:
 
         result = await self.session.execute(query)
 
-        return result.scalars().first()
+        return result.first()
+
+    async def get_all_variant_names_ids_by_parent_id(self, parent_id : int):
+        query = (
+            select(
+                Variants.var_name,
+                Variants.var_id
+            )
+            .where(Variants.parent_id == parent_id)
+        )
+
+
+        result = await self.session.execute(query)
+
+        rows = result.all()
+
+        answer = {}
+
+        for row in rows:
+            answer[row[0]] = row[1]
+
+        return answer
