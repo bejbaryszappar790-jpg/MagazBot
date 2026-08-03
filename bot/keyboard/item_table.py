@@ -1,12 +1,11 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from aiogram.types import InlineKeyboardButton
+from bot.callback_factories.item_callback import ItemCallback
 
-
-def create_item_table_buttons(data : dict):
+def create_item_table_buttons(data : dict, action : str):
     builder = InlineKeyboardBuilder()
 
     for key, value in data.items():
-        builder.add(InlineKeyboardButton(text = f"{key}", callback_data = f"item_{value}"))
+        builder.button(text = f"{key}", callback_data = ItemCallback(action = action, item_id = value))
 
     
     builder.adjust(2)

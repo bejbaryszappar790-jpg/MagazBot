@@ -5,6 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from bot.states.add_product import AddProductFlow
 from bot.services.product_services import ProductService
+from bot.services.user_services import UserService
 from bot.errors.server_error import (
     ServerError,
     )
@@ -20,7 +21,7 @@ router = Router()
 
 @router.message(Command("add_product"))
 async def ask_name(message : Message, 
-                   product_service : ProductService,
+                   user_service : UserService,
                     state : FSMContext):
 
 
@@ -31,7 +32,7 @@ async def ask_name(message : Message,
    
     try:
     
-        result = await product_service.start_asking_name(admin_id = message.from_user.id)
+        result = await user_service.verify_user(admin_id = message.from_user.id)
         
         if result:
             await state.set_state(AddProductFlow.waiting_for_name)

@@ -34,24 +34,9 @@ class Variants(Base):
     var_name : Mapped[str] = mapped_column(nullable = False)
     parent_id : Mapped[int] = mapped_column(ForeignKey("Parent_Products.parent_id"), nullable = False, index = True)
     var_price : Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable = False)
+    var_quantity : Mapped[int] = mapped_column(nullable = False)
     parent : Mapped["Parent_Products"] = relationship("Parent_Products", back_populates = "variants")
-
+    
     __table_args__ = (
         UniqueConstraint("parent_id", "var_name", name = "var_name_parent_id"),
     )
-    
-    stocks : Mapped[list["Stocks"]] = relationship(
-        "Stocks", 
-        back_populates = "variant",
-        cascade = "all, delete-orphan")
-
-
-
-
-
-class Stocks(Base):
-    __tablename__ = "Stocks"
-    stock_id : Mapped[int] = mapped_column(primary_key = True, index = True)
-    var_id : Mapped[int] = mapped_column(ForeignKey("Variants.var_id"), nullable = False, index = True)
-    stock_quantity : Mapped[int] = mapped_column(nullable = False)
-    variant : Mapped["Variants"] = relationship("Variants", back_populates = "stocks")

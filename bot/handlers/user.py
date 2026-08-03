@@ -20,7 +20,7 @@ async def start_session(message : Message, user_service : UserService):
     try:
         user_type = await user_service.process_user_start(admin_id = message.from_user.id)
 
-        if user_type == UserType.EXISTING:
+        if user_type is UserType.EXISTING:
             await message.answer(
                 "Добро Пожаловать снова!"
             )  

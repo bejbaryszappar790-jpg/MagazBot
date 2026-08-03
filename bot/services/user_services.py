@@ -6,6 +6,11 @@ from bot.errors.server_error import (
     DataBaseError,
     ServerPydanticError
     )
+from bot.enums import UserRole
+from bot.errors.client_error import (
+    UnknownUserError,
+    RoleError,
+)
 
 from bot.enums import UserType
 class UserService:
@@ -38,4 +43,27 @@ class UserService:
             raise DataBaseError(f"Alchemy че то гонит в сервисе пользователя {admin_id} и в методе process_user_start.")
         except ValidationError:
             raise ServerPydanticError(f"Почему то pydantic не смог изменить тип id пользователя {admin_id} сервисе пользователя")
+
+
+
+    async def verify_user(self, admin_id : int) -> bool:
+            
+            try:
+                input = Id_In(admin_id = admin_id)
+                
+                admin_role = await self.user_repo.check_user_role(admin_id = input.admin_id)
+    
+                if admin_role is None:
+                    raise UnknownUserError("У вас нету прав админа что бы создать продукт!", f"Пользователь {admin_id} не зарегестрирован в базе данных но пытается создать продукт.")
+                
+                
+                if admin_role != UserRole.ADMIN:
+                    raise RoleError("Вы не являетесь админом что бы создать продукт!", f"Пользователь {admin_id} не является админом но пытается создать продукт!")
+    
+    
+                return True
+            except SQLAlchemyError:
+                raise DataBaseError("Почему то alchemy гонит в сервисе продукта и в методе start_asking_name")
+            except ValidationError:
+                raise ServerPydanticError(f"Pydantic почему не смог валидировать {admin_id}.")
         

@@ -35,30 +35,6 @@ class ProductService:
         self.product_repo = product_repo
         self.user_repo = user_repo
 
-
-
-    async def start_asking_name(self, admin_id : int) -> bool:
-        
-        try:
-            input = Id_In(admin_id = admin_id)
-            
-            admin_role = await self.user_repo.check_user_role(admin_id = input.admin_id)
-
-            if admin_role is None:
-                raise UnknownUserError("У вас нету прав админа что бы создать продукт!", f"Пользователь {admin_id} не зарегестрирован в базе данных но пытается создать продукт.")
-            
-            
-            if admin_role != UserRole.ADMIN:
-                raise RoleError("Вы не являетесь админом что бы создать продукт!", f"Пользователь {admin_id} не является админом но пытается создать продукт!")
-
-
-            return True
-        except SQLAlchemyError:
-            raise DataBaseError("Почему то alchemy гонит в сервисе продукта и в методе start_asking_name")
-        except ValidationError:
-            raise ServerPydanticError(f"Pydantic почему не смог валидировать {admin_id}.")
-        
-
     async def creating_product(self, parent_name : str, admin_id : int) -> bool:
         try:
             product_names_ids = await self.product_repo.get_all_parent_names_ids(parent_name = parent_name)

@@ -5,6 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from bot.states.add_variant import AddVariantFlow
 from bot.services.variant_services import VariantService
+from bot.services.user_services import UserService
 from bot.errors.server_error import (
     ServerError
     )
@@ -14,8 +15,8 @@ from bot.errors.client_error import (
 )
 from bot.keyboard.item_table import create_item_table_buttons
 from bot.states.show_variant import ShowVariantFlow
-
-
+from bot.enums import OperationMode
+from bot.callback_factories.item_callback import ItemCallback
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +25,7 @@ router = Router()
 
 @router.message(Command("add_variant"))
 async def check_parent_name(message : Message,  
-                            variant_service : VariantService, 
+                            user_service : UserService,
                             state : FSMContext
                             ):
     if message.from_user is None:
@@ -36,7 +37,7 @@ async def check_parent_name(message : Message,
     
 
     try:
-        result = await variant_service.start_creating_variant(admin_id = message.from_user.id
+        result = await user_service.verify_user(admin_id = message.from_user.id
                                                               )
         if result:
             await state.set_state(AddVariantFlow.waiting_for_parent_name)
@@ -67,7 +68,8 @@ async def check_parent_name(message : Message,
     
 
 
-@router.message(AddVariantFlow.waiting_for_parent_name)
+@router.message(AddVariantFlow.waiting_for_parent_name
+                )
 async def receiving_parent_name(message : Message, 
                                 variant_service : VariantService,
                                 state : FSMContext
@@ -88,11 +90,12 @@ async def receiving_parent_name(message : Message,
     try:
         admin_id = message.from_user.id
         product_data = await variant_service.get_product_name_for_variant(parent_name = message.text, 
-                                                                       admin_id = admin_id
+                                                                       user_id = admin_id,
+                                                                       mode = OperationMode.WRITE
                                                        )
         
         if product_data:
-            kb = create_item_table_buttons(data = product_data)
+            kb = create_item_table_buttons(data = product_data, action = "/add_variant")
             await state.set_state(AddVariantFlow.waiting_for_parent_id)
 
             await message.answer(
@@ -119,7 +122,7 @@ async def receiving_parent_name(message : Message,
 
 @router.callback_query(
     AddVariantFlow.waiting_for_parent_id,
-    F.data.startswith("item_")
+    ItemCallback.filter(F.action == "/add_variant")
     )
 async def receiving_parent_id(callback : CallbackQuery, 
                               variant_service : VariantService, 
@@ -141,7 +144,6 @@ async def receiving_parent_id(callback : CallbackQuery,
     await callback.answer()
     admin_id  = callback.from_user.id
     try:
-        text = callback.data.split("_")[1]
         parent_id = await variant_service.get_product_id_for_variant(text = text,
                                                             admin_id = admin_id
                                                             )
@@ -379,9 +381,9 @@ async def get_parent_name_to_show_variant(message : Message, variant_service : V
 
     user_id = message.from_user.id
     try:
-        product_data = await variant_service.get_parent_name_for_get_variant(parent_name = message.text, user_id = user_id)
+        product_data = await variant_service.get_product_name_for_variant(user_id = user_id, parent_name = message.text, mode = OperationMode.READ)
 
-        product_kb = create_item_table_buttons(data = product_data)
+        product_kb = create_item_table_buttons(data = product_data, action = "/show_variant")
 
         await message.answer(
             "Теперь выберите продукт чей варианты вы хотите увидеть.",
@@ -403,7 +405,7 @@ async def get_parent_name_to_show_variant(message : Message, variant_service : V
         await state.clear()
 
 @router.callback_query(ShowVariantFlow.waiting_for_parent_id,
-                       F.data.startswith("item_")
+                       ItemCallback.filter(F.action == "/show_variant")
                        )
 async def get_parent_id_to_show_variant(callback : CallbackQuery, 
                                         variant_service : VariantService,
@@ -427,7 +429,6 @@ async def get_parent_id_to_show_variant(callback : CallbackQuery,
 
         show_variant_data = await state.get_data()
         parent_name = show_variant_data.get("parent_name")
-        text = callback.data.split("_")[1]
         user_id = callback.from_user.id
         variant_data = await variant_service.get_parent_id_for_get_variant(parent_name = parent_name,
                                                                            text = text,
@@ -435,7 +436,7 @@ async def get_parent_id_to_show_variant(callback : CallbackQuery,
                                                                            )
 
         await callback.answer()
-        variant_kb = create_item_table_buttons(data = variant_data)
+        variant_kb = create_item_table_buttons(data = variant_data, action = "/show_variant")
         await state.update_data(parent_id = int(text))
         await state.set_state(ShowVariantFlow.waiting_for_variant_id)
 
@@ -467,9 +468,12 @@ async def get_parent_id_to_show_variant(callback : CallbackQuery,
 
 @router.callback_query(
     ShowVariantFlow.waiting_for_variant_id,
-    F.data.startswith("item_")
+    ItemCallback.filter(F.action == "/show_variant")
 )
-async def finish_showing_variant(callback : CallbackQuery, variant_service : VariantService, state : FSMContext):
+async def finish_showing_variant(callback : CallbackQuery, 
+                                 callback_data : ItemCallback,
+                                 variant_service : VariantService, 
+                                 state : FSMContext):
 
     if callback.from_user is None:
                 await callback.answer()
@@ -486,15 +490,14 @@ async def finish_showing_variant(callback : CallbackQuery, variant_service : Var
     
     await callback.answer()
     try:
-        text = callback.data.split("_")[1]
         show_variant_data = await state.get_data()
         parent_id = show_variant_data.get("parent_id")
         parent_name = show_variant_data.get("parent_name")
         user_id = callback.from_user.id
-
+        variant_id = callback_data.item_id
         found_variant = await variant_service.get_variant_to_show(parent_id = parent_id,
                                                                   parent_name = parent_name,
-                                                                  text = text,
+                                                                  ,
                                                                   user_id = user_id)
 
         await callback.message.answer(
