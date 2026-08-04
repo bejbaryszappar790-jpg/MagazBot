@@ -4,14 +4,11 @@ from pydantic import ValidationError
 from bot.repositories.variant import VariantRepository
 from bot.repositories.user import UserRepository
 from bot.repositories.product import ProductRepository
-from bot.schemas.id import Id_In
+
 from bot.errors.server_error import (
     DataBaseError,
-    ServerPydanticError,
-    ServerAbsenceError,
-    ServerValidationError,
-    RecheckError,
-    ServerMissingDataError
+    ServerMissingDataError,
+    ServerAbsenceError
 )
 from bot.errors.client_error import (
     AbsenceError,
@@ -21,9 +18,10 @@ from bot.errors.client_error import (
     MissingDataError,
     UnknownUserError
 )
-from bot.enums import UserRole, OperationMode
+from bot.enums import OperationMode
 from bot.tools.exist import check_exist
 from bot.models import Variants
+
 
 
 
@@ -39,14 +37,10 @@ class VariantService:
         self.user_repo = user_repo
 
 
-    async def get_product_name_for_variant(self, user_id : int, parent_name : str | None, mode : OperationMode) -> dict:
+    async def get_product_name_for_variant(self, user_id : int, parent_name : str, mode : OperationMode) -> dict:
         try:
             user_type = "Пользователь" if mode is OperationMode.READ else "Админ"
 
-            if not parent_name:
-                raise MissingDataError("Вы не написали имя!\nЛибо напиши имя продукта либо нажмите на кнопку отмена!", 
-                                 f"{user_type} {user_id} отправил пустую строку вместо того что бы написать имя продукта!"
-                                 )
             product_names_ids =  await self.product_repo.get_all_parent_names_ids(parent_name = parent_name)
             
             if not product_names_ids:
@@ -66,26 +60,20 @@ class VariantService:
     
     
 
-    async def get_product_id_for_variant(self, text : str,
+    async def get_product_id_for_variant(self, parent_id,
                                       admin_id : int
-                                      ) -> int:
+                                      ) -> bool:
         
         try:
             if admin_id is None:
                 raise ServerMissingDataError("Почему то admin_id нету в сервисах вариянта и в методе get_product_id_for_variant")
 
-            if not text:
-                raise ServerMissingDataError("Почему то текст parent_id нету в сервисах вариянта и в методе get_product_id_for_variant")
-            
-            parent_id = int(text)
             existing_product = await self.product_repo.search_product_byid(parent_id)
             if not existing_product:
                 raise ServerMissingDataError(f"Пользователь {admin_id} выбрал callback продукт  {parent_id} нету.")
             
             
-            return parent_id
-        except ValueError:
-            raise ServerValidationError(f"{text} от пользвоателя {admin_id} не может быть приведен к типу int.")
+            return True
         except SQLAlchemyError:
             raise DataBaseError("Почему то БД упало в сервисах вариянта и в методе get_product_id_for_variant")
                 
@@ -140,7 +128,7 @@ class VariantService:
         try:
             if not quantity:
                 raise MissingDataError("Вы не написали количество.", f"Пользователь {admin_id} не написал количество.")
-            
+
             variant_quantity = int(quantity)
             
             if variant_quantity < 0:

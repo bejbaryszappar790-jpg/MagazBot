@@ -3,6 +3,7 @@ from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
+from pydantic import ValidationError
 from bot.states.add_variant import AddVariantFlow
 from bot.services.variant_services import VariantService
 from bot.services.user_services import UserService
@@ -17,7 +18,10 @@ from bot.keyboard.item_table import create_item_table_buttons
 from bot.states.show_variant import ShowVariantFlow
 from bot.enums import OperationMode
 from bot.callback_factories.item_callback import ItemCallback
-
+from bot.schemas.products.getproductnameforvariant import GetProductNameForVariant
+from bot.schemas.products.getproductidforvariant import GetProductIdForVariant
+from bot.schemas.variants.getvariantname import GetVariantName
+from bot.schemas.variants.getvariantprice import GetVariantPrice
 logger = logging.getLogger(__name__)
 
 router = Router()
@@ -88,10 +92,10 @@ async def receiving_parent_name(message : Message,
         return
     
     try:
-        admin_id = message.from_user.id
-        product_data = await variant_service.get_product_name_for_variant(parent_name = message.text, 
-                                                                       user_id = admin_id,
-                                                                       mode = OperationMode.WRITE
+        arguments = GetProductNameForVariant(admin_id = message.from_user.id, parent_name = message.text, mode = OperationMode.WRITE)
+        product_data = await variant_service.get_product_name_for_variant(parent_name = arguments.parent_name, 
+                                                                       user_id = arguments.admin_id,
+                                                                       mode = arguments.mode
                                                        )
         
         if product_data:
@@ -107,12 +111,16 @@ async def receiving_parent_name(message : Message,
             "Почему то product_data пуст."
         )
         await state.clear()
+    except ValidationError:
+        logger.warning(f"Имя продукты который был отправен пользователем {message.from_user.id} вызвал ошибку валидаций у pydantic в хэндлере receiving_parent_name", exc_info = True)
+        await message.answer(
+            "Вы не правильно написали parent_name!\nНапишите имя продукта и она не должно быть пустым или же нажмите на кнопку отмена!"
+        )
     except ClientError as e:
         logger.warning(f"{e.log_message}", exc_info = True)
         await message.answer(
             f"{e.user_message}"
         )
-
     except ServerError:
         logger.exception("Ошибка в хэндлере receiving_parent_name")
         await message.answer(
@@ -126,6 +134,7 @@ async def receiving_parent_name(message : Message,
     )
 async def receiving_parent_id(callback : CallbackQuery, 
                               variant_service : VariantService, 
+                              callback_data : ItemCallback,
                               state : FSMContext
                               ):
 
@@ -142,25 +151,30 @@ async def receiving_parent_id(callback : CallbackQuery,
         return
     
     await callback.answer()
-    admin_id  = callback.from_user.id
     try:
-        parent_id = await variant_service.get_product_id_for_variant(text = text,
-                                                            admin_id = admin_id
+        input_data = GetProductIdForVariant(parent_id = callback_data.item_id, admin_id = callback.from_user.id)
+        result = await variant_service.get_product_id_for_variant(parent_id = input_data.parent_id,
+                                                            admin_id = input_data.admin_id
                                                             )
-        
-        if parent_id:
-            await state.update_data(parent_id = parent_id)
-            await state.set_state(AddVariantFlow.waiting_for_variant_name)
 
+        if not result:
+            logger.error("Метод get_product_id_for_variant не вернул True в хэндлере receiving_parent_id.")
             await callback.message.answer(
-                "Напишите имя варианта которую вы хотите добавить."
+                "Ошибка сервера."
             )
             return
         
+        await state.update_data(parent_id = input_data.parent_id)
+        await state.set_state(AddVariantFlow.waiting_for_variant_name)
+
         await callback.message.answer(
-            "Почему то parent_id пуст"
+            "Напишите имя варианта которую вы хотите добавить."
         )
-        await state.clear()
+    except ValidationError:
+        logger.warning(f"Pydantic не смог валидировать id товара {callback_data.item_id} который был выбран пользователем {callback.from_user.id}", exc_info = True)
+        await callback.message.answer(
+            "Ошибка сервера!"
+        )
     except ClientError as e:
         logger.warning(f"{e.log_message}")
         await callback.message.answer(
@@ -194,19 +208,19 @@ async def receiving_var_name(message : Message, variant_service : VariantService
 
     admin_data = await state.get_data()
 
-    parent_id = admin_data.get("parent_id", None)
-    if parent_id is None:
+    if not admin_data:
+        logger.error("Словарь FSM пуст в хэндлере receiving_var_name")
         await message.answer(
-            "Мы не смогли получить id продукта."
+            "Ошибка сервера."
         )
-        await state.clear()
         return
-
-    admin_id = message.from_user.id
+    
+    
     try:
-        result = await variant_service.get_variant_name(variant_name = message.text, 
-                                                 parent_id = parent_id,
-                                                 admin_id = admin_id
+        input_data = GetVariantName(**admin_data)
+        result = await variant_service.get_variant_name(variant_name = input_data.variant_name, 
+                                                 parent_id = input_data.parent_id,
+                                                 admin_id = input_data.admin_id
                                                  )
         if result:
             
@@ -220,25 +234,30 @@ async def receiving_var_name(message : Message, variant_service : VariantService
         await message.answer(
             "Ошибка: Почему то result получисля False"
         )
-
+    except ValidationError:
+            logger.exception(f"Pydantic не смог валидировать имя товара {message.text} который был выбран пользователем {message.from_user.id}")
+            await message.answer(
+                "Ошибка сервера!"
+            )
     except ClientError as e:
         logger.warning(f"{e.log_message}", exc_info = True)
         await message.answer(
             f"{e.user_message}"
         )
-
     except ServerError:
-        logger.exception("Ошибка в хэндлере receiving_var_name")
+        logger.warning("Ошибка в хэндлере receiving_var_name")
         await message.answer(
             "Ошибка сервера."
         )
         await state.clear()
 
+
+
 @router.message(AddVariantFlow.waiting_for_price)
 async def receiving_var_price(message : Message, 
                               variant_service : VariantService,
                               state : FSMContext):
-
+    
     if message.from_user is None:
         await message.answer("Ошибка сервера.")
         logger.error("message.from_user пустой.")
@@ -253,7 +272,7 @@ async def receiving_var_price(message : Message,
         return
     
     admin_id = message.from_user.id
-
+    
     try:
         variant_price = variant_service.get_variant_price(
             input_price = message.text,
@@ -270,6 +289,11 @@ async def receiving_var_price(message : Message,
         
         await message.answer(
             "Почему из сервиса вариянта и из метода .get_VariantPrice не вернулся цена."
+        )
+    except ValidationError:
+        logger.warning(f"Pydantic не смог валидировать цену {message.text}")
+        await message.answer(
+            "Неправильно ввели цену!"
         )
     except ClientError as e:
         logger.warning(f"{e.log_message}")
@@ -315,6 +339,14 @@ async def receiving_var_quantity(message : Message,
         parent_id = admin_data.get("parent_id")
         var_name = admin_data.get("var_name")
         var_price = admin_data.get("var_price")
+
+        if not parent_id or not var_name or not var_price:
+            logger.error("Произошла ошибка с даныыми в хэндлере receiving_var_quantity")
+            await message.answer(
+                "Ошибка сервера."
+            )
+            return
+        
         
         new_variant = await variant_service.finish_creating_variant(quantity = quantity,
                                                                   parent_id = parent_id,
@@ -409,6 +441,7 @@ async def get_parent_name_to_show_variant(message : Message, variant_service : V
                        )
 async def get_parent_id_to_show_variant(callback : CallbackQuery, 
                                         variant_service : VariantService,
+                                        callback_data : ItemCallback,
                                         state : FSMContext
                                         ):
     
@@ -426,18 +459,25 @@ async def get_parent_id_to_show_variant(callback : CallbackQuery,
             return
 
     try:
-
+        parent_id = callback_data.item_id
         show_variant_data = await state.get_data()
         parent_name = show_variant_data.get("parent_name")
         user_id = callback.from_user.id
+        if not parent_name:
+            logger.error("Ошибка с пустыми данными в хэндлере get_parent_id_to_show_variant.")
+            await callback.message.answer(
+                "Ошибка сервера."
+            )
+            return 
+        
         variant_data = await variant_service.get_parent_id_for_get_variant(parent_name = parent_name,
-                                                                           text = text,
+                                                                           parent_id = parent_id,
                                                                            user_id = user_id
                                                                            )
 
         await callback.answer()
         variant_kb = create_item_table_buttons(data = variant_data, action = "/show_variant")
-        await state.update_data(parent_id = int(text))
+        await state.update_data(parent_id = parent_id)
         await state.set_state(ShowVariantFlow.waiting_for_variant_id)
 
         await callback.message.answer(
@@ -495,9 +535,17 @@ async def finish_showing_variant(callback : CallbackQuery,
         parent_name = show_variant_data.get("parent_name")
         user_id = callback.from_user.id
         variant_id = callback_data.item_id
+
+        if not parent_name or parent_id is None:
+            logger.error("Произошла ошибка с отсуствием данных в хэндлере finish_showing_variant.")
+            await callback.message.answer(
+                "Ошибка сервера."
+            )
+            return
+        
         found_variant = await variant_service.get_variant_to_show(parent_id = parent_id,
                                                                   parent_name = parent_name,
-                                                                  ,
+                                                                  variant_id = variant_id,
                                                                   user_id = user_id)
 
         await callback.message.answer(
