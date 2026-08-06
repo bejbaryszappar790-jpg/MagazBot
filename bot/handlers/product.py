@@ -3,6 +3,7 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
+from pydantic import ValidationError
 from bot.states.add_product import AddProductFlow
 from bot.services.product_services import ProductService
 from bot.services.user_services import UserService
@@ -12,7 +13,8 @@ from bot.errors.server_error import (
 from bot.errors.client_error import (
     ClientError
 )
-
+from bot.schemas.users.verifyuser import VerifyUser
+from bot.schemas.products.creatingproduct import CreatingProduct
 
 logger = logging.getLogger(__name__)
 
@@ -31,13 +33,18 @@ async def ask_name(message : Message,
     
    
     try:
-    
-        result = await user_service.verify_user(admin_id = message.from_user.id)
+        input_data = VerifyUser(user_id = message.from_user.id)
+        result = await user_service.verify_user(admin_id = input_data.user_id)
         
         if result:
             await state.set_state(AddProductFlow.waiting_for_name)
             await message.reply("Введите имя товара:")
             return
+    except ValidationError:
+        logger.error(f"Pydantic не смог валидировать id пользователь {message.from_user.id}")
+        await message.answer(
+            "Ошибка сервера."
+        )
     except ClientError as e:
         logger.warning(f"{e.log_message}", exc_info = True)
         await message.answer(
@@ -68,13 +75,18 @@ async def create_parent(message : Message, product_service : ProductService, sta
 
 
     try:
-        admin_id = message.from_user.id
-        result = await product_service.creating_product(parent_name = message.text, admin_id = admin_id)
+        input_data = CreatingProduct(admin_id = message.from_user.id, parent_name = message.text)
+        result = await product_service.creating_product(parent_name = input_data.parent_name, admin_id = input_data.admin_id)
         if result:
             await message.answer(
                 f"Продукт по имени {message.text} создался!"
             )
             await state.clear()
+    except ValidationError:
+        logger.warning(f"Пользователь {message.from_user.id} не написал имя.")
+        await message.answer(
+            "Вы не написали имя!"
+        )
     except ClientError as e:
         logger.warning(f"{e.log_message}", exc_info = True)
         await message.answer(

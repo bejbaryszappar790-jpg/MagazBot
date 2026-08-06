@@ -75,6 +75,7 @@ class VariantService:
             
             return True
         except SQLAlchemyError:
+            
             raise DataBaseError("Почему то БД упало в сервисах вариянта и в методе get_product_id_for_variant")
                 
 
@@ -118,7 +119,7 @@ class VariantService:
 
 
     async def finish_creating_variant(self,
-                                    quantity : str,
+                                    quantity : int,
                                     parent_id : int,
                                     var_name : str,
                                     var_price : float,
@@ -126,19 +127,15 @@ class VariantService:
              
                                ) -> Variants:
         try:
-            if not quantity:
-                raise MissingDataError("Вы не написали количество.", f"Пользователь {admin_id} не написал количество.")
-
-            variant_quantity = int(quantity)
             
-            if variant_quantity < 0:
+            if quantity < 0:
                 raise BusinessLogicError("Напишите целое число больше или равно нулю.", f"Пользователь {admin_id}")
             
             new_variant = await self.variant_repo.create_variant(
                                                     parent_id = parent_id,
                                                     var_name = var_name,
                                                     var_price = Decimal(str(var_price)),
-                                                    quantity = variant_quantity
+                                                    quantity = quantity
                                                                 )
             if new_variant is None:
                 raise ServerMissingDataError("Почему то новый вариянт не создался в сервисах вариянта и в методе finishCreatingVariant.")
