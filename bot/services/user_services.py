@@ -1,5 +1,5 @@
 from bot.repositories.user import UserRepository
-from bot.schemas.id import Id_In
+from bot.schemas.users.Id_schema import Id_In
 from sqlalchemy.exc import SQLAlchemyError
 from pydantic import ValidationError
 from bot.errors.server_error import (

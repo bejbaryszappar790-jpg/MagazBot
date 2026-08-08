@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from bot.models import (
     Parent_Products,
     )
@@ -30,7 +30,9 @@ class ProductRepository:
                 Parent_Products.parent_name,
                 Parent_Products.parent_id
                 )
-            .where(Parent_Products.parent_name.ilike(f"%{parent_name}%"))
+            .where(Parent_Products.parent_name.op("%")(parent_name))
+            .order_by(func.similarity(Parent_Products.parent_name, parent_name).desc())
+            .limit(10)
         )
 
         result = await self.session.execute(query)
