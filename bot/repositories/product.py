@@ -65,11 +65,11 @@ class ProductRepository:
             select(Parent_Products.parent_name,
                    Parent_Products.parent_id
                    )
-            .where(Parent_Products.parent_name == parent_name)
+            .where(Parent_Products.parent_name.ilike(parent_name))
         )
 
         result = await self.session.execute(query)
-        return result.scalars().first()
+        return result
     
 
 

@@ -1,14 +1,16 @@
 import asyncio
-import os
 import logging
+import os
+
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
 from dotenv import load_dotenv
-from bot.middleware.db import DbSessionMiddleware
+
+from bot.database import SessionLocal
+from bot.handlers.product import router as product_router
 from bot.handlers.user import router as user_router
 from bot.handlers.variant import router as variant_router
-from bot.handlers.product import router as product_router
-from bot.database import SessionLocal
+from bot.middleware.db import DbSessionMiddleware
 
 load_dotenv()
 

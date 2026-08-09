@@ -19,7 +19,6 @@ from bot.models import Variants
 from bot.repositories.product import ProductRepository
 from bot.repositories.user import UserRepository
 from bot.repositories.variant import VariantRepository
-from bot.tools.exist import check_exist
 
 
 class VariantService:
@@ -55,7 +54,7 @@ class VariantService:
 
     async def get_product_id_for_variant(self, parent_id,
                                       admin_id : int
-                                      ) -> bool:
+                                      ):
         
         try:
             if admin_id is None:
@@ -66,7 +65,7 @@ class VariantService:
                 raise ServerMissingDataError(f"Пользователь {admin_id} выбрал callback продукт  {parent_id} нету.")
             
             
-            return True
+            return existing_product
         except SQLAlchemyError:
             
             raise DataBaseError("Почему то БД упало в сервисах вариянта и в методе get_product_id_for_variant")
@@ -83,15 +82,9 @@ class VariantService:
                                     )
 
                 
-            variant_names_ids = await self.variant_repo.get_all_variant_names_ids(var_name = variant_name, parent_id = parent_id)
+            existing_variant = await self.variant_repo.get_all_variant_names_ids(var_name = variant_name, parent_id = parent_id)
 
-            if not variant_names_ids:
-                return True
-            
-            if check_exist(names = variant_names_ids, name = variant_name):
-                raise DuplicateError("Такой вариянт существует, напишите другое имя или нажмите на кнопку отмена!", f"Пользователь {admin_id} пытался создать существующий продукт с именем {variant_name} у продукта с id {parent_id}")
-            
-            return True
+            return existing_variant is None
         except SQLAlchemyError:
             raise DataBaseError("Почему БД упал в сервисе вариянта и в методе get_variant_name")
 

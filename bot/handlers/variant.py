@@ -110,7 +110,6 @@ async def receiving_parent_name(message : Message,
         if product_data:
             kb = create_item_table_buttons(data = product_data, action = "/add_variant")
             await state.set_state(AddVariantFlow.waiting_for_parent_id)
-
             await message.answer(
                 "Выберите продукт которому хотите добавить вариант.",
                 reply_markup = kb
@@ -166,14 +165,15 @@ async def receiving_parent_id(callback : CallbackQuery,
                                                             admin_id = input_data.admin_id
                                                             )
 
-        if not result:
-            logger.error("Метод get_product_id_for_variant не вернул True в хэндлере receiving_parent_id.")
+        if result is None:
+            logger.error("Метод get_product_id_for_variant не вернул None в хэндлере receiving_parent_id.")
             await callback.message.answer(
                 "Ошибка сервера."
             )
             return
         
-        await state.update_data(parent_id = input_data.parent_id)
+        await state.update_data(parent_id = result.parent_id)
+        await state.update_data(parent_name = result.parent_name)
         await state.set_state(AddVariantFlow.waiting_for_variant_name)
 
         await callback.message.answer(
@@ -350,6 +350,7 @@ async def receiving_var_quantity(message : Message,
         
         data_dict = {
             "quantity" : message.text,
+            "admin_id" : message.from_user.id,
             **admin_data
         }
 
@@ -570,9 +571,15 @@ async def finish_showing_variant(callback : CallbackQuery,
                                                                   user_id = input_data.user_id
                                                                   )
         await callback.message.answer(
-            f"Продукт: {input_data.parent_name}\nВариант: {found_variant.var_name}\nЦена варианта: {found_variant.var_price}\nКоличество варианта {found_variant.stock_quantity}"
+            f"Продукт: {input_data.parent_name}\nВариант: {found_variant.var_name}\nЦена варианта: {found_variant.var_price}\nКоличество варианта {found_variant.var_quantity}"
         )
 
+        await state.clear()
+    except AttributeError:
+        logger.exception("Пройзошел ошибка аттрибутовы в хэндлере finish_showing_variant.")
+        await callback.message.answer(
+            "Ошибка Сервера"
+        )
         await state.clear()
     except ValidationError:
         logger.error(f"Pydantic не смог получить вариант {data_dict.get("parent_name")} продукта {data_dict.get("parent_id")}")

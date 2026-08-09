@@ -1,13 +1,16 @@
-from typing import Callable, Dict, Any, Awaitable
-from aiogram import BaseMiddleware 
+from typing import Any, Awaitable, Callable, Dict
+
+from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+
 from bot.repositories.product import ProductRepository
 from bot.repositories.user import UserRepository
 from bot.repositories.variant import VariantRepository
-from bot.services.user_services import UserService
 from bot.services.product_services import ProductService
+from bot.services.user_services import UserService
 from bot.services.variant_services import VariantService
+
 
 class DbSessionMiddleware(BaseMiddleware):
     def __init__(self, session_pool : async_sessionmaker[AsyncSession]):
@@ -27,11 +30,12 @@ class DbSessionMiddleware(BaseMiddleware):
                 
                 
                 
+                data["user_service"] = UserService(user_repo = user_repo)
+                
                 data["product_service"] = ProductService(product_repo = product_repo,
                                                          user_repo = user_repo
                                                          )
                 
-                data["user_service"] = UserService(user_repo = user_repo)
                 data["variant_service"] = VariantService(variant_repo = variant_repo,
                                                          product_repo = product_repo,
                                                          user_repo = user_repo

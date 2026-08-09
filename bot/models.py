@@ -1,12 +1,11 @@
 from decimal import Decimal
-from sqlalchemy import UniqueConstraint, Index
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, Numeric, BigInteger
+
+from sqlalchemy import BigInteger, ForeignKey, Index, Numeric, UniqueConstraint
 from sqlalchemy import Enum as SAENUM
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from bot.database import Base
 from bot.enums import UserRole
-
-
 
 
 class Users(Base):

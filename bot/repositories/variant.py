@@ -39,17 +39,12 @@ class VariantRepository:
         query = (
             select(Variants.var_name,
                 Variants.var_id)
-            .where(Variants.var_name.ilike(f"%{var_name}%"), Variants.parent_id == parent_id)
+            .where(Variants.var_name.ilike(var_name), Variants.parent_id == parent_id)
         )
 
         result = await self.session.execute(query)
-        rows = result.all()
-        answer = {}
 
-        for row in rows:
-            answer[row[0]] = row[1]
-
-        return answer
+        return result.first()
 
     
 
