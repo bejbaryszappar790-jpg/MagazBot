@@ -1,28 +1,25 @@
 from decimal import Decimal, InvalidOperation
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
-from pydantic import ValidationError
-from bot.repositories.variant import VariantRepository
-from bot.repositories.user import UserRepository
-from bot.repositories.product import ProductRepository
 
-from bot.errors.server_error import (
-    DataBaseError,
-    ServerMissingDataError,
-    ServerAbsenceError
-)
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+
+from bot.enums import OperationMode
 from bot.errors.client_error import (
     AbsenceError,
-    SimpleValidationError,
-    DuplicateError,
     BusinessLogicError,
+    DuplicateError,
     MissingDataError,
-    UnknownUserError
+    SimpleValidationError,
 )
-from bot.enums import OperationMode
-from bot.tools.exist import check_exist
+from bot.errors.server_error import (
+    DataBaseError,
+    ServerAbsenceError,
+    ServerMissingDataError,
+)
 from bot.models import Variants
-
-
+from bot.repositories.product import ProductRepository
+from bot.repositories.user import UserRepository
+from bot.repositories.variant import VariantRepository
+from bot.tools.exist import check_exist
 
 
 class VariantService:
@@ -39,8 +36,7 @@ class VariantService:
 
     async def get_product_name_for_variant(self, user_id : int, parent_name : str, mode : OperationMode) -> dict:
         try:
-            user_type = "Пользователь" if mode is OperationMode.READ else "Админ"
-
+            
             product_names_ids =  await self.product_repo.get_all_parent_names_ids(parent_name = parent_name)
             
             if not product_names_ids:
@@ -48,10 +44,7 @@ class VariantService:
                                    "Словарь с именами и id продуктов пуст в сервисах вариянта и в методе get_ProductNameForVariant"
                                    )
             
-            if not check_exist(names = product_names_ids, name = parent_name):
-                raise AbsenceError(f"Продукт с именем {parent_name} не существует.", 
-                                   f"{user_type} {user_id} пытался создать вариянт для {parent_name} который не существует."
-                                                       )
+            
             
 
             return product_names_ids

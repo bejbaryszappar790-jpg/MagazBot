@@ -1,18 +1,16 @@
+from pydantic import ValidationError
+from sqlalchemy.exc import SQLAlchemyError
+
+from bot.enums import UserRole, UserType
+from bot.errors.client_error import (
+    RoleError,
+    UnknownUserError,
+)
+from bot.errors.server_error import DataBaseError, ServerPydanticError
 from bot.repositories.user import UserRepository
 from bot.schemas.users.Id_schema import Id_In
-from sqlalchemy.exc import SQLAlchemyError
-from pydantic import ValidationError
-from bot.errors.server_error import (
-    DataBaseError,
-    ServerPydanticError
-    )
-from bot.enums import UserRole
-from bot.errors.client_error import (
-    UnknownUserError,
-    RoleError,
-)
 
-from bot.enums import UserType
+
 class UserService:
 
     def __init__(self, user_repo : UserRepository) -> None:

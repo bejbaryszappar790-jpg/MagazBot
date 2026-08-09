@@ -1,31 +1,29 @@
 import logging
-from aiogram import Router, F
+
+from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import CallbackQuery, Message
 from pydantic import ValidationError
-from bot.states.add_variant import AddVariantFlow
-from bot.services.variant_services import VariantService
-from bot.services.user_services import UserService
-from bot.errors.server_error import (
-    ServerError
-    )
-from bot.errors.client_error import (
-    ClientError,
-    AbsenceError
-)
-from bot.keyboard.item_table import create_item_table_buttons
-from bot.states.show_variant import ShowVariantFlow
-from bot.enums import OperationMode
+
 from bot.callback_factories.item_callback import ItemCallback
-from bot.schemas.products.getproductnameforvariant import GetProductNameForVariant
-from bot.schemas.products.getproductidforvariant import GetProductIdForVariant
+from bot.enums import OperationMode
+from bot.errors.client_error import AbsenceError, ClientError
+from bot.errors.server_error import ServerError
+from bot.keyboard.item_table import create_item_table_buttons
 from bot.schemas.products.getparentidforgetvariant import GetParentIdForGetVariant
+from bot.schemas.products.getproductidforvariant import GetProductIdForVariant
+from bot.schemas.products.getproductnameforvariant import GetProductNameForVariant
+from bot.schemas.users.verifyuser import VerifyUser
 from bot.schemas.variants.getvariantname import GetVariantName
 from bot.schemas.variants.getvariantprice import GetVariantPrice
-from bot.schemas.variants.receivingvarquantity import ReceivingVarQuantity
 from bot.schemas.variants.getvarianttoshow import GetVariantToShow
-from bot.schemas.users.verifyuser import VerifyUser
+from bot.schemas.variants.receivingvarquantity import ReceivingVarQuantity
+from bot.services.user_services import UserService
+from bot.services.variant_services import VariantService
+from bot.states.add_variant import AddVariantFlow
+from bot.states.show_variant import ShowVariantFlow
+
 logger = logging.getLogger(__name__)
 
 router = Router()

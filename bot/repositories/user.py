@@ -1,10 +1,10 @@
 import os
 
 from dotenv import load_dotenv
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from bot.models import Users, UserRole
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from bot.models import UserRole, Users
 
 load_dotenv()
 

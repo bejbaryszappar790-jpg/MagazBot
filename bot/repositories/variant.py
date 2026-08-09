@@ -1,13 +1,12 @@
 from decimal import Decimal
 from typing import Any
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy import select
-from bot.models import (
-    Variants
-    )
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from bot.enums import ChangingData
 from bot.errors.server_error import ServerAbsenceError
-
+from bot.models import Variants
 
 """
 Repository for Variants which works with DB.

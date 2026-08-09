@@ -1,10 +1,9 @@
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+
 from bot.models import (
     Parent_Products,
-    )
-
-
+)
 
 """
 Repository for product which works with DB.
@@ -60,6 +59,17 @@ class ProductRepository:
         return result.scalars().first()
 
 
+
+    async def get_exact_product_by_name(self, parent_name : str):
+        query = (
+            select(Parent_Products.parent_name,
+                   Parent_Products.parent_id
+                   )
+            .where(Parent_Products.parent_name == parent_name)
+        )
+
+        result = await self.session.execute(query)
+        return result.scalars().first()
     
 
 

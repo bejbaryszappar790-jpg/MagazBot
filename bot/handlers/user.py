@@ -1,10 +1,12 @@
 import logging
+
 from aiogram import Router
 from aiogram.filters import CommandStart
 from aiogram.types import Message
-from bot.services.user_services import UserService
-from bot.errors.server_error import ServerError
+
 from bot.enums import UserType
+from bot.errors.server_error import ServerError
+from bot.services.user_services import UserService
 
 router = Router()
 
