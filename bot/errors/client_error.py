@@ -1,7 +1,6 @@
 from bot.errors.base_error import BotError
 
 
-
 class ClientError(BotError):
     """
     Universial error which is caused by client side.
@@ -16,14 +15,14 @@ class RoleError(ClientError):
     """
     Any error which is related to user role.
     """
-    pass
+    
 
 
 class DuplicateError(ClientError):
     """
     The error which is caused when admin wants to create products/variants which is already exists.
     """
-    pass
+    
 
 
 class AbsenceError(ClientError):
@@ -37,31 +36,31 @@ class BusinessLogicError(ClientError):
     """
     The error which is related to every buissnes logic error.
     """
-    pass
+    
 
 
 class MissingDataError(ClientError):
     """
     The error which is caused when nullable data is None.
     """
-    pass
+    
 
 class ClientPydanticError(ClientError):
     """
     Any error which is related to pydantic validation error which is caused by user/admin.
     """
-    pass
+    
 
 class SimpleValidationError(ClientError):
     """
     Any validation error which is not related to pydantic.
     """
-    pass
+    
 
 class UnknownUserError(ClientError):
     """
     Error which is caused when unauthorized user wants to do smth.
     """
-    pass
+    
 
 

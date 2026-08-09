@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from pydantic import ValidationError
 
+from bot.enums import ThingType
 from bot.errors.client_error import ClientError
 from bot.errors.server_error import (
     ServerError,
@@ -34,7 +35,9 @@ async def ask_name(message : Message,
    
     try:
         input_data = VerifyUser(user_id = message.from_user.id)
-        result = await user_service.verify_user(admin_id = input_data.user_id)
+        result = await user_service.verify_user(admin_id = input_data.user_id,
+                                                thing_type = ThingType.PRODUCT
+                                                )
         
         if result:
             await state.set_state(AddProductFlow.waiting_for_name)

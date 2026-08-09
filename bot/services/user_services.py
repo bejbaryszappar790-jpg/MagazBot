@@ -1,7 +1,7 @@
 from pydantic import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
 
-from bot.enums import UserRole, UserType
+from bot.enums import ThingType, UserRole, UserType
 from bot.errors.client_error import (
     RoleError,
     UnknownUserError,
@@ -44,19 +44,20 @@ class UserService:
 
 
 
-    async def verify_user(self, admin_id : int) -> bool:
+    async def verify_user(self, admin_id : int, thing_type : ThingType) -> bool:
             
             try:
                 input = Id_In(admin_id = admin_id)
                 
                 admin_role = await self.user_repo.check_user_role(admin_id = input.admin_id)
-    
+
+                thing = "продукт" if thing_type == ThingType.PRODUCT else "вариант"
                 if admin_role is None:
-                    raise UnknownUserError("У вас нету прав админа что бы создать продукт!", f"Пользователь {admin_id} не зарегестрирован в базе данных но пытается создать продукт.")
+                    raise UnknownUserError(f"У вас нету прав админа что бы создать {thing}!", f"Пользователь {admin_id} не зарегестрирован в базе данных но пытается создать {thing}.")
                 
                 
                 if admin_role != UserRole.ADMIN:
-                    raise RoleError("Вы не являетесь админом что бы создать продукт!", f"Пользователь {admin_id} не является админом но пытается создать продукт!")
+                    raise RoleError(f"Вы не являетесь админом что бы создать {thing}!", f"Пользователь {admin_id} не является админом но пытается создать {thing}!")
     
     
                 return True

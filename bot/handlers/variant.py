@@ -7,7 +7,7 @@ from aiogram.types import CallbackQuery, Message
 from pydantic import ValidationError
 
 from bot.callback_factories.item_callback import ItemCallback
-from bot.enums import OperationMode
+from bot.enums import OperationMode, ThingType
 from bot.errors.client_error import AbsenceError, ClientError
 from bot.errors.server_error import ServerError
 from bot.keyboard.item_table import create_item_table_buttons
@@ -44,7 +44,8 @@ async def check_parent_name(message : Message,
 
     try:
         input_data = VerifyUser(user_id = message.from_user.id)
-        result = await user_service.verify_user(admin_id = input_data.user_id
+        result = await user_service.verify_user(admin_id = input_data.user_id,
+                                                thing_type = ThingType.VARIANT
                                                               )
         if result:
             await state.set_state(AddVariantFlow.waiting_for_parent_name)
@@ -376,9 +377,9 @@ async def receiving_var_quantity(message : Message,
         await state.clear()
 
     except ValidationError:
-        logger.warning(f"Pydantc вызвал ошибку при вводе цене варианта которого пытался создалть пользователь {message.from_user.id}.")
+        logger.warning(f"Pydantc вызвал ошибку при вводе количество варианта которого пытался создалть пользователь {message.from_user.id}.")
         await message.answer(
-            "Вы не правильно ввели цену.\nПримеры записи цены: 100, 100,0, 100.0"
+            "Вы не правильно ввели количество.\nНапишите целое число которое равно или больше нуля."
         )
     except ClientError as e:
         logger.warning(f"{e.log_message}")

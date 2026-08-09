@@ -20,3 +20,7 @@ class ChangingData(str, Enum):
 class OperationMode(str, Enum):
     WRITE = "write"
     READ = "read"
+
+class ThingType(str, Enum):
+    PRODUCT = "product"
+    VARIANT = "variant"
