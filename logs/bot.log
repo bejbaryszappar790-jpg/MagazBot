@@ -1603,3 +1603,189 @@ AttributeError: stock_quantity
 2026-08-09 17:02:01,587 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
 2026-08-09 17:02:01,588 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
 2026-08-09 17:02:01,841 - __main__ - INFO - main.py - main - Bot stopped.
+2026-08-10 00:19:33,811 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Start polling
+2026-08-10 00:19:33,968 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Run polling for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-10 00:19:54,701 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689349 is handled. Duration 16524 ms by bot id=8929833040
+2026-08-10 00:19:57,581 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689350 is handled. Duration 7414 ms by bot id=8929833040
+2026-08-10 00:20:12,660 - bot.handlers.product - WARNING - product.py - create_parent - Пользователь 6066556352 пытался создать существующий продукт ча
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/bot/handlers/product.py", line 82, in create_parent
+    result = await product_service.creating_product(parent_name = input_data.parent_name, admin_id = input_data.admin_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/bot/services/product_services.py", line 30, in creating_product
+    raise DuplicateError("Такой продукт уже существует!", f"Пользователь {admin_id} пытался создать существующий продукт {parent_name}")
+bot.errors.client_error.DuplicateError: ('Такой продукт уже существует!', 'Пользователь 6066556352 пытался создать существующий продукт ча')
+2026-08-10 00:20:15,320 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689351 is handled. Duration 2680 ms by bot id=8929833040
+2026-08-10 00:20:30,173 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689352 is handled. Duration 944 ms by bot id=8929833040
+2026-08-10 00:20:32,589 - bot.handlers.product - WARNING - product.py - create_parent - Пользователь 6066556352 пытался создать существующий продукт чала
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/bot/handlers/product.py", line 82, in create_parent
+    result = await product_service.creating_product(parent_name = input_data.parent_name, admin_id = input_data.admin_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/bot/services/product_services.py", line 30, in creating_product
+    raise DuplicateError("Такой продукт уже существует!", f"Пользователь {admin_id} пытался создать существующий продукт {parent_name}")
+bot.errors.client_error.DuplicateError: ('Такой продукт уже существует!', 'Пользователь 6066556352 пытался создать существующий продукт чала')
+2026-08-10 00:20:33,290 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689353 is handled. Duration 705 ms by bot id=8929833040
+2026-08-10 00:20:40,276 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689354 is handled. Duration 744 ms by bot id=8929833040
+2026-08-10 00:20:46,345 - bot.handlers.product - WARNING - product.py - create_parent - Пользователь 6066556352 пытался создать существующий продукт чапа
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/bot/handlers/product.py", line 82, in create_parent
+    result = await product_service.creating_product(parent_name = input_data.parent_name, admin_id = input_data.admin_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/bot/services/product_services.py", line 30, in creating_product
+    raise DuplicateError("Такой продукт уже существует!", f"Пользователь {admin_id} пытался создать существующий продукт {parent_name}")
+bot.errors.client_error.DuplicateError: ('Такой продукт уже существует!', 'Пользователь 6066556352 пытался создать существующий продукт чапа')
+2026-08-10 00:20:48,583 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689355 is handled. Duration 2242 ms by bot id=8929833040
+2026-08-10 00:21:05,369 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689356 is handled. Duration 4966 ms by bot id=8929833040
+2026-08-10 00:21:08,163 - bot.handlers.product - WARNING - product.py - create_parent - Пользователь 6066556352 пытался создать существующий продукт фыдвлаофдж
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/bot/handlers/product.py", line 82, in create_parent
+    result = await product_service.creating_product(parent_name = input_data.parent_name, admin_id = input_data.admin_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/bot/services/product_services.py", line 30, in creating_product
+    raise DuplicateError("Такой продукт уже существует!", f"Пользователь {admin_id} пытался создать существующий продукт {parent_name}")
+bot.errors.client_error.DuplicateError: ('Такой продукт уже существует!', 'Пользователь 6066556352 пытался создать существующий продукт фыдвлаофдж')
+2026-08-10 00:21:14,239 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689357 is handled. Duration 6080 ms by bot id=8929833040
+2026-08-10 00:25:01,189 - aiogram.dispatcher - WARNING - dispatcher.py - _signal_stop_polling - Received SIGINT signal
+2026-08-10 00:25:01,190 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-10 00:25:01,190 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
+2026-08-10 00:25:01,443 - __main__ - INFO - main.py - main - Bot stopped.
+2026-08-10 00:25:25,156 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Start polling
+2026-08-10 00:25:25,683 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Run polling for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-10 00:25:28,208 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689358 is handled. Duration 1543 ms by bot id=8929833040
+2026-08-10 00:25:41,230 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689359 is handled. Duration 1602 ms by bot id=8929833040
+2026-08-10 00:25:48,968 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689360 is handled. Duration 530 ms by bot id=8929833040
+2026-08-10 00:25:53,596 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689361 is handled. Duration 227 ms by bot id=8929833040
+2026-08-10 00:25:58,292 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689362 is handled. Duration 576 ms by bot id=8929833040
+2026-08-10 00:26:05,535 - bot.handlers.variant - ERROR - variant.py - receiving_var_name - Pydantic не смог валидировать имя товара красный который был выбран пользователем 6066556352
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/bot/handlers/variant.py", line 229, in receiving_var_name
+    input_data = GetVariantName(**admin_data)
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/pydantic/main.py", line 263, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+pydantic_core._pydantic_core.ValidationError: 2 validation errors for GetVariantName
+variant_name
+  Field required [type=missing, input_value={'parent_id': 9, 'parent_name': 'чала'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.13/v/missing
+admin_id
+  Field required [type=missing, input_value={'parent_id': 9, 'parent_name': 'чала'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.13/v/missing
+2026-08-10 00:26:05,832 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689363 is handled. Duration 297 ms by bot id=8929833040
+2026-08-10 00:34:56,784 - aiogram.dispatcher - WARNING - dispatcher.py - _signal_stop_polling - Received SIGINT signal
+2026-08-10 00:34:56,786 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-10 00:34:56,787 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
+2026-08-10 00:34:57,040 - __main__ - INFO - main.py - main - Bot stopped.
+2026-08-10 11:41:31,056 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Start polling
+2026-08-10 11:41:31,216 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Run polling for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-10 11:41:52,382 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689364 is handled. Duration 2213 ms by bot id=8929833040
+2026-08-10 11:41:57,733 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689365 is handled. Duration 294 ms by bot id=8929833040
+2026-08-10 11:41:59,941 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689366 is handled. Duration 710 ms by bot id=8929833040
+2026-08-10 11:42:03,215 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689367 is handled. Duration 208 ms by bot id=8929833040
+2026-08-10 11:42:06,531 - bot.handlers.variant - WARNING - variant.py - receiving_var_price - Пользователь пытался написать цену меньше нуля написав -2342
+2026-08-10 11:42:06,749 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689368 is handled. Duration 220 ms by bot id=8929833040
+2026-08-10 11:42:09,268 - bot.handlers.variant - WARNING - variant.py - receiving_var_price - Пользователь 6066556352 написал цену в неприемлимом формате в виде фжыдвлао
+2026-08-10 11:42:09,450 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689369 is handled. Duration 183 ms by bot id=8929833040
+2026-08-10 11:42:15,755 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689370 is handled. Duration 251 ms by bot id=8929833040
+2026-08-10 11:42:18,681 - bot.handlers.variant - WARNING - variant.py - receiving_var_quantity - Пользователь 6066556352
+2026-08-10 11:42:18,922 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689371 is handled. Duration 243 ms by bot id=8929833040
+2026-08-10 11:42:21,558 - bot.handlers.variant - WARNING - variant.py - receiving_var_quantity - Pydantc вызвал ошибку при вводе количество варианта которого пытался создалть пользователь 6066556352.
+2026-08-10 11:42:21,786 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689372 is handled. Duration 229 ms by bot id=8929833040
+2026-08-10 11:42:27,251 - bot.handlers.variant - INFO - variant.py - receiving_var_quantity - Пользователь 6066556352 создал вариант красный продукта с id 9
+2026-08-10 11:42:27,543 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689373 is handled. Duration 304 ms by bot id=8929833040
+2026-08-10 11:42:30,658 - bot.handlers.variant - INFO - variant.py - start_showing_variant - Пользователь 6066556352 успешно начал команду /show_variant.
+2026-08-10 11:42:30,953 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689374 is handled. Duration 296 ms by bot id=8929833040
+2026-08-10 11:42:34,356 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689375 is handled. Duration 983 ms by bot id=8929833040
+2026-08-10 11:42:35,924 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689376 is handled. Duration 393 ms by bot id=8929833040
+2026-08-10 11:42:37,690 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689377 is handled. Duration 378 ms by bot id=8929833040
+2026-08-10 11:42:51,929 - bot.handlers.variant - INFO - variant.py - start_showing_variant - Пользователь 6066556352 успешно начал команду /show_variant.
+2026-08-10 11:42:52,120 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689378 is handled. Duration 191 ms by bot id=8929833040
+2026-08-10 11:42:54,886 - bot.handlers.variant - WARNING - variant.py - get_parent_name_to_show_variant - Словарь с именами и id продуктов пуст в сервисах вариянта и в методе get_ProductNameForVariant
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/bot/handlers/variant.py", line 404, in get_parent_name_to_show_variant
+    product_data = await variant_service.get_product_name_for_variant(user_id = input_data.user_id, parent_name = input_data.parent_name, mode = input_data.mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/bot/services/variant_services.py", line 42, in get_product_name_for_variant
+    raise AbsenceError("Такого товара не существует!\nНапишите другое имя или же нажмите на кнопку отмена!",
+                       "Словарь с именами и id продуктов пуст в сервисах вариянта и в методе get_ProductNameForVariant"
+                       )
+bot.errors.client_error.AbsenceError: ('Такого товара не существует!\nНапишите другое имя или же нажмите на кнопку отмена!', 'Словарь с именами и id продуктов пуст в сервисах вариянта и в методе get_ProductNameForVariant')
+2026-08-10 11:42:55,085 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689379 is handled. Duration 202 ms by bot id=8929833040
+2026-08-10 11:43:00,189 - bot.handlers.variant - INFO - variant.py - start_showing_variant - Пользователь 6066556352 успешно начал команду /show_variant.
+2026-08-10 11:43:01,108 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689380 is handled. Duration 920 ms by bot id=8929833040
+2026-08-10 11:43:04,701 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689381 is handled. Duration 233 ms by bot id=8929833040
+2026-08-10 11:43:36,668 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689382 is handled. Duration 375 ms by bot id=8929833040
+2026-08-10 11:43:38,246 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689383 is handled. Duration 384 ms by bot id=8929833040
+2026-08-10 11:43:40,505 - bot.handlers.variant - INFO - variant.py - start_showing_variant - Пользователь 6066556352 успешно начал команду /show_variant.
+2026-08-10 11:43:40,717 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689384 is handled. Duration 212 ms by bot id=8929833040
+2026-08-10 11:43:46,072 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689385 is handled. Duration 197 ms by bot id=8929833040
+2026-08-10 11:44:28,509 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689386 is handled. Duration 1042 ms by bot id=8929833040
+2026-08-10 11:44:41,364 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689387 is handled. Duration 750 ms by bot id=8929833040
+2026-08-10 11:53:30,578 - bot.handlers.variant - INFO - variant.py - start_showing_variant - Пользователь 6066556352 успешно начал команду /show_variant.
+2026-08-10 11:53:31,202 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689388 is handled. Duration 624 ms by bot id=8929833040
+2026-08-10 11:53:34,415 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689389 is handled. Duration 575 ms by bot id=8929833040
+2026-08-10 11:53:39,723 - bot.handlers.variant - WARNING - variant.py - get_parent_id_to_show_variant - Пользователь 6066556352 пытался увидеть вариант продукт чаи у которого их нет.
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/bot/handlers/variant.py", line 454, in get_parent_id_to_show_variant
+    variant_data = await variant_service.get_parent_id_for_get_variant(parent_name = input_data.parent_name,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+                                                                       )
+                                                                       ^
+  File "/Users/beybaris/BikoAiBot/bot/services/variant_services.py", line 144, in get_parent_id_for_get_variant
+    raise AbsenceError(f"У продукта {parent_name} пока нету вариантов.",
+                       f"Пользователь {user_id} пытался увидеть вариант продукт {parent_name} у которого их нет."
+                        )
+bot.errors.client_error.AbsenceError: ('У продукта чаи пока нету вариантов.', 'Пользователь 6066556352 пытался увидеть вариант продукт чаи у которого их нет.')
+2026-08-10 11:53:40,172 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689390 is handled. Duration 808 ms by bot id=8929833040
+2026-08-10 12:58:59,418 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 12:58:59,420 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-10 13:25:29,464 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 13:25:29,465 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.232281 seconds and try again... (tryings = 1, bot id = 8929833040)
+2026-08-10 13:25:48,648 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 2, bot id = 8929833040)
+2026-08-10 13:35:21,255 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 13:35:21,257 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-10 13:47:09,128 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 13:47:09,130 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.499581 seconds and try again... (tryings = 1, bot id = 8929833040)
+2026-08-10 13:47:57,384 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 2, bot id = 8929833040)
+2026-08-10 14:53:51,844 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 14:53:51,847 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-10 14:54:03,907 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 1, bot id = 8929833040)
+2026-08-10 16:06:05,949 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 16:06:05,951 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-10 16:06:17,357 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 1, bot id = 8929833040)
+2026-08-10 16:14:44,966 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 16:14:44,968 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-10 16:15:56,967 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 16:15:56,967 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.325161 seconds and try again... (tryings = 1, bot id = 8929833040)
+2026-08-10 16:17:08,967 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 16:17:08,968 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.709086 seconds and try again... (tryings = 2, bot id = 8929833040)
+2026-08-10 16:17:21,941 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 3, bot id = 8929833040)
+2026-08-10 17:21:04,705 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 17:21:04,707 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-10 17:54:51,139 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 17:54:51,140 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.246961 seconds and try again... (tryings = 1, bot id = 8929833040)
+2026-08-10 18:34:33,116 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 18:34:33,117 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.604925 seconds and try again... (tryings = 2, bot id = 8929833040)
+2026-08-10 19:11:27,581 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 19:11:27,583 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 2.220272 seconds and try again... (tryings = 3, bot id = 8929833040)
+2026-08-10 19:11:40,421 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 4, bot id = 8929833040)
+2026-08-10 19:27:01,979 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 19:27:01,981 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-10 19:27:14,209 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 1, bot id = 8929833040)
+2026-08-10 21:12:12,919 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 21:12:12,922 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-10 21:12:24,804 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 1, bot id = 8929833040)
+2026-08-10 22:34:14,386 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 22:34:14,388 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-10 22:40:14,982 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientConnectorError: Cannot connect to host api.telegram.org:443 ssl:default [None]
+2026-08-10 22:40:14,984 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.222241 seconds and try again... (tryings = 1, bot id = 8929833040)
+2026-08-10 22:51:17,160 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 22:51:17,163 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.512032 seconds and try again... (tryings = 2, bot id = 8929833040)
+2026-08-10 22:51:30,451 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 3, bot id = 8929833040)
+2026-08-10 23:28:36,512 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-10 23:28:36,513 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-10 23:28:48,088 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 1, bot id = 8929833040)
+2026-08-10 23:34:26,789 - aiogram.dispatcher - WARNING - dispatcher.py - _signal_stop_polling - Received SIGINT signal
+2026-08-10 23:34:26,791 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-10 23:34:26,791 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
+2026-08-10 23:34:27,043 - __main__ - INFO - main.py - main - Bot stopped.

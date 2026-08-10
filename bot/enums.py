@@ -24,3 +24,7 @@ class OperationMode(str, Enum):
 class ThingType(str, Enum):
     PRODUCT = "product"
     VARIANT = "variant"
+
+class GuiltytType(str, Enum):
+    SERVER = "server"
+    CLIENT = "client"

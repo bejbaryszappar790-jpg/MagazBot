@@ -33,19 +33,17 @@ class VariantService:
         self.user_repo = user_repo
 
 
-    async def get_product_name_for_variant(self, user_id : int, parent_name : str, mode : OperationMode) -> dict:
+    async def get_product_name_for_variant(self, id : int, parent_name : str, mode : OperationMode) -> dict:
         try:
-            
+
+            user_type = "Админ" if mode is OperationMode.WRITE else "Пользователь"
             product_names_ids =  await self.product_repo.get_all_parent_names_ids(parent_name = parent_name)
             
             if not product_names_ids:
                 raise AbsenceError("Такого товара не существует!\nНапишите другое имя или же нажмите на кнопку отмена!",
-                                   "Словарь с именами и id продуктов пуст в сервисах вариянта и в методе get_ProductNameForVariant"
+                                   f"Словарь с именами и id продуктов пуст который был получен по имени продукта {parent_name} от {user_type} {id} в сервисах вариянта и в методе get_ProductNameForVariant"
                                    )
             
-            
-            
-
             return product_names_ids
         except SQLAlchemyError:
             raise DataBaseError("Почему то БД упало в сервисах вариянта и в методе get_product_name_for_variant")

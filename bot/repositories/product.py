@@ -69,8 +69,7 @@ class ProductRepository:
         )
 
         result = await self.session.execute(query)
-        return result
-    
+        return result.first()    
 
 
 
