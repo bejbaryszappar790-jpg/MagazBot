@@ -53,11 +53,17 @@ class UserService:
 
                 thing = "продукт" if thing_type == ThingType.PRODUCT else "вариант"
                 if admin_role is None:
-                    raise UnknownUserError(f"У вас нету прав админа что бы создать {thing}!", f"Пользователь {admin_id} не зарегестрирован в базе данных но пытается создать {thing}.")
+                    raise UnknownUserError(f"У вас нету прав админа что бы создать {thing}!", 
+                                           f"Пользователь {admin_id} не зарегестрирован в базе данных но пытается создать {thing}.", 
+                                           clear_state = True
+                                           )
                 
                 
                 if admin_role != UserRole.ADMIN:
-                    raise RoleError(f"Вы не являетесь админом что бы создать {thing}!", f"Пользователь {admin_id} не является админом но пытается создать {thing}!")
+                    raise RoleError(f"Вы не являетесь админом что бы создать {thing}!", 
+                                    f"Пользователь {admin_id} не является админом но пытается создать {thing}!", 
+                                    clear_state = True
+                                    )
     
     
                 return True

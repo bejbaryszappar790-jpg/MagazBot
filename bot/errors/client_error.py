@@ -6,9 +6,10 @@ class ClientError(BotError):
     Universial error which is caused by client side.
     """
 
-    def __init__(self, user_message : str, log_message : str):
+    def __init__(self, user_message : str, log_message : str, clear_state : bool = False):
         self.user_message = user_message
         self.log_message = log_message
+        self.clear_state = clear_state
 
 
 class RoleError(ClientError):

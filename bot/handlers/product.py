@@ -53,6 +53,7 @@ async def ask_name(message : Message,
         await message.answer(
             f"{e.user_message}"
         )
+        await state.clear()
     except ServerError:
         logger.exception("Ошибка в хэндлере для старта создание продукта.")
         await message.answer(
