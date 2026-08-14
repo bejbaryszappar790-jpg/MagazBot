@@ -7,6 +7,7 @@ from aiogram.types import BotCommand
 from dotenv import load_dotenv
 
 from bot.database import SessionLocal
+from bot.handlers.error_hander import router as error_router
 from bot.handlers.product import router as product_router
 from bot.handlers.user import router as user_router
 from bot.handlers.variant import router as variant_router
@@ -56,13 +57,14 @@ async def main():
         dp.include_router(user_router)
         dp.include_router(variant_router)
         dp.include_router(product_router)
+        dp.include_router(error_router)
 
         dp.startup.register(set_main_menu)
 
     
         await dp.start_polling(bot)
-    except Exception as e:
-        logger.error(f"Error: {e}")
+    except Exception:
+        logger.exception("Ошибка в main.py")
     finally:
         logger.info("Bot stopped.")
 

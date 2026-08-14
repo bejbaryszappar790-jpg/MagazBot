@@ -106,7 +106,7 @@ class VariantService:
                                     quantity : int,
                                     parent_id : int,
                                     var_name : str,
-                                    var_price : float,
+                                    var_price : Decimal,
                                     admin_id : int
              
                                ) -> Variants:

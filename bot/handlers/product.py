@@ -4,18 +4,14 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from pydantic import ValidationError
 
 from bot.enums import ThingType
-from bot.errors.client_error import ClientError
-from bot.errors.server_error import (
-    ServerError,
-)
 from bot.schemas.products.creatingproduct import CreatingProduct
 from bot.schemas.users.verifyuser import VerifyUser
 from bot.services.product_services import ProductService
 from bot.services.user_services import UserService
 from bot.states.add_product import AddProductFlow
+from bot.tools.helper import validate_user_input
 
 logger = logging.getLogger(__name__)
 
@@ -33,33 +29,18 @@ async def ask_name(message : Message,
         return
     
    
-    try:
-        input_data = VerifyUser(user_id = message.from_user.id)
-        result = await user_service.verify_user(admin_id = input_data.user_id,
-                                                thing_type = ThingType.PRODUCT
-                                                )
-        
-        if result:
-            await state.set_state(AddProductFlow.waiting_for_name)
-            await message.reply("Введите имя товара:")
-            return
-    except ValidationError:
-        logger.error(f"Pydantic не смог валидировать id пользователь {message.from_user.id}")
-        await message.answer(
-            "Ошибка сервера."
-        )
-    except ClientError as e:
-        logger.warning(f"{e.log_message}", exc_info = True)
-        await message.answer(
-            f"{e.user_message}"
-        )
-        await state.clear()
-    except ServerError:
-        logger.exception("Ошибка в хэндлере для старта создание продукта.")
-        await message.answer(
-            "Ошибка сервера."
-        )
-        await state.clear()
+    
+    input_data = VerifyUser(user_id = message.from_user.id)
+    result = await user_service.verify_user(admin_id = input_data.user_id,
+                                            thing_type = ThingType.PRODUCT
+                                            )
+    
+    if result:
+        await state.set_state(AddProductFlow.waiting_for_name)
+        await state.update_data(admin_id = message.from_user.id)
+        await message.reply("Введите имя товара:")
+        return
+    
 
 
 
@@ -77,29 +58,17 @@ async def create_parent(message : Message, product_service : ProductService, sta
         await message.answer("Вы отправили пустую строку. Напишите имя продукта!")
         return
 
+    state_data = await state.get_data()
 
-    try:
-        input_data = CreatingProduct(admin_id = message.from_user.id, parent_name = message.text)
-        result = await product_service.creating_product(parent_name = input_data.parent_name, admin_id = input_data.admin_id)
-        if result:
-            await message.answer(
-                f"Продукт по имени {message.text} создался!"
-            )
-            await state.clear()
-    except ValidationError:
-        logger.warning(f"Пользователь {message.from_user.id} не написал имя.")
+    data = {
+        "admin_id" : state_data.get("admin_id"),
+        "parent_name" : message.text
+    }
+    Вызвать validate_user_input в нужные места и тестить все команды бота!!!
+    input_data = validate_user_input(schema = CreatingProduct, data = data, user_id = message.from_user.id, validated_data = "parent_name")
+    result = await product_service.creating_product(parent_name = input_data.parent_name, admin_id = input_data.admin_id)
+    if result:
         await message.answer(
-            "Вы не написали имя!"
+            f"Продукт по имени {message.text} создался!"
         )
-    except ClientError as e:
-        logger.warning(f"{e.log_message}", exc_info = True)
-        await message.answer(
-            f"Ошибка: {e.user_message}"
-        )
-        
-    except ServerError:
-        logger.exception("Ошибка в хэндлере create_parent.")
-        await message.answer(
-            "Ошибка со стороны сервера."
-        )
-
+        await state.clear()

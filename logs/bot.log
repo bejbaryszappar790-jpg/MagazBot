@@ -1789,3 +1789,210 @@ bot.errors.client_error.AbsenceError: ('У продукта чаи пока не
 2026-08-10 23:34:26,791 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
 2026-08-10 23:34:26,791 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
 2026-08-10 23:34:27,043 - __main__ - INFO - main.py - main - Bot stopped.
+2026-08-14 16:48:52,275 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Start polling
+2026-08-14 16:48:52,820 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Run polling for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-14 16:51:33,499 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689391 is handled. Duration 618 ms by bot id=8929833040
+2026-08-14 16:51:38,549 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689392 is handled. Duration 187 ms by bot id=8929833040
+2026-08-14 16:51:46,611 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689393 is not handled. Duration 24 ms by bot id=8929833040
+2026-08-14 16:51:46,611 - aiogram.event - ERROR - dispatcher.py - _process_update - Cause exception while process update id=361689393 by bot id=8929833040
+DuplicateError: Пользователь 6066556352 пытался создать существующий продукт Макси чай
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/dispatcher.py", line 320, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/dispatcher.py", line 164, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/bot/middleware/db.py", line 45, in __call__
+    result = await handler(event, data)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/event/handler.py", line 71, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/router.py", line 165, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/router.py", line 157, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/router.py", line 193, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/router.py", line 165, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/router.py", line 157, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/router.py", line 185, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/event/handler.py", line 71, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/bot/handlers/product.py", line 62, in create_parent
+    result = await product_service.creating_product(parent_name = input_data.parent_name, admin_id = input_data.admin_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/bot/services/product_services.py", line 30, in creating_product
+    raise DuplicateError("Такой продукт уже существует!", f"Пользователь {admin_id} пытался создать существующий продукт {parent_name}")
+bot.errors.client_error.DuplicateError: Пользователь 6066556352 пытался создать существующий продукт Макси чай
+2026-08-14 17:03:59,728 - aiogram.dispatcher - WARNING - dispatcher.py - _signal_stop_polling - Received SIGINT signal
+2026-08-14 17:03:59,730 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-14 17:03:59,730 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
+2026-08-14 17:03:59,982 - __main__ - INFO - main.py - main - Bot stopped.
+2026-08-14 17:04:28,120 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Start polling
+2026-08-14 17:04:28,940 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Run polling for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-14 17:04:41,964 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689394 is handled. Duration 11767 ms by bot id=8929833040
+2026-08-14 17:04:48,041 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689395 is handled. Duration 449 ms by bot id=8929833040
+2026-08-14 17:04:57,905 - bot.handlers.error_hander - WARNING - error_hander.py - error_handler - Пользователь 6066556352 пытался создать существующий продукт Макси чай
+2026-08-14 17:04:57,905 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689396 is handled. Duration 14 ms by bot id=8929833040
+2026-08-14 17:16:57,571 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-14 17:16:57,574 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-14 17:17:09,341 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 1, bot id = 8929833040)
+2026-08-14 17:42:36,238 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-14 17:42:36,241 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-14 17:42:47,724 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 1, bot id = 8929833040)
+2026-08-14 17:56:17,414 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-14 17:56:17,416 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-14 17:56:28,902 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 1, bot id = 8929833040)
+2026-08-14 19:25:28,762 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-14 19:25:28,764 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-14 19:25:40,401 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 1, bot id = 8929833040)
+2026-08-14 19:36:19,779 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-14 19:36:19,782 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-14 19:36:34,040 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 1, bot id = 8929833040)
+2026-08-14 20:12:46,157 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-14 20:12:46,160 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-14 20:12:57,954 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 1, bot id = 8929833040)
+2026-08-14 20:26:24,804 - aiogram.dispatcher - WARNING - dispatcher.py - _signal_stop_polling - Received SIGINT signal
+2026-08-14 20:26:24,807 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-14 20:26:24,807 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
+2026-08-14 20:26:25,059 - __main__ - INFO - main.py - main - Bot stopped.
+2026-08-14 20:26:41,204 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Start polling
+2026-08-14 20:26:42,207 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Run polling for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-14 20:26:46,069 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689397 is handled. Duration 3097 ms by bot id=8929833040
+2026-08-14 20:26:55,407 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689398 is handled. Duration 3185 ms by bot id=8929833040
+2026-08-14 20:26:58,319 - bot.handlers.error_hander - WARNING - error_hander.py - error_handler - Пользователь 6066556352 пытался создать существующий продукт Макси чай
+2026-08-14 20:26:58,319 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689399 is handled. Duration 11 ms by bot id=8929833040
+2026-08-14 21:14:47,251 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-14 21:14:47,254 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-14 21:14:58,996 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 1, bot id = 8929833040)
+2026-08-14 21:43:52,642 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-14 21:43:52,643 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-14 21:44:04,619 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 1, bot id = 8929833040)
+2026-08-14 22:13:53,103 - aiogram.dispatcher - WARNING - dispatcher.py - _signal_stop_polling - Received SIGINT signal
+2026-08-14 22:13:53,107 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-14 22:13:53,107 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
+2026-08-14 22:13:53,359 - __main__ - INFO - main.py - main - Bot stopped.
+2026-08-14 22:14:02,923 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Start polling
+2026-08-14 22:14:03,627 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Run polling for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-14 22:14:10,841 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689400 is handled. Duration 571 ms by bot id=8929833040
+2026-08-14 22:14:22,914 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689401 is handled. Duration 425 ms by bot id=8929833040
+2026-08-14 22:14:28,339 - bot.handlers.error_hander - WARNING - error_hander.py - error_handler - Пользователь 6066556352 пытался создать существующий продукт Макси чай
+2026-08-14 22:14:28,540 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689402 is handled. Duration 212 ms by bot id=8929833040
+2026-08-14 22:14:41,786 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689403 is handled. Duration 200 ms by bot id=8929833040
+2026-08-14 22:14:47,443 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689404 is handled. Duration 179 ms by bot id=8929833040
+2026-08-14 22:14:51,378 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689405 is handled. Duration 205 ms by bot id=8929833040
+2026-08-14 22:14:55,189 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689406 is handled. Duration 407 ms by bot id=8929833040
+2026-08-14 22:15:00,329 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689407 is handled. Duration 315 ms by bot id=8929833040
+2026-08-14 22:15:05,339 - bot.handlers.error_hander - WARNING - error_hander.py - error_handler - Пользователь пытался написать цену меньше нуля написав -234234
+2026-08-14 22:15:05,543 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689408 is handled. Duration 207 ms by bot id=8929833040
+2026-08-14 22:15:10,200 - bot.handlers.error_hander - WARNING - error_hander.py - error_handler - Пользователь 6066556352 написал цену в неприемлимом формате в виде офыждваол
+2026-08-14 22:15:10,375 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689409 is handled. Duration 176 ms by bot id=8929833040
+2026-08-14 22:15:18,606 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689410 is handled. Duration 182 ms by bot id=8929833040
+2026-08-14 22:15:20,929 - bot.handlers.error_hander - WARNING - error_hander.py - error_handler - Пользователь 6066556352
+2026-08-14 22:15:21,356 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689411 is handled. Duration 428 ms by bot id=8929833040
+2026-08-14 22:15:22,824 - bot.handlers.error_hander - ERROR - error_hander.py - error_handler - quantity : Input should be a valid integer, unable to parse string as an integer
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/middlewares/error.py", line 27, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 58, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/fsm/middleware.py", line 43, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/bot/middleware/db.py", line 45, in __call__
+    result = await handler(event, data)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/event/handler.py", line 71, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/dispatcher.py", line 283, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/router.py", line 165, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/router.py", line 157, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/router.py", line 193, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/router.py", line 165, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/router.py", line 157, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/router.py", line 185, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/event/telegram.py", line 126, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/event/handler.py", line 71, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/bot/handlers/variant.py", line 248, in receiving_var_quantity
+    input_data = ReceivingVarQuantity(**data_dict)
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/pydantic/main.py", line 263, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+pydantic_core._pydantic_core.ValidationError: 1 validation error for ReceivingVarQuantity
+quantity
+  Input should be a valid integer, unable to parse string as an integer [type=int_parsing, input_value='тмыдвламотыдв', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/int_parsing
+2026-08-14 22:15:23,357 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689412 is handled. Duration 535 ms by bot id=8929833040
+2026-08-14 22:15:34,004 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689413 is not handled. Duration 2 ms by bot id=8929833040
+2026-08-14 22:44:15,106 - aiogram.dispatcher - WARNING - dispatcher.py - _signal_stop_polling - Received SIGINT signal
+2026-08-14 22:44:15,109 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-14 22:44:15,109 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
+2026-08-14 22:44:15,363 - __main__ - INFO - main.py - main - Bot stopped.
