@@ -1,11 +1,12 @@
 import logging
 
 from aiogram import Router
-from aiogram.types import ErrorEvent, Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
+from aiogram.types import CallbackQuery, ErrorEvent, Message
+from pydantic import ValidationError
 
 from bot.errors.client_error import ClientError
-
+from bot.errors.server_error import ServerError
 
 router = Router()
 
@@ -17,13 +18,24 @@ async def error_handler(event : ErrorEvent, state : FSMContext):
     update = event.update
 
     clear_state = False
+    user_message = "Ошибка Сервера"
     if isinstance(exception, ClientError):
         user_message = exception.user_message
-        logger.warning(f"{exception.log_message}")
-    else:
-        user_message = "Ошибка сервера!"
-        logger.exception(f"{exception.args[0]}")
+        logger.warning(exception.log_message)
+        clear_state = exception.clear_state
+    elif isinstance(exception, ValidationError):
+
+        logger_messsage = '; '.join(f"{'->'.join(str(loc) for loc in error['loc'])} : {error['msg']}" for error in exception.errors())
+        logger.exception(f"{logger_messsage}")
         clear_state = True
+    elif isinstance(exception, ServerError):
+
+        logger.exception(exception.log_message)
+        clear_state = True
+    else:
+        logger.exception("Ошибка сервера!")
+        clear_state = True
+        
         
 
 
@@ -39,11 +51,5 @@ async def error_handler(event : ErrorEvent, state : FSMContext):
             f"{user_message}"
         )
 
-    if exception.clear_state or clear_state:
+    if clear_state:
         await state.clear()
-
-    Надо дорабобать случаи с ValidationError который был вызван со стороны сервера и кроме этого очистить хэндлеры от try/except и запустить и протестить бота!
-
-
-    
-    

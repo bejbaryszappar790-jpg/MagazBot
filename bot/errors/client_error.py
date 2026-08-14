@@ -10,6 +10,7 @@ class ClientError(BotError):
         self.user_message = user_message
         self.log_message = log_message
         self.clear_state = clear_state
+        super().__init__(log_message)
 
 
 class RoleError(ClientError):

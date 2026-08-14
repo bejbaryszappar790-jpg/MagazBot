@@ -5,8 +5,9 @@ class ServerError(BotError):
     """
     Base class for all internal server and developer errors.
     """   
-    
-
+    def __init__(self, log_message : str):
+        self.log_message = log_message
+        super().__init__(log_message)
 
 
 class DataBaseError(ServerError):
@@ -44,4 +45,3 @@ class ServerMissingDataError(ServerError):
     """
     MissinDataError but caused the side of server
     """
-    
