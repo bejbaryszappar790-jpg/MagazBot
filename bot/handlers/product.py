@@ -30,8 +30,8 @@ async def ask_name(message : Message,
     
    
     
-    input_data = VerifyUser(user_id = message.from_user.id)
-    result = await user_service.verify_user(admin_id = input_data.user_id,
+    service_args = VerifyUser(user_id = message.from_user.id)
+    result = await user_service.verify_user(admin_id = service_args.user_id,
                                             thing_type = ThingType.PRODUCT
                                             )
     
@@ -64,9 +64,9 @@ async def create_parent(message : Message, product_service : ProductService, sta
         "admin_id" : state_data.get("admin_id"),
         "parent_name" : message.text
     }
-    Вызвать validate_user_input в нужные места и тестить все команды бота!!!
-    input_data = validate_user_input(schema = CreatingProduct, data = data, user_id = message.from_user.id, validated_data = "parent_name")
-    result = await product_service.creating_product(parent_name = input_data.parent_name, admin_id = input_data.admin_id)
+
+    service_args = validate_user_input(schema = CreatingProduct, data = data, user_id = message.from_user.id, validated_data = "parent_name")
+    result = await product_service.creating_product(parent_name = service_args.parent_name, admin_id = service_args.admin_id)
     if result:
         await message.answer(
             f"Продукт по имени {message.text} создался!"

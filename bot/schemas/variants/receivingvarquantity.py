@@ -7,6 +7,6 @@ from pydantic import BaseModel, StringConstraints
 class ReceivingVarQuantity(BaseModel):
     quantity : int
     parent_id : int
-    var_name : Annotated[str, StringConstraints(strip_whitespace = True, min_length = 1)]
-    var_price : Decimal
+    variant_name : Annotated[str, StringConstraints(strip_whitespace = True, min_length = 1)]
+    variant_price : Decimal
     admin_id : int
