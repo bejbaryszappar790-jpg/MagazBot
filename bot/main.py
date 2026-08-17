@@ -8,9 +8,10 @@ from dotenv import load_dotenv
 
 from bot.database import SessionLocal
 from bot.handlers.error_hander import router as error_router
-from bot.handlers.product import router as product_router
-from bot.handlers.user import router as user_router
-from bot.handlers.variant import router as variant_router
+from bot.handlers.products.add_product import router as add_product_router
+from bot.handlers.users.start_bot import router as start_bot_router
+from bot.handlers.variants.add_variant import router as add_variant_router
+from bot.handlers.variants.show_variant import router as show_variant_router
 from bot.middleware.db import DbSessionMiddleware
 
 load_dotenv()
@@ -54,9 +55,10 @@ async def main():
         dp.update.middleware(DbSessionMiddleware(session_pool = SessionLocal))
 
 
-        dp.include_router(user_router)
-        dp.include_router(variant_router)
-        dp.include_router(product_router)
+        dp.include_router(start_bot_router)
+        dp.include_router(add_variant_router)
+        dp.include_router(show_variant_router)
+        dp.include_router(add_product_router)
         dp.include_router(error_router)
 
         dp.startup.register(set_main_menu)
