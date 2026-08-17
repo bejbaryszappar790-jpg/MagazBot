@@ -8,8 +8,8 @@ from aiogram.types import CallbackQuery, Message
 from bot.callback_factories.item_callback import ItemCallback
 from bot.enums import OperationMode
 from bot.keyboard.item_table import create_item_table_buttons
-from bot.schemas.products.getparentidforgetvariant import GetParentIdForGetVariant
 from bot.schemas.products.getproductnameforvariant import GetProductNameForVariant
+from bot.schemas.variants.returnvarianttable import ReturnVariantTableSchema
 from bot.schemas.variants.getvarianttoshow import GetVariantToShow
 from bot.services.variant_services import VariantService
 from bot.states.show_variant import ShowVariantFlow
@@ -87,8 +87,8 @@ async def get_parent_id_to_show_variant(callback : CallbackQuery,
             "parent_id" : callback_data.item_id,
             **state_data
     }
-    service_args = GetParentIdForGetVariant(**data)
-    variant_data = await variant_service.get_parent_id_for_get_variant(parent_name = service_args.parent_name,
+    service_args = ReturnVariantTableSchema(**data)
+    variant_data = await variant_service.return_variant_table(parent_name = service_args.parent_name,
                                                                         parent_id = service_args.parent_id,
                                                                         user_id = service_args.user_id
                                                                         )
@@ -137,6 +137,7 @@ async def finish_showing_variant(callback : CallbackQuery,
     await callback.message.answer(
         f"Продукт: {service_args.parent_name}\nВариант: {found_variant.var_name}\nЦена варианта: {found_variant.var_price}\nКоличество варианта {found_variant.var_quantity}"
     )
+    logger.info(f"Пользователь {service_args.user_id} успешно получит вариант товара с id {service_args.variant_id} от бота!")
 
     await state.clear()
     

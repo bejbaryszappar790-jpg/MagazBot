@@ -47,9 +47,8 @@ class UserService:
     async def verify_user(self, admin_id : int, thing_type : ThingType) -> bool:
             
             try:
-                input = Id_In(admin_id = admin_id)
                 
-                admin_role = await self.user_repo.check_user_role(admin_id = input.admin_id)
+                admin_role = await self.user_repo.check_user_role(admin_id = admin_id)
 
                 thing = "продукт" if thing_type == ThingType.PRODUCT else "вариант"
                 if admin_role is None:
@@ -60,8 +59,8 @@ class UserService:
                 
                 
                 if admin_role != UserRole.ADMIN:
-                    raise RoleError(f"Вы не являетесь админом что бы создать {thing}!", 
-                                    f"Пользователь {admin_id} не является админом но пытается создать {thing}!", 
+                    raise RoleError(f"Вы не являетесь админом что бы взаимодействовать {thing}!", 
+                                    f"Пользователь {admin_id} не является админом но пытается взаимодействовать {thing}!", 
                                     clear_state = True
                                     )
     

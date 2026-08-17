@@ -66,9 +66,10 @@ async def create_parent(message : Message, product_service : ProductService, sta
     }
 
     service_args = validate_user_input(schema = CreatingProduct, data = data, user_id = message.from_user.id, validated_data = "parent_name")
-    result = await product_service.creating_product(parent_name = service_args.parent_name, admin_id = service_args.admin_id)
-    if result:
-        await message.answer(
-            f"Продукт по имени {message.text} создался!"
-        )
-        await state.clear()
+    new_product = await product_service.creating_product(parent_name = service_args.parent_name, admin_id = service_args.admin_id)
+    
+    await message.answer(
+        f"Продукт по имени {message.text} создался!"
+    )
+    logger.info(f"Пользователь {service_args.admin_id} успешно создал товар {new_product.parent_name} с id {new_product.parent_id}")
+    await state.clear()

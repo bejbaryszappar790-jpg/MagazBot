@@ -4,7 +4,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.enums import ChangingData
+from bot.enums import ChangingVariantAttribute
 from bot.errors.server_error import ServerAbsenceError
 from bot.models import Variants
 
@@ -51,9 +51,7 @@ class VariantRepository:
     async def get_variant(self, variant_id : int):
         query = (
             select(
-                Variants.var_name,
-                Variants.var_price,
-                Variants.var_quantity
+                Variants
             )
             .where(Variants.var_id == variant_id)
         )
@@ -61,7 +59,7 @@ class VariantRepository:
 
         result = await self.session.execute(query)
 
-        return result.first()
+        return result.scalars().first()
 
     async def get_all_variant_names_ids_by_parent_id(self, parent_id : int):
         query = (
@@ -84,7 +82,7 @@ class VariantRepository:
 
         return answer
 
-    async def change_variant_data(self, variant_id : int, data : Any, datatype: ChangingData):
+    async def change_variant_data(self, variant_id : int, data : Any, attribute_for_change: ChangingVariantAttribute):
         query = (
             select(Variants)
             .where(Variants.var_id == variant_id)
@@ -96,11 +94,11 @@ class VariantRepository:
 
         if variant is None:
             raise ServerAbsenceError("База Данных вернуло None в методе репозиторий варианта change_variant_data.")
-        if datatype is ChangingData.VARIANT_NAME:
+        if attribute_for_change is ChangingVariantAttribute.VARIANT_NAME:
             variant.var_name = data
-        elif datatype is ChangingData.VARIANT_PRICE:
+        elif attribute_for_change is ChangingVariantAttribute.VARIANT_PRICE:
             variant.var_price = data
-        elif datatype is ChangingData.VARIANT_QUANTITY:
+        elif attribute_for_change is ChangingVariantAttribute.VARIANT_QUANTITY:
             variant.var_quantity = data
 
         return variant

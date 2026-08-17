@@ -1,5 +1,7 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+
 from bot.callback_factories.item_callback import ItemCallback
+
 
 def create_item_table_buttons(data : dict, action : str):
     builder = InlineKeyboardBuilder()

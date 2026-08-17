@@ -22,7 +22,7 @@ class ProductService:
         self.product_repo = product_repo
         self.user_repo = user_repo
 
-    async def creating_product(self, parent_name : str, admin_id : int) -> bool:
+    async def creating_product(self, parent_name : str, admin_id : int):
         try:
             existing_product = await self.product_repo.get_exact_product_by_name(parent_name = parent_name)
             
@@ -34,7 +34,7 @@ class ProductService:
             if not new_product:
                 raise DataBaseError(f"Продукт который пользователя {admin_id} с именем {parent_name} не был создан.")
 
-            return True
+            return new_product
 
         except IntegrityError:
             raise DuplicateError("Такой продукт уже был создан!", f"Пользователь {admin_id} пытаслся создать продукт {parent_name} который уже был создан!")

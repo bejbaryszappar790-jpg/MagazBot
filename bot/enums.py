@@ -12,7 +12,7 @@ class UserRole(str, Enum):
     ADMIN = "admin"
 
 
-class ChangingData(str, Enum):
+class ChangingVariantAttribute(str, Enum):
     VARIANT_NAME = "variant_name"
     VARIANT_PRICE = "variant_price"
     VARIANT_QUANTITY = "variant_quantity"
@@ -28,3 +28,4 @@ class ThingType(str, Enum):
 class GuiltytType(str, Enum):
     SERVER = "server"
     CLIENT = "client"
+

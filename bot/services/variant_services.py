@@ -19,6 +19,7 @@ from bot.models import Variants
 from bot.repositories.product import ProductRepository
 from bot.repositories.user import UserRepository
 from bot.repositories.variant import VariantRepository
+from bot.enums import ChangingVariantAttribute
 
 
 class VariantService:
@@ -51,7 +52,7 @@ class VariantService:
     
 
     async def get_product_id_for_variant(self, parent_id,
-                                      admin_id : int
+                                      admin_id : int | None
                                       ):
         
         try:
@@ -134,7 +135,7 @@ class VariantService:
             raise DataBaseError("Почему БД упал в сервисе вариянта и в методе finish_creating_variant")
 
 
-    async def get_parent_id_for_get_variant(self, parent_name : str, parent_id : int, user_id : int):
+    async def return_variant_table(self, parent_name : str, parent_id : int, user_id : int):
         try:
             variant_names_ids = await self.variant_repo.get_all_variant_names_ids_by_parent_id(parent_id = parent_id)
 
@@ -162,3 +163,6 @@ class VariantService:
             return found_variant
         except SQLAlchemyError:
             raise DataBaseError("Почему БД упал в сервисе вариянта и в методе get_variant_to_show")
+
+
+    async def change_variant_attribute(self, variant_id : int, variant_attribute : ChangingVariantAttribute)
