@@ -1,8 +1,9 @@
 from decimal import Decimal, InvalidOperation
+from typing import Any
 
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
-from bot.enums import OperationMode
+from bot.enums import ChangingVariantAttribute, OperationMode
 from bot.errors.client_error import (
     AbsenceError,
     BusinessLogicError,
@@ -19,7 +20,6 @@ from bot.models import Variants
 from bot.repositories.product import ProductRepository
 from bot.repositories.user import UserRepository
 from bot.repositories.variant import VariantRepository
-from bot.enums import ChangingVariantAttribute
 
 
 class VariantService:
@@ -165,4 +165,29 @@ class VariantService:
             raise DataBaseError("Почему БД упал в сервисе вариянта и в методе get_variant_to_show")
 
 
-    async def change_variant_attribute(self, variant_id : int, variant_attribute : ChangingVariantAttribute)
+    async def change_variant_attribute(self, 
+                                       variant_obj : Variants, 
+                                       new_attribute : Any, 
+                                       variant_attribute : ChangingVariantAttribute, 
+                                       admin_id : int | None
+                                       ):
+        try:
+            if variant_attribute is ChangingVariantAttribute.VARIANT_PRICE:
+                repo_argument = Decimal(new_attribute.replace(",", "."))
+            else:
+                repo_argument = new_attribute
+            result = await self.variant_repo.update_variant_without_search(variant = variant_obj, new_attribute = repo_argument, attribute_for_change = variant_attribute)
+
+            if result is None:
+                raise DataBaseError(f"База данных вернула пустоту когда отправили вариант {variant_obj.var_id}")
+            
+            
+            if(variant_attribute is ChangingVariantAttribute.VARIANT_NAME and result.var_name != repo_argument or 
+            variant_attribute is ChangingVariantAttribute.VARIANT_PRICE and result.var_price != repo_argument or
+            variant_attribute is ChangingVariantAttribute.VARIANT_QUANTITY and result.var_quantity != repo_argument
+            ):
+                raise DataBaseError(f"База данных не изменило аттрибут вариант {result.var_id} которогы мы указали.")
+
+            return result
+        except (ValueError, InvalidOperation):
+            raise SimpleValidationError("Введите число как: 100, 100.0, 100,0", f"Пользователь {admin_id} написал цену в неприемлимом формате в виде {new_attribute}")

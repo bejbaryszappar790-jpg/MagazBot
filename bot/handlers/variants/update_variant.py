@@ -1,26 +1,29 @@
 import logging
 
-from aiogram import Router, F
+from aiogram import F, Router
 from aiogram.filters import Command
-from aiogram.types import Message, CallbackQuery
-from bot.callback_factories.item_callback import ItemCallback
 from aiogram.fsm.context import FSMContext
-from bot.errors.client_error import UnknownUserError
-from bot.schemas.users.verifyuser import VerifyUser
-from bot.services.user_services import UserService
-from bot.enums import ThingType
-from bot.states.update_variant import UpdateVariantFlow
-from bot.services.product_services import ProductService
-from bot.enums import OperationMode
-from bot.tools.helper import validate_user_input
-from bot.schemas.products.getproductnameforvariant import GetProductNameForVariant
-from bot.services.variant_services import VariantService
-from bot.keyboard.item_table import create_item_table_buttons
-from bot.errors.server_error import ServerAbsenceError
-from bot.schemas.variants.returnvarianttable import ReturnVariantTableSchema
-from bot.schemas.variants.getvarianttoshow import GetVariantToShow
-from bot.keyboard.variant_attributes_table import create_variant_attribute_table
+from aiogram.types import CallbackQuery, Message
 
+from bot.callback_factories.item_callback import ItemCallback
+from bot.enums import ChangingVariantAttribute, OperationMode, ThingType
+from bot.errors.client_error import UnknownUserError
+from bot.errors.server_error import ServerAbsenceError, ServerError
+from bot.keyboard.item_table import create_item_table_buttons
+from bot.keyboard.variant_attributes_table import create_variant_attribute_table
+from bot.schemas.products.getproductnameforvariant import GetProductNameForVariant
+from bot.schemas.users.verifyuser import VerifyUser
+from bot.schemas.variants.changevariantattribute import (
+    ChangeVariantNameSchema,
+    ChangeVariantPriceSchema,
+    ChangeVariantQuantitySchema,
+)
+from bot.schemas.variants.getvarianttoshow import GetVariantToShow
+from bot.schemas.variants.returnvarianttable import ReturnVariantTableSchema
+from bot.services.user_services import UserService
+from bot.services.variant_services import VariantService
+from bot.states.update_variant import UpdateVariantFlow
+from bot.tools.helper import validate_user_input
 
 router = Router()
 logger = logging.getLogger(__name__)
@@ -141,7 +144,7 @@ async def receive_variant_id_to_show_var_attribute(
         "Выберите какой аттрибут варианта вы хотите изменить.",
         reply_markup = kb
     )
-    await state.update_data(variant_id = existing_variant.var_id)
+    await state.update_data(variant_obj = existing_variant)
     await state.set_state(UpdateVariantFlow.waiting_for_variant_attributes)
 
 
@@ -151,13 +154,72 @@ async def receive_variant_id_to_show_var_attribute(
 )
 async def receive_var_attribute_to_update(
     callback : CallbackQuery,
-    variant_service : VariantService,
     state : FSMContext
 ):
-
+    
     if callback.message is None:
+        callback.answer("Ошибка сервера!")
         raise ServerAbsenceError("Обьект message нету внутри CallbackQuery в хэндлере receive_parent_id_for_update_variant")
 
+    await callback.answer()
+    if not callback.data:
+        raise ServerAbsenceError("Data внутри кнопку был пуст в хэндлере receive_var_attribute_to_update")
+
+    await state.update_data(variant_attribte = callback.data)
+    await state.set_state(UpdateVariantFlow.waiting_for_new_data)
+    if callback.data is ChangingVariantAttribute.VARIANT_NAME:
+        await callback.message.answer(
+            "Теперь напишите новое имя для варианта."
+        )
+    elif callback.data is ChangingVariantAttribute.VARIANT_PRICE:
+        await callback.message.answer(
+            "Теперь напишите новую цену для варианта."
+        )
+    elif callback.data is ChangingVariantAttribute.VARIANT_QUANTITY:
+        await callback.message.answer(
+            "Теперь напишите новое количество для варианта."
+        )
+    else:
+        await callback.message.answer(
+            "Ошибка сервера!"
+        )
+        raise ServerError(f"callbakc.data имеет внутри {callback.data} который не соответвует классу ChangingVariantAttribute.")
+
+
+@router.message(UpdateVariantFlow.waiting_for_new_data)
+async def finish_update_data(message : Message, variant_service : VariantService, state : FSMContext):
+    state_data = await state.get_data()
+
+    data = {
+        **state_data,
+        "new_attibute" : message.text
+    }
     
+    if state_data.get("variant_attibute") is ChangingVariantAttribute.VARIANT_NAME:
+        service_args = validate_user_input(schema = ChangeVariantNameSchema, data = data, user_id = state_data.get("admin_id"), validated_data = "Новая имя варианта")
+        old_attribute = service_args.variant_obj.var_name
+    elif state_data.get("variant_attibute") is ChangingVariantAttribute.VARIANT_PRICE:
+        service_args = validate_user_input(schema = ChangeVariantPriceSchema, data = data, user_id = state_data.get("admin_id"), validated_data = "Новая цена варианта")
+        old_attribute = service_args.variant_obj.var_price
+    else:
+        service_args = validate_user_input(schema = ChangeVariantQuantitySchema, data = data, user_id = state_data.get("admin_id"), validated_data = "Новое количесто варианта")
+        old_attribute = service_args.variant_obj.var_quantity
+
+    result = await variant_service.change_variant_attribute(variant_obj = service_args.variant_obj, new_attribute = service_args.new_attibute, variant_attribute = service_args.variant_attribute, admin_id = service_args.admin_id)
+
+    if service_args.variant_attribute is ChangingVariantAttribute.VARIANT_NAME:
+        await message.answer(
+            f"Имя варианта изменилось c {old_attribute} в {result.var_name}"
+        )
+    elif service_args.variant_attribute is ChangingVariantAttribute.VARIANT_PRICE:
+        await message.answer(
+            f"Цена варианта изменилось с {old_attribute} в {result.var_price}"
+        )
+    else:
+        await message.answer(
+            f"Количество варианта изменилось с {old_attribute} в {result.var_quantity}"
+        )
+
+    await state.clear()
     
     
