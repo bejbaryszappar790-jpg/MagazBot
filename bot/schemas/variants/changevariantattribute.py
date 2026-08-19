@@ -3,11 +3,10 @@ from typing import Annotated
 from pydantic import BaseModel, StringConstraints
 
 from bot.enums import ChangingVariantAttribute
-from bot.models import Variants
 
 
 class ChangeVariantBaseSchema(BaseModel):
-    variant_obj : Variants
+    variant_id : int
     variant_attribute : ChangingVariantAttribute
     admin_id : int
 

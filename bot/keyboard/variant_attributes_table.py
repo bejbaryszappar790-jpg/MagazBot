@@ -1,6 +1,5 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-
 from bot.enums import ChangingVariantAttribute
 
 

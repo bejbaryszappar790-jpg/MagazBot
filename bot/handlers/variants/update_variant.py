@@ -122,7 +122,7 @@ async def receive_variant_id_to_show_var_attribute(
     if callback.message is None:
         raise ServerAbsenceError("Обьект message нету внутри CallbackQuery в хэндлере receive_parent_id_for_update_variant")
 
-
+    await callback.answer()
     state_data = await state.get_data()
 
     data = {

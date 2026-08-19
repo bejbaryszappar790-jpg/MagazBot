@@ -9,8 +9,8 @@ from bot.callback_factories.item_callback import ItemCallback
 from bot.enums import OperationMode
 from bot.keyboard.item_table import create_item_table_buttons
 from bot.schemas.products.getproductnameforvariant import GetProductNameForVariant
-from bot.schemas.variants.returnvarianttable import ReturnVariantTableSchema
 from bot.schemas.variants.getvarianttoshow import GetVariantToShow
+from bot.schemas.variants.returnvarianttable import ReturnVariantTableSchema
 from bot.services.variant_services import VariantService
 from bot.states.show_variant import ShowVariantFlow
 from bot.tools.helper import validate_user_input

@@ -1423,3 +1423,198 @@ Traceback (most recent call last):
   File "/Users/beybaris/BikoAiBot/bot/tools/helper.py", line 13, in validate_user_input
     raise ServerMissingDataError("Не было передано user_id в helper")
 bot.errors.server_error.ServerMissingDataError: Не было передано user_id в helper
+2026-08-18 19:33:53,516 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-18 19:35:39,514 - __main__ - ERROR - main.py - main - Ошибка в main.py
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/client.py", line 856, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/client.py", line 810, in _connect_and_send_request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        req, traces=traces, timeout=real_timeout
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/connector.py", line 657, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/connector.py", line 1242, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/connector.py", line 1589, in _create_direct_connection
+    transp, proto = await self._wrap_create_connection(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/connector.py", line 1301, in _wrap_create_connection
+    sock = await aiohappyeyeballs.start_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohappyeyeballs/impl.py", line 75, in start_connection
+    sock = await _connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohappyeyeballs/impl.py", line 210, in _connect_sock
+    await loop.sock_connect(sock, address)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/client/session/aiohttp.py", line 167, in make_request
+    async with session.post(
+               ~~~~~~~~~~~~^
+        url,
+        ^^^^
+        data=form,
+        ^^^^^^^^^^
+        timeout=self.timeout if timeout is None else timeout,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ) as resp:
+    ^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/client.py", line 1683, in __aenter__
+    self._resp: _RetType_co = await self._coro
+                              ^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/client.py", line 699, in _request
+    with timer:
+         ^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/helpers.py", line 759, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/bot/main.py", line 68, in main
+    await dp.start_polling(bot)
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/dispatcher.py", line 595, in start_polling
+    await self.emit_startup(bot=bots[-1], **workflow_data)
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/router.py", line 283, in emit_startup
+    await self.startup.trigger(*args, **kwargs)
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/event/event.py", line 43, in trigger
+    await handler.call(*args, **kwargs)
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/event/handler.py", line 71, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/bot/main.py", line 49, in set_main_menu
+    await bot.set_my_commands(main_menu_commands)
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/client/bot.py", line 3759, in set_my_commands
+    return await self(call, request_timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/client/bot.py", line 509, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/client/session/aiohttp.py", line 174, in make_request
+    raise TelegramNetworkError(method=method, message="Request timeout error") from e
+aiogram.exceptions.TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-18 19:35:39,536 - asyncio - ERROR - base_events.py - default_exception_handler - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x10baf6a50>
+2026-08-18 19:37:03,512 - __main__ - ERROR - main.py - main - Ошибка в main.py
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/client.py", line 856, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/client.py", line 810, in _connect_and_send_request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        req, traces=traces, timeout=real_timeout
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/connector.py", line 657, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/connector.py", line 1242, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/connector.py", line 1589, in _create_direct_connection
+    transp, proto = await self._wrap_create_connection(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/connector.py", line 1301, in _wrap_create_connection
+    sock = await aiohappyeyeballs.start_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohappyeyeballs/impl.py", line 75, in start_connection
+    sock = await _connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohappyeyeballs/impl.py", line 210, in _connect_sock
+    await loop.sock_connect(sock, address)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/client/session/aiohttp.py", line 167, in make_request
+    async with session.post(
+               ~~~~~~~~~~~~^
+        url,
+        ^^^^
+        data=form,
+        ^^^^^^^^^^
+        timeout=self.timeout if timeout is None else timeout,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ) as resp:
+    ^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/client.py", line 1683, in __aenter__
+    self._resp: _RetType_co = await self._coro
+                              ^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/client.py", line 699, in _request
+    with timer:
+         ^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiohttp/helpers.py", line 759, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/beybaris/BikoAiBot/bot/main.py", line 68, in main
+    await dp.start_polling(bot)
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/dispatcher.py", line 595, in start_polling
+    await self.emit_startup(bot=bots[-1], **workflow_data)
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/router.py", line 283, in emit_startup
+    await self.startup.trigger(*args, **kwargs)
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/event/event.py", line 43, in trigger
+    await handler.call(*args, **kwargs)
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/dispatcher/event/handler.py", line 71, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/bot/main.py", line 49, in set_main_menu
+    await bot.set_my_commands(main_menu_commands)
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/client/bot.py", line 3759, in set_my_commands
+    return await self(call, request_timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/client/bot.py", line 509, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/beybaris/BikoAiBot/venv/lib/python3.13/site-packages/aiogram/client/session/aiohttp.py", line 174, in make_request
+    raise TelegramNetworkError(method=method, message="Request timeout error") from e
+aiogram.exceptions.TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-18 19:37:03,531 - asyncio - ERROR - base_events.py - default_exception_handler - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x1094daba0>

@@ -12,6 +12,7 @@ from bot.handlers.products.add_product import router as add_product_router
 from bot.handlers.users.start_bot import router as start_bot_router
 from bot.handlers.variants.add_variant import router as add_variant_router
 from bot.handlers.variants.show_variant import router as show_variant_router
+from bot.handlers.variants.update_variant import router as update_variant_router
 from bot.middleware.db import DbSessionMiddleware
 
 load_dotenv()
@@ -42,7 +43,8 @@ async def set_main_menu(bot : Bot):
     main_menu_commands = [
         BotCommand(command = "add_product", description = "Добавляет новый продукт"),
         BotCommand(command = "add_variant", description = "Добавляет новый вариант"),
-        BotCommand(command = "show_variant", description = "Показывает цену и количество варианта")
+        BotCommand(command = "show_variant", description = "Показывает цену и количество варианта"),
+        BotCommand(command = "update_variant", description = "Обновляет либо имя либо цену либо количество варианта")
     ]
 
     await bot.set_my_commands(main_menu_commands)
@@ -60,6 +62,7 @@ async def main():
         dp.include_router(show_variant_router)
         dp.include_router(add_product_router)
         dp.include_router(error_router)
+        dp.include_router(update_variant_router)
 
         dp.startup.register(set_main_menu)
 
