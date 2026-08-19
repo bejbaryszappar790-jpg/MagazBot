@@ -102,17 +102,3 @@ class VariantRepository:
             variant.var_quantity = data
 
         return variant
-
-    
-    async def update_variant_without_search(self, variant : Variants, new_attribute : Any, attribute_for_change: ChangingVariantAttribute):
-            
-            if variant is None:
-                raise ServerAbsenceError("База Данных вернуло None в методе репозиторий варианта change_variant_data.")
-            if attribute_for_change is ChangingVariantAttribute.VARIANT_NAME:
-                variant.var_name = new_attribute
-            elif attribute_for_change is ChangingVariantAttribute.VARIANT_PRICE:
-                variant.var_price = new_attribute
-            elif attribute_for_change is ChangingVariantAttribute.VARIANT_QUANTITY:
-                variant.var_quantity = new_attribute
-    
-            return variant

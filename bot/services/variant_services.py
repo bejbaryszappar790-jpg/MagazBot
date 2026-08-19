@@ -166,28 +166,39 @@ class VariantService:
 
 
     async def change_variant_attribute(self, 
-                                       variant_obj : Variants, 
+                                       variant_id : int,
                                        new_attribute : Any, 
                                        variant_attribute : ChangingVariantAttribute, 
                                        admin_id : int | None
                                        ):
         try:
-            if variant_attribute is ChangingVariantAttribute.VARIANT_PRICE:
+            if variant_attribute == ChangingVariantAttribute.VARIANT_PRICE:
                 repo_argument = Decimal(new_attribute.replace(",", "."))
+                if repo_argument < 0:
+                    raise BusinessLogicError("Напишите цену больше или равно нулю!", f"Пользователь {admin_id} написал цену меньше чем ноль")
+            elif variant_attribute == ChangingVariantAttribute.VARIANT_QUANTITY:
+                repo_argument = int(new_attribute)
+                if repo_argument < 0:
+                    raise BusinessLogicError("Напишите количество больше или равно нулю", f"Пользователь {admin_id} написал количество меньше чем ноль")
             else:
                 repo_argument = new_attribute
-            result = await self.variant_repo.update_variant_without_search(variant = variant_obj, new_attribute = repo_argument, attribute_for_change = variant_attribute)
+                if not repo_argument:
+                    raise BusinessLogicError("Вы отправили пустое сообщение!", f"Пользователь {admin_id} отправил пустое сообщение вместо нового имение варианта.")
+
+            result = await self.variant_repo.change_variant_data(variant_id = variant_id, data = repo_argument, attribute_for_change = variant_attribute)            
 
             if result is None:
-                raise DataBaseError(f"База данных вернула пустоту когда отправили вариант {variant_obj.var_id}")
+                raise DataBaseError(f"База данных вернула пустоту когда когда хотели изменить аттрибут варианта{variant_id}")
             
             
-            if(variant_attribute is ChangingVariantAttribute.VARIANT_NAME and result.var_name != repo_argument or 
-            variant_attribute is ChangingVariantAttribute.VARIANT_PRICE and result.var_price != repo_argument or
-            variant_attribute is ChangingVariantAttribute.VARIANT_QUANTITY and result.var_quantity != repo_argument
+            if(variant_attribute == ChangingVariantAttribute.VARIANT_NAME and result.var_name != repo_argument or 
+            variant_attribute == ChangingVariantAttribute.VARIANT_PRICE and result.var_price != repo_argument or
+            variant_attribute == ChangingVariantAttribute.VARIANT_QUANTITY and result.var_quantity != repo_argument
             ):
                 raise DataBaseError(f"База данных не изменило аттрибут вариант {result.var_id} которогы мы указали.")
 
             return result
-        except (ValueError, InvalidOperation):
+        except ValueError:
+            raise SimpleValidationError("Введите целое число!", f"Пользователь {admin_id} написал количество в не правильно в виде {new_attribute} варианте.")
+        except InvalidOperation:
             raise SimpleValidationError("Введите число как: 100, 100.0, 100,0", f"Пользователь {admin_id} написал цену в неприемлимом формате в виде {new_attribute}")

@@ -29,14 +29,14 @@ router = Router()
 logger = logging.getLogger(__name__)
 
 @router.message(Command("update_variant"))
-async def start_update_variant_handler(message : Message, user_servcie : UserService, state : FSMContext):
+async def start_update_variant_handler(message : Message, user_service : UserService, state : FSMContext):
     if message.from_user is None:
         raise UnknownUserError("Вы не авторизованы!", "Неизвестный пользователь пыталься использовать команду /update_variant.", clear_state = True)
 
 
     service_args = VerifyUser(user_id = message.from_user.id)
 
-    result = await user_servcie.verify_user(admin_id = service_args.user_id, thing_type = ThingType.VARIANT)
+    result = await user_service.verify_user(admin_id = service_args.user_id, thing_type = ThingType.VARIANT)
 
     if result:
         await message.answer(
@@ -47,7 +47,7 @@ async def start_update_variant_handler(message : Message, user_servcie : UserSer
 
         
 @router.message(UpdateVariantFlow.waiting_for_parent_name)
-async def receinving_parent_name_for_update_variant(message : Message, variant_services : VariantService, state : FSMContext):
+async def receinving_parent_name_for_update_variant(message : Message, variant_service : VariantService, state : FSMContext):
 
     if not message.text:
         await message.answer(
@@ -65,10 +65,11 @@ async def receinving_parent_name_for_update_variant(message : Message, variant_s
 
     service_args = validate_user_input(schema = GetProductNameForVariant, data = data, user_id = state_data.get("admin_id"), validated_data = "parent_name")
 
-    product_data = await variant_services.get_product_name_for_variant(id = service_args.user_id, parent_name = service_args.parent_name, mode = service_args.mode)
+    product_data = await variant_service.get_product_name_for_variant(id = service_args.user_id, parent_name = service_args.parent_name, mode = service_args.mode)
 
     kb = create_item_table_buttons(data = product_data, action = "/update_variant")
 
+    
     await state.set_state(UpdateVariantFlow.waiting_for_parent_id)
     await message.answer(
         "Выберите продукт чей вариант вы хотите изменить.",
@@ -104,8 +105,8 @@ async def receive_parent_id_for_update_variant(callback : CallbackQuery,
         "Теперь выберите тот вариант которого вы хотите изменить.",
         reply_markup = kb
     )
-    await state.update_data(parent_id = service_args.parent_id)
-    await state.update_data(parent_id = service_args.parent_name)
+    await state.update_data(parent_id = existing_product.parent_id)
+    await state.update_data(parent_name = existing_product.parent_name)
     await state.set_state(UpdateVariantFlow.waiting_for_variant_id)
 
 @router.callback_query(
@@ -144,7 +145,7 @@ async def receive_variant_id_to_show_var_attribute(
         "Выберите какой аттрибут варианта вы хотите изменить.",
         reply_markup = kb
     )
-    await state.update_data(variant_obj = existing_variant)
+    await state.update_data(variant_id= existing_variant.var_id)
     await state.set_state(UpdateVariantFlow.waiting_for_variant_attributes)
 
 
@@ -165,17 +166,17 @@ async def receive_var_attribute_to_update(
     if not callback.data:
         raise ServerAbsenceError("Data внутри кнопку был пуст в хэндлере receive_var_attribute_to_update")
 
-    await state.update_data(variant_attribte = callback.data)
+    await state.update_data(variant_attribute = callback.data)
     await state.set_state(UpdateVariantFlow.waiting_for_new_data)
-    if callback.data is ChangingVariantAttribute.VARIANT_NAME:
+    if callback.data == ChangingVariantAttribute.VARIANT_NAME:
         await callback.message.answer(
             "Теперь напишите новое имя для варианта."
         )
-    elif callback.data is ChangingVariantAttribute.VARIANT_PRICE:
+    elif callback.data == ChangingVariantAttribute.VARIANT_PRICE:
         await callback.message.answer(
             "Теперь напишите новую цену для варианта."
         )
-    elif callback.data is ChangingVariantAttribute.VARIANT_QUANTITY:
+    elif callback.data == ChangingVariantAttribute.VARIANT_QUANTITY:
         await callback.message.answer(
             "Теперь напишите новое количество для варианта."
         )
@@ -192,34 +193,31 @@ async def finish_update_data(message : Message, variant_service : VariantService
 
     data = {
         **state_data,
-        "new_attibute" : message.text
+        "new_attribute" : message.text
     }
     
-    if state_data.get("variant_attibute") is ChangingVariantAttribute.VARIANT_NAME:
+    if state_data.get("variant_attribute") == ChangingVariantAttribute.VARIANT_NAME:
         service_args = validate_user_input(schema = ChangeVariantNameSchema, data = data, user_id = state_data.get("admin_id"), validated_data = "Новая имя варианта")
-        old_attribute = service_args.variant_obj.var_name
-    elif state_data.get("variant_attibute") is ChangingVariantAttribute.VARIANT_PRICE:
+
+    elif state_data.get("variant_attribute") == ChangingVariantAttribute.VARIANT_PRICE:
         service_args = validate_user_input(schema = ChangeVariantPriceSchema, data = data, user_id = state_data.get("admin_id"), validated_data = "Новая цена варианта")
-        old_attribute = service_args.variant_obj.var_price
     else:
         service_args = validate_user_input(schema = ChangeVariantQuantitySchema, data = data, user_id = state_data.get("admin_id"), validated_data = "Новое количесто варианта")
-        old_attribute = service_args.variant_obj.var_quantity
 
-    result = await variant_service.change_variant_attribute(variant_obj = service_args.variant_obj, new_attribute = service_args.new_attibute, variant_attribute = service_args.variant_attribute, admin_id = service_args.admin_id)
+    result = await variant_service.change_variant_attribute(variant_id = service_args.variant_id, 
+                                                            new_attribute = service_args.new_attribute, 
+                                                            variant_attribute = service_args.variant_attribute, 
+                                                            admin_id = state_data.get("admin_id")
+                                                            )
 
-    if service_args.variant_attribute is ChangingVariantAttribute.VARIANT_NAME:
-        await message.answer(
-            f"Имя варианта изменилось c {old_attribute} в {result.var_name}"
-        )
-    elif service_args.variant_attribute is ChangingVariantAttribute.VARIANT_PRICE:
-        await message.answer(
-            f"Цена варианта изменилось с {old_attribute} в {result.var_price}"
-        )
-    else:
-        await message.answer(
-            f"Количество варианта изменилось с {old_attribute} в {result.var_quantity}"
-        )
-
+    await message.answer(
+        f"""
+        Изменение успешно сохранились!
+        {result.var_name}
+        {result.var_price}
+        {result.var_quantity}
+        """
+    )
     await state.clear()
     
     

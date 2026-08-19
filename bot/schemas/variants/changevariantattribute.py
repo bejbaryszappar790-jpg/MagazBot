@@ -11,11 +11,11 @@ class ChangeVariantBaseSchema(BaseModel):
     admin_id : int
 
 class ChangeVariantNameSchema(ChangeVariantBaseSchema):
-    new_attibute : Annotated[str, StringConstraints(strip_whitespace = True, min_length = 1)]
+    new_attribute : Annotated[str, StringConstraints(strip_whitespace = True, min_length = 1)]
 
 
 class ChangeVariantPriceSchema(ChangeVariantNameSchema):
     pass
     
 class ChangeVariantQuantitySchema(ChangeVariantBaseSchema):
-    new_attibute : int
+    new_attribute : int

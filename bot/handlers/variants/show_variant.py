@@ -88,7 +88,8 @@ async def get_parent_id_to_show_variant(callback : CallbackQuery,
             **state_data
     }
     service_args = ReturnVariantTableSchema(**data)
-    variant_data = await variant_service.return_variant_table(parent_name = service_args.parent_name,
+    existing_product = await variant_service.get_product_id_for_variant(parent_id = service_args.parent_id, admin_id = service_args.user_id)
+    variant_data = await variant_service.return_variant_table(parent_name = existing_product,
                                                                         parent_id = service_args.parent_id,
                                                                         user_id = service_args.user_id
                                                                         )
