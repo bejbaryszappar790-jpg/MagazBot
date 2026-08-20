@@ -3176,3 +3176,23 @@ bot.errors.server_error.ServerError: callbakc.data имеет внутри varia
 2026-08-19 18:56:44,416 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
 2026-08-19 18:56:44,416 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
 2026-08-19 18:56:44,669 - __main__ - INFO - main.py - main - Bot stopped.
+2026-08-20 13:53:47,452 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Start polling
+2026-08-20 13:53:47,614 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Run polling for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-20 13:54:21,501 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689583 is handled. Duration 679 ms by bot id=8929833040
+2026-08-20 13:54:25,362 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689584 is handled. Duration 213 ms by bot id=8929833040
+2026-08-20 13:54:26,993 - bot.handlers.error_hander - WARNING - error_hander.py - error_handler - Пользователь 6066556352 пытался увидеть вариант продукт чай у которого их нет.
+2026-08-20 13:54:27,512 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689585 is handled. Duration 531 ms by bot id=8929833040
+2026-08-20 13:54:34,748 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689586 is handled. Duration 215 ms by bot id=8929833040
+2026-08-20 13:54:51,414 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689587 is handled. Duration 377 ms by bot id=8929833040
+2026-08-20 13:54:53,705 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689588 is handled. Duration 369 ms by bot id=8929833040
+2026-08-20 13:54:58,882 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689589 is handled. Duration 195 ms by bot id=8929833040
+2026-08-20 13:55:05,616 - bot.handlers.variants.show_variant - INFO - show_variant.py - start_showing_variant - Пользователь 6066556352 успешно начал команду /show_variant.
+2026-08-20 13:55:05,831 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689590 is handled. Duration 215 ms by bot id=8929833040
+2026-08-20 13:55:11,041 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689591 is handled. Duration 287 ms by bot id=8929833040
+2026-08-20 13:55:13,063 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689592 is handled. Duration 401 ms by bot id=8929833040
+2026-08-20 13:55:14,850 - bot.handlers.variants.show_variant - INFO - show_variant.py - finish_showing_variant - Пользователь 6066556352 успешно получит вариант товара с id 14 от бота!
+2026-08-20 13:55:14,851 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689593 is handled. Duration 342 ms by bot id=8929833040
+2026-08-20 13:56:13,909 - aiogram.dispatcher - WARNING - dispatcher.py - _signal_stop_polling - Received SIGINT signal
+2026-08-20 13:56:13,911 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-20 13:56:13,911 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
+2026-08-20 13:56:14,162 - __main__ - INFO - main.py - main - Bot stopped.

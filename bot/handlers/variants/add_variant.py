@@ -18,7 +18,7 @@ from bot.schemas.variants.receivingvarquantity import ReceivingVarQuantity
 from bot.services.user_services import UserService
 from bot.services.variant_services import VariantService
 from bot.states.add_variant import AddVariantFlow
-from bot.tools.helper import validate_user_input
+from bot.utils.helper import validate_user_input
 
 logger = logging.getLogger(__name__)
 

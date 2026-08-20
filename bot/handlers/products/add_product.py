@@ -11,7 +11,7 @@ from bot.schemas.users.verifyuser import VerifyUser
 from bot.services.product_services import ProductService
 from bot.services.user_services import UserService
 from bot.states.add_product import AddProductFlow
-from bot.tools.helper import validate_user_input
+from bot.utils.helper import validate_user_input
 
 logger = logging.getLogger(__name__)
 

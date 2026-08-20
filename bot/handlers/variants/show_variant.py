@@ -13,7 +13,7 @@ from bot.schemas.variants.getvarianttoshow import GetVariantToShow
 from bot.schemas.variants.returnvarianttable import ReturnVariantTableSchema
 from bot.services.variant_services import VariantService
 from bot.states.show_variant import ShowVariantFlow
-from bot.tools.helper import validate_user_input
+from bot.utils.helper import validate_user_input
 
 logger = logging.getLogger(__name__)
 

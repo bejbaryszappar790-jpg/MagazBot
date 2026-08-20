@@ -23,7 +23,7 @@ from bot.schemas.variants.returnvarianttable import ReturnVariantTableSchema
 from bot.services.user_services import UserService
 from bot.services.variant_services import VariantService
 from bot.states.update_variant import UpdateVariantFlow
-from bot.tools.helper import validate_user_input
+from bot.utils.helper import validate_user_input
 
 router = Router()
 logger = logging.getLogger(__name__)
@@ -213,9 +213,9 @@ async def finish_update_data(message : Message, variant_service : VariantService
     await message.answer(
         f"""
         Изменение успешно сохранились!
-        {result.var_name}
-        {result.var_price}
-        {result.var_quantity}
+        Имя варианта: {result.var_name}
+        Цена варианта: {result.var_price}
+        Количество варианта: {result.var_quantity}
         """
     )
     await state.clear()
