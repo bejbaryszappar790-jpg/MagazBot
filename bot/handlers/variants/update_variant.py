@@ -43,6 +43,7 @@ async def start_update_variant_handler(message : Message, user_service : UserSer
             "Напишите имя продукта чей вариант вы хотите изменить."
         )
         await state.update_data(admin_id = message.from_user.id)
+        await state.update_data(action = "/update_variant")
         await state.set_state(UpdateVariantFlow.waiting_for_parent_name)
 
         
@@ -69,7 +70,8 @@ async def receinving_parent_name_for_update_variant(message : Message, variant_s
 
     kb = create_item_table_buttons(data = product_data, action = "/update_variant")
 
-    
+    await state.update_data(input_name = message.text)   
+    await state.update_data(mode = service_args.mode) 
     await state.set_state(UpdateVariantFlow.waiting_for_parent_id)
     await message.answer(
         "Выберите продукт чей вариант вы хотите изменить.",
@@ -220,7 +222,3 @@ async def finish_update_data(message : Message, variant_service : VariantService
     )
     await state.clear()
     
-
-
-Continue creating go back button, create it via dictionary
-we created and datas for recreating inline buttons

@@ -29,3 +29,8 @@ class GuiltytType(str, Enum):
     SERVER = "server"
     CLIENT = "client"
 
+
+class RegressButtonType(str, Enum):
+    CANCEL = "cancel"
+    GO_BACK = "go_back"
+    

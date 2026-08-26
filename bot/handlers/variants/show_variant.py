@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from bot.callback_factories.item_callback import ItemCallback
-from bot.enums import OperationMode
+from bot.enums import OperationMode, UserRole
 from bot.keyboard.item_table import create_item_table_buttons
 from bot.schemas.products.getproductnameforvariant import GetProductNameForVariant
 from bot.schemas.variants.getvarianttoshow import GetVariantToShow
@@ -38,6 +38,7 @@ async def start_showing_variant(message : Message, state : FSMContext):
         "Теперь напишите имя продукта чьей вариант хотите увидеть!"
     )
     await state.update_data(user_id = message.from_user.id)
+    await state.update_data(user_role = UserRole.USER)
     await state.set_state(ShowVariantFlow.waiting_for_parent_name)
 
 
@@ -62,7 +63,9 @@ async def get_parent_name_to_show_variant(message : Message, variant_service : V
         reply_markup = product_kb
     )
 
-    await state.update_data(parent_name = message.text)
+    await state.update_data(input_name = message.text)
+    await state.update_data(mode = service_args.mode)
+    await state.update_data(action = "/show_variant")
     await state.set_state(ShowVariantFlow.waiting_for_parent_id)
 
 
@@ -89,7 +92,7 @@ async def get_parent_id_to_show_variant(callback : CallbackQuery,
     }
     service_args = ReturnVariantTableSchema(**data)
     existing_product = await variant_service.get_product_id_for_variant(parent_id = service_args.parent_id, admin_id = service_args.user_id)
-    variant_data = await variant_service.return_variant_table(parent_name = existing_product,
+    variant_data = await variant_service.return_variant_table(parent_name = existing_product.parent_name,
                                                                         parent_id = service_args.parent_id,
                                                                         user_id = service_args.user_id
                                                                         )
@@ -97,6 +100,8 @@ async def get_parent_id_to_show_variant(callback : CallbackQuery,
     await callback.answer()
     variant_kb = create_item_table_buttons(data = variant_data, action = "/show_variant")
     await state.update_data(parent_id = service_args.parent_id)
+    await state.update_data(parent_name = existing_product.parent_name)
+    
     await state.set_state(ShowVariantFlow.waiting_for_variant_id)
     
     await callback.message.answer(

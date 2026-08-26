@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from bot.callback_factories.item_callback import ItemCallback
-from bot.enums import OperationMode, ThingType
+from bot.enums import OperationMode, ThingType, UserRole
 from bot.errors.server_error import ServerAbsenceError
 from bot.keyboard.item_table import create_item_table_buttons
 from bot.schemas.products.getproductidforvariant import GetProductIdForVariant
@@ -46,6 +46,8 @@ async def check_parent_name(message : Message,
     if result:
         await state.set_state(AddVariantFlow.waiting_for_parent_name)
         await state.update_data(admin_id = message.from_user.id)
+        await state.update_data(user_role = UserRole.ADMIN)
+        await state.update_data(action = "/add_variant")
         await message.answer(
             "Отправьте имя продукта к которому хотите добавить вариант."
         )
@@ -94,6 +96,8 @@ async def receiving_parent_name(message : Message,
     
     if product_data:
         kb = create_item_table_buttons(data = product_data, action = "/add_variant")
+        await state.update_data(input_name = message.text)
+        await state.update_data(mode = service_args.mode)
         await state.set_state(AddVariantFlow.waiting_for_parent_id)
         await message.answer(
             "Выберите продукт которому хотите добавить вариант.",
