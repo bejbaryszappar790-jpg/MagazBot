@@ -33,4 +33,7 @@ class GuiltytType(str, Enum):
 class RegressButtonType(str, Enum):
     CANCEL = "cancel"
     GO_BACK = "go_back"
-    
+
+class RegressButtonText(str, Enum):
+    CANCEL = "Назад"
+    GO_BACK = "Отменить полное действие"

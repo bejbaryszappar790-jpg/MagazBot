@@ -10,6 +10,7 @@ from bot.enums import ChangingVariantAttribute, OperationMode, ThingType
 from bot.errors.client_error import UnknownUserError
 from bot.errors.server_error import ServerAbsenceError, ServerError
 from bot.keyboard.item_table import create_item_table_buttons
+from bot.keyboard.reply_cancel_go_back_kb import reply_cancel_go_back_kb
 from bot.keyboard.variant_attributes_table import create_variant_attribute_table
 from bot.schemas.products.getproductnameforvariant import GetProductNameForVariant
 from bot.schemas.users.verifyuser import VerifyUser
@@ -39,12 +40,14 @@ async def start_update_variant_handler(message : Message, user_service : UserSer
     result = await user_service.verify_user(admin_id = service_args.user_id, thing_type = ThingType.VARIANT)
 
     if result:
-        await message.answer(
-            "Напишите имя продукта чей вариант вы хотите изменить."
-        )
         await state.update_data(admin_id = message.from_user.id)
         await state.update_data(action = "/update_variant")
         await state.set_state(UpdateVariantFlow.waiting_for_parent_name)
+        kb = reply_cancel_go_back_kb()
+        await message.answer(
+            "Напишите имя продукта чей вариант вы хотите изменить.",
+            reply_markup = kb
+        )
 
         
 @router.message(UpdateVariantFlow.waiting_for_parent_name)
@@ -80,7 +83,7 @@ async def receinving_parent_name_for_update_variant(message : Message, variant_s
     return
 
 @router.callback_query(UpdateVariantFlow.waiting_for_parent_id,
-                       ItemCallback.filter(F.action == "/update_variant")
+                       ItemCallback.filter(F.action == "/update")
                        )
 async def receive_parent_id_for_update_variant(callback : CallbackQuery, 
                                                callback_data : ItemCallback,
@@ -113,7 +116,7 @@ async def receive_parent_id_for_update_variant(callback : CallbackQuery,
 
 @router.callback_query(
     UpdateVariantFlow.waiting_for_variant_id,
-    ItemCallback.filter(F.action == "/update_variant")
+    ItemCallback.filter(F.action == "/update")
 )
 async def receive_variant_id_to_show_var_attribute(
     callback : CallbackQuery,
@@ -170,17 +173,21 @@ async def receive_var_attribute_to_update(
 
     await state.update_data(variant_attribute = callback.data)
     await state.set_state(UpdateVariantFlow.waiting_for_new_data)
+    kb = reply_cancel_go_back_kb()
     if callback.data == ChangingVariantAttribute.VARIANT_NAME:
         await callback.message.answer(
-            "Теперь напишите новое имя для варианта."
+            "Теперь напишите новое имя для варианта.",
+            reply_markup = kb
         )
     elif callback.data == ChangingVariantAttribute.VARIANT_PRICE:
         await callback.message.answer(
-            "Теперь напишите новую цену для варианта."
+            "Теперь напишите новую цену для варианта.",
+            reply_markup = kb
         )
     elif callback.data == ChangingVariantAttribute.VARIANT_QUANTITY:
         await callback.message.answer(
-            "Теперь напишите новое количество для варианта."
+            "Теперь напишите новое количество для варианта.",
+            reply_markup = kb
         )
     else:
         await callback.message.answer(

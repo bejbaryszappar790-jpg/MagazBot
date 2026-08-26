@@ -9,6 +9,7 @@ from bot.utils.helper import validate_user_input
 
 async def make_go_back_cancel_shorter(variant_service : VariantService, state_data : dict, table : ThingType):
     parent_name = state_data.get("parent_name")
+    input_parent_name = state_data.get("input_name")
     parent_id = state_data.get("parent_id")
     user_role = state_data.get("user_role")
     action = state_data.get("action")
@@ -18,7 +19,7 @@ async def make_go_back_cancel_shorter(variant_service : VariantService, state_da
         id = state_data.get("user_id")
 
 
-    if (not parent_name or parent_id is None or not user_role or not action or id is None):
+    if (not parent_name or not input_parent_name or parent_id is None or not user_role or not action or id is None):
         raise ServerMissingDataError("Данные не полные для создание кнопок в роутере callback_go_back_cancel_handler")
 
     
@@ -39,12 +40,12 @@ async def make_go_back_cancel_shorter(variant_service : VariantService, state_da
             
         data = {
             "user_id" : id,
-            "parent_name" : parent_name,
+            "parent_name" : input_parent_name,
             "mode" : mode
         }
 
         service_args = validate_user_input(schema = GetProductNameForVariant, data = data, user_id = id, validated_data = "parent_name")
-        data_for_table = await variant_service.get_product_name_for_variant(id = service_args.user_id, parent_name = service_args.parent_name, mode = service_args.mode)
+        data_for_table = await variant_service.get_product_name_for_variant(id = service_args.user_id, parent_name = input_parent_name, mode = service_args.mode)
 
 
     kb = create_item_table_buttons(data = data_for_table, action = action)

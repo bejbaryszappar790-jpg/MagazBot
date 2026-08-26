@@ -8,6 +8,7 @@ from aiogram.types import CallbackQuery, Message
 from bot.callback_factories.item_callback import ItemCallback
 from bot.enums import OperationMode, UserRole
 from bot.keyboard.item_table import create_item_table_buttons
+from bot.keyboard.reply_cancel_go_back_kb import reply_cancel_go_back_kb
 from bot.schemas.products.getproductnameforvariant import GetProductNameForVariant
 from bot.schemas.variants.getvarianttoshow import GetVariantToShow
 from bot.schemas.variants.returnvarianttable import ReturnVariantTableSchema
@@ -34,8 +35,10 @@ async def start_showing_variant(message : Message, state : FSMContext):
 
     user_id = message.from_user.id
     logger.info(f"Пользователь {user_id} успешно начал команду /show_variant.")
+    kb = reply_cancel_go_back_kb()
     await message.answer(
-        "Теперь напишите имя продукта чьей вариант хотите увидеть!"
+        "Теперь напишите имя продукта чьей вариант хотите увидеть!",
+        reply_markup = kb
     )
     await state.update_data(user_id = message.from_user.id)
     await state.update_data(user_role = UserRole.USER)

@@ -9,6 +9,7 @@ from bot.callback_factories.item_callback import ItemCallback
 from bot.enums import OperationMode, ThingType, UserRole
 from bot.errors.server_error import ServerAbsenceError
 from bot.keyboard.item_table import create_item_table_buttons
+from bot.keyboard.reply_cancel_go_back_kb import reply_cancel_go_back_kb
 from bot.schemas.products.getproductidforvariant import GetProductIdForVariant
 from bot.schemas.products.getproductnameforvariant import GetProductNameForVariant
 from bot.schemas.users.verifyuser import VerifyUser
@@ -48,15 +49,17 @@ async def check_parent_name(message : Message,
         await state.update_data(admin_id = message.from_user.id)
         await state.update_data(user_role = UserRole.ADMIN)
         await state.update_data(action = "/add_variant")
+        kb = reply_cancel_go_back_kb()
         await message.answer(
-            "Отправьте имя продукта к которому хотите добавить вариант."
+            "Отправьте имя продукта к которому хотите добавить вариант.",
+            reply_markup = kb
         )
         return
-    
     await message.answer(
         "Ошибка сервера"
     )
     logger.error("Метод start_creating_variant в сервисе вариянта вернула False.")
+    
     await state.clear()
     
     
@@ -145,9 +148,10 @@ async def receiving_parent_id(callback : CallbackQuery,
     await state.update_data(parent_id = result.parent_id)
     await state.update_data(parent_name = result.parent_name)
     await state.set_state(AddVariantFlow.waiting_for_variant_name)
-
+    kb = reply_cancel_go_back_kb()
     await callback.message.answer(
-        "Напишите имя варианта которую вы хотите добавить."
+        "Напишите имя варианта которую вы хотите добавить.",
+        reply_markup = kb
         )
     
 
@@ -176,8 +180,10 @@ async def receiving_var_name(message : Message, variant_service : VariantService
         await state.update_data(variant_name = message.text)
 
         await state.set_state(AddVariantFlow.waiting_for_price)
+        kb = reply_cancel_go_back_kb()
         await message.answer(
-            "Теперь напишите цену варианта."
+            "Теперь напишите цену варианта.",
+            reply_markup = kb
         )
         return
     await message.answer(
@@ -217,8 +223,10 @@ async def receiving_var_price(message : Message,
     if variant_price is not None:
         await state.update_data(variant_price = variant_price)
         await state.set_state(AddVariantFlow.waiting_for_quantity)
+        kb = reply_cancel_go_back_kb()
         await message.answer(
-            "Теперь напишите количество варианта."
+            "Теперь напишите количество варианта.",
+            reply_markup = kb
         )
         return
     

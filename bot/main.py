@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 from bot.database import SessionLocal
 from bot.handlers.error_hander import router as error_router
+from bot.handlers.go_back_handler import router as go_back_cancel_handler
 from bot.handlers.products.add_product import router as add_product_router
 from bot.handlers.users.start_bot import router as start_bot_router
 from bot.handlers.variants.add_variant import router as add_variant_router
@@ -63,6 +64,7 @@ async def main():
         dp.include_router(add_product_router)
         dp.include_router(error_router)
         dp.include_router(update_variant_router)
+        dp.include_router(go_back_cancel_handler)
 
         dp.startup.register(set_main_menu)
 
