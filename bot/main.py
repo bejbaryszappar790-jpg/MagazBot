@@ -58,13 +58,13 @@ async def main():
         dp.update.middleware(DbSessionMiddleware(session_pool = SessionLocal))
 
 
+        dp.include_router(go_back_cancel_handler)
+        dp.include_router(error_router)
         dp.include_router(start_bot_router)
         dp.include_router(add_variant_router)
         dp.include_router(show_variant_router)
         dp.include_router(add_product_router)
-        dp.include_router(error_router)
         dp.include_router(update_variant_router)
-        dp.include_router(go_back_cancel_handler)
 
         dp.startup.register(set_main_menu)
 

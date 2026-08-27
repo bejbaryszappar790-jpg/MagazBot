@@ -8,6 +8,7 @@ from aiogram.types import CallbackQuery, Message
 from bot.callback_factories.command_callback import CommandCallback
 from bot.enums import RegressButtonText, RegressButtonType
 from bot.errors.server_error import ServerError
+from bot.keyboard.reply_cancel_go_back_kb import reply_cancel_go_back_kb
 from bot.services.variant_services import VariantService
 from bot.utils.back_navigarion_map import GLOBAL_BACK_NAVIGATION
 from bot.utils.make_go_back_cancel_shorter import make_go_back_cancel_shorter
@@ -68,7 +69,8 @@ async def callback_go_back_cancel_handler(
     await state.set_state(previous_state)
 
     if table is None:
-        await callback.message.answer(message_for_user)
+        kb = reply_cancel_go_back_kb()
+        await callback.message.answer(message_for_user, reply_markup = kb)
     else:
         state_data = await state.get_data()
         kb = await make_go_back_cancel_shorter(variant_service = variant_service, state_data = state_data, table = table)
