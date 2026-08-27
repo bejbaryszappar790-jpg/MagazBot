@@ -1,6 +1,7 @@
 from bot.enums import ThingType, UserRole
 from bot.errors.server_error import ServerMissingDataError
 from bot.keyboard.item_table import create_item_table_buttons
+from bot.keyboard.variant_attributes_table import create_variant_attribute_table
 from bot.schemas.products.getproductnameforvariant import GetProductNameForVariant
 from bot.schemas.variants.returnvarianttable import ReturnVariantTableSchema
 from bot.services.variant_services import VariantService
@@ -47,8 +48,9 @@ async def make_go_back_cancel_shorter(variant_service : VariantService, state_da
         service_args = ReturnVariantTableSchema(**data)
         existing_product = await variant_service.get_product_id_for_variant(parent_id = parent_id, admin_id = service_args.user_id)
         data_for_table = await variant_service.return_variant_table(parent_name = existing_product.parent_name, parent_id = existing_product.parent_id, user_id = id)
+        kb = create_item_table_buttons(data = data_for_table, action = action)
         
-    else:
+    elif table is ThingType.PRODUCT:
         mode = state_data.get("mode")
         if mode is None:
             raise ServerMissingDataError("Переменная mode пуст в хэндлере allback_go_back_cancel_handler")
@@ -61,7 +63,8 @@ async def make_go_back_cancel_shorter(variant_service : VariantService, state_da
 
         service_args = validate_user_input(schema = GetProductNameForVariant, data = data, user_id = id, validated_data = "parent_name")
         data_for_table = await variant_service.get_product_name_for_variant(id = service_args.user_id, parent_name = input_parent_name, mode = service_args.mode)
+        kb = create_item_table_buttons(data = data_for_table, action = action)
+    else:
+        kb = create_variant_attribute_table()
 
-
-    kb = create_item_table_buttons(data = data_for_table, action = action)
     return kb

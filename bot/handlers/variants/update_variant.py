@@ -5,6 +5,7 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
+from bot.callback_factories.attribute_callback import AttributeCallback
 from bot.callback_factories.item_callback import ItemCallback
 from bot.enums import ChangingVariantAttribute, OperationMode, ThingType, UserRole
 from bot.errors.client_error import UnknownUserError
@@ -25,7 +26,6 @@ from bot.services.user_services import UserService
 from bot.services.variant_services import VariantService
 from bot.states.update_variant import UpdateVariantFlow
 from bot.utils.helper import validate_user_input
-from bot.callback_factories.attribute_callback import AttributeCallback
 
 router = Router()
 logger = logging.getLogger(__name__)

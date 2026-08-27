@@ -2473,3 +2473,5 @@ Traceback (most recent call last):
   File "/Users/beybaris/BikoAiBot/bot/handlers/variants/update_variant.py", line 197, in receive_var_attribute_to_update
     raise ServerError(f"callbakc.data имеет внутри {callback.data} который не соответвует классу ChangingVariantAttribute.")
 bot.errors.server_error.ServerError: callbakc.data имеет внутри go_back который не соответвует классу ChangingVariantAttribute.
+2026-08-27 19:07:35,027 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-27 19:40:14,066 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
