@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from bot.callback_factories.item_callback import ItemCallback
-from bot.enums import ChangingVariantAttribute, OperationMode, ThingType
+from bot.enums import ChangingVariantAttribute, OperationMode, ThingType, UserRole
 from bot.errors.client_error import UnknownUserError
 from bot.errors.server_error import ServerAbsenceError, ServerError
 from bot.keyboard.item_table import create_item_table_buttons
@@ -25,6 +25,7 @@ from bot.services.user_services import UserService
 from bot.services.variant_services import VariantService
 from bot.states.update_variant import UpdateVariantFlow
 from bot.utils.helper import validate_user_input
+from bot.callback_factories.attribute_callback import AttributeCallback
 
 router = Router()
 logger = logging.getLogger(__name__)
@@ -42,6 +43,7 @@ async def start_update_variant_handler(message : Message, user_service : UserSer
     if result:
         await state.update_data(admin_id = message.from_user.id)
         await state.update_data(action = "/update_variant")
+        await state.update_data(user_role = UserRole.ADMIN)
         await state.set_state(UpdateVariantFlow.waiting_for_parent_name)
         kb = reply_cancel_go_back_kb()
         await message.answer(
@@ -83,7 +85,7 @@ async def receinving_parent_name_for_update_variant(message : Message, variant_s
     return
 
 @router.callback_query(UpdateVariantFlow.waiting_for_parent_id,
-                       ItemCallback.filter(F.action == "/update")
+                       ItemCallback.filter(F.action == "/update_variant")
                        )
 async def receive_parent_id_for_update_variant(callback : CallbackQuery, 
                                                callback_data : ItemCallback,
@@ -116,7 +118,7 @@ async def receive_parent_id_for_update_variant(callback : CallbackQuery,
 
 @router.callback_query(
     UpdateVariantFlow.waiting_for_variant_id,
-    ItemCallback.filter(F.action == "/update")
+    ItemCallback.filter(F.action == "/update_variant")
 )
 async def receive_variant_id_to_show_var_attribute(
     callback : CallbackQuery,
@@ -156,10 +158,12 @@ async def receive_variant_id_to_show_var_attribute(
 
 
 @router.callback_query(
-    UpdateVariantFlow.waiting_for_variant_attributes
+    UpdateVariantFlow.waiting_for_variant_attributes,
+    AttributeCallback.filter(F.type == "attribute")
 )
 async def receive_var_attribute_to_update(
     callback : CallbackQuery,
+    callback_data : AttributeCallback,
     state : FSMContext
 ):
     
@@ -174,17 +178,17 @@ async def receive_var_attribute_to_update(
     await state.update_data(variant_attribute = callback.data)
     await state.set_state(UpdateVariantFlow.waiting_for_new_data)
     kb = reply_cancel_go_back_kb()
-    if callback.data == ChangingVariantAttribute.VARIANT_NAME:
+    if callback_data.attribute_type == ChangingVariantAttribute.VARIANT_NAME:
         await callback.message.answer(
             "Теперь напишите новое имя для варианта.",
             reply_markup = kb
         )
-    elif callback.data == ChangingVariantAttribute.VARIANT_PRICE:
+    elif callback_data.attribute_type == ChangingVariantAttribute.VARIANT_PRICE:
         await callback.message.answer(
             "Теперь напишите новую цену для варианта.",
             reply_markup = kb
         )
-    elif callback.data == ChangingVariantAttribute.VARIANT_QUANTITY:
+    elif callback_data.attribute_type == ChangingVariantAttribute.VARIANT_QUANTITY:
         await callback.message.answer(
             "Теперь напишите новое количество для варианта.",
             reply_markup = kb

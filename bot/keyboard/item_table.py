@@ -18,3 +18,4 @@ def create_item_table_buttons(data : dict, action : str,):
     builder.adjust(2)
     
     return builder.as_markup()
+

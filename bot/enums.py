@@ -35,5 +35,5 @@ class RegressButtonType(str, Enum):
     GO_BACK = "go_back"
 
 class RegressButtonText(str, Enum):
-    CANCEL = "Назад"
-    GO_BACK = "Отменить полное действие"
+    CANCEL = "Отменить полное действие"
+    GO_BACK = "Назад"

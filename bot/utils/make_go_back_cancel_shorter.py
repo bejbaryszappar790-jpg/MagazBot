@@ -18,9 +18,24 @@ async def make_go_back_cancel_shorter(variant_service : VariantService, state_da
     else:
         id = state_data.get("user_id")
 
+    if not parent_name:
+        raise ServerMissingDataError("Имя продукта пуст.")
 
-    if (not parent_name or not input_parent_name or parent_id is None or not user_role or not action or id is None):
-        raise ServerMissingDataError("Данные не полные для создание кнопок в роутере callback_go_back_cancel_handler")
+    if not input_parent_name:
+        raise ServerMissingDataError("Имя продукта который был написан пользователем пуст.")
+
+    if parent_id is None:
+        raise ServerMissingDataError("Id продукта пуст")
+
+    if not user_role:
+        raise ServerMissingDataError("Роль пользователя не был передан!")
+
+    if not action:
+        raise ServerMissingDataError("Действие/команда не было передано!")
+
+    if id is None:
+        raise ServerMissingDataError("Id пользователя не был передан!")
+    
 
     
     if table is ThingType.VARIANT:

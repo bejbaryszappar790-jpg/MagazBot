@@ -37,14 +37,14 @@ async def callback_go_back_cancel_handler(
     current_state = await state.get_state()
     navigation_back_dict = GLOBAL_BACK_NAVIGATION.get(current_state)
     
-    if callback.data == RegressButtonType.CANCEL:
+    if callback_data.type == RegressButtonType.CANCEL:
         await callback.message.answer(
             """
             Вы отменили всю команду.
             Выберите команду.
             """
         )
-        logger.info(f"Пользователь {callback.from_user.id} отменил команду в состояний {current_state} и вышел полностью из команды {callback_data.action}")
+        logger.info(f"Пользователь {callback.from_user.id} отменил команду в состояний {current_state} и вышел полностью из команды {callback_data.action} с {callback_data.type}")
         await state.clear()
         return
     
