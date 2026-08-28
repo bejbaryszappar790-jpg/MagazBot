@@ -159,7 +159,7 @@ async def receive_variant_id_to_show_var_attribute(
 
 @router.callback_query(
     UpdateVariantFlow.waiting_for_variant_attributes,
-    AttributeCallback.filter(F.type == "attribute")
+    AttributeCallback.filter(F.callback_type == "attribute")
 )
 async def receive_var_attribute_to_update(
     callback : CallbackQuery,

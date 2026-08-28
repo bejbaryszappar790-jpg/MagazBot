@@ -4006,3 +4006,121 @@ bot.errors.server_error.ServerError: callbakc.data имеет внутри go_ba
 2026-08-27 22:45:43,937 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
 2026-08-27 22:45:43,937 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
 2026-08-27 22:45:44,190 - __main__ - INFO - main.py - main - Bot stopped.
+2026-08-28 17:42:02,106 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Start polling
+2026-08-28 17:42:02,278 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Run polling for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-28 17:42:12,414 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689822 is handled. Duration 607 ms by bot id=8929833040
+2026-08-28 17:42:42,627 - bot.handlers.error_hander - WARNING - error_hander.py - error_handler - Пользователь 6066556352 пытался создать существующий продукт Lays
+2026-08-28 17:42:42,808 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689823 is handled. Duration 204 ms by bot id=8929833040
+2026-08-28 17:42:53,512 - bot.handlers.error_hander - WARNING - error_hander.py - error_handler - Пользователь 6066556352 пытался создать существующий продукт кола
+2026-08-28 17:42:53,715 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689824 is handled. Duration 206 ms by bot id=8929833040
+2026-08-28 17:43:06,638 - bot.handlers.products.add_product - INFO - add_product.py - create_parent - Пользователь 6066556352 успешно создал товар Alpen Gold с id 12
+2026-08-28 17:43:06,639 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689825 is handled. Duration 221 ms by bot id=8929833040
+2026-08-28 17:43:16,279 - bot.handlers.variants.show_variant - INFO - show_variant.py - start_showing_variant - Пользователь 6066556352 успешно начал команду /show_variant.
+2026-08-28 17:43:16,483 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689826 is handled. Duration 205 ms by bot id=8929833040
+2026-08-28 17:43:21,629 - bot.handlers.go_back_handler - INFO - go_back_handler.py - message_go_back_cancel_handler - Пользователь 6066556352 отменил команду в состояний ShowVariantFlow:waiting_for_parent_name и вышел полностью из команды None
+2026-08-28 17:43:21,630 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689827 is handled. Duration 189 ms by bot id=8929833040
+2026-08-28 17:43:27,799 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689828 is handled. Duration 198 ms by bot id=8929833040
+2026-08-28 17:43:41,392 - bot.handlers.error_hander - WARNING - error_hander.py - error_handler - Словарь с именами и id продуктов пуст который был получен по имени продукта Algen Kold от Админ 6066556352 в сервисах вариянта и в методе get_ProductNameForVariant
+2026-08-28 17:43:41,584 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689829 is handled. Duration 200 ms by bot id=8929833040
+2026-08-28 17:43:48,243 - bot.handlers.error_hander - WARNING - error_hander.py - error_handler - Словарь с именами и id продуктов пуст который был получен по имени продукта algen от Админ 6066556352 в сервисах вариянта и в методе get_ProductNameForVariant
+2026-08-28 17:43:48,483 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689830 is handled. Duration 243 ms by bot id=8929833040
+2026-08-28 17:43:57,415 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689831 is handled. Duration 199 ms by bot id=8929833040
+2026-08-28 17:44:49,336 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689832 is handled. Duration 617 ms by bot id=8929833040
+2026-08-28 17:45:39,332 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689833 is handled. Duration 246 ms by bot id=8929833040
+2026-08-28 17:45:43,379 - bot.handlers.error_hander - WARNING - error_hander.py - error_handler - Пользователь 6066556352 написал цену в неприемлимом формате в виде фыдлваоыолвтм
+2026-08-28 17:45:43,611 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689834 is handled. Duration 234 ms by bot id=8929833040
+2026-08-28 17:45:48,760 - bot.handlers.error_hander - WARNING - error_hander.py - error_handler - Пользователь пытался написать цену меньше нуля написав -17236498723649
+2026-08-28 17:45:48,993 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689835 is handled. Duration 233 ms by bot id=8929833040
+2026-08-28 17:46:03,000 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689836 is handled. Duration 220 ms by bot id=8929833040
+2026-08-28 17:46:09,976 - bot.handlers.variants.add_variant - INFO - add_variant.py - receiving_var_quantity - Пользователь 6066556352 создал вариант фундук продукта с id 12
+2026-08-28 17:46:10,217 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689837 is handled. Duration 250 ms by bot id=8929833040
+2026-08-28 17:46:15,667 - bot.handlers.variants.show_variant - INFO - show_variant.py - start_showing_variant - Пользователь 6066556352 успешно начал команду /show_variant.
+2026-08-28 17:46:15,868 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689838 is handled. Duration 202 ms by bot id=8929833040
+2026-08-28 17:46:20,452 - bot.handlers.error_hander - WARNING - error_hander.py - error_handler - Словарь с именами и id продуктов пуст который был получен по имени продукта alden от Пользователь 6066556352 в сервисах вариянта и в методе get_ProductNameForVariant
+2026-08-28 17:46:20,669 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689839 is handled. Duration 221 ms by bot id=8929833040
+2026-08-28 17:46:26,213 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689840 is handled. Duration 203 ms by bot id=8929833040
+2026-08-28 17:46:46,469 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689841 is handled. Duration 423 ms by bot id=8929833040
+2026-08-28 17:46:49,197 - bot.handlers.variants.show_variant - INFO - show_variant.py - finish_showing_variant - Пользователь 6066556352 успешно получит вариант товара с id 16 от бота!
+2026-08-28 17:46:49,199 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689842 is handled. Duration 569 ms by bot id=8929833040
+2026-08-28 17:46:54,255 - bot.handlers.go_back_handler - INFO - go_back_handler.py - callback_go_back_cancel_handler - Пользователь 6066556352 нажал на кнопку назад в первом шаге в команде /show_variant
+2026-08-28 17:46:54,256 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689843 is handled. Duration 397 ms by bot id=8929833040
+2026-08-28 17:47:01,330 - bot.handlers.go_back_handler - INFO - go_back_handler.py - message_go_back_cancel_handler - Пользователь 6066556352 отменил команду в состояний None и вышел полностью из команды None
+2026-08-28 17:47:01,331 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689844 is handled. Duration 292 ms by bot id=8929833040
+2026-08-28 17:47:07,510 - bot.handlers.variants.show_variant - INFO - show_variant.py - start_showing_variant - Пользователь 6066556352 успешно начал команду /show_variant.
+2026-08-28 17:47:07,756 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689845 is handled. Duration 248 ms by bot id=8929833040
+2026-08-28 17:47:29,788 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689846 is handled. Duration 229 ms by bot id=8929833040
+2026-08-28 17:47:32,062 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689847 is handled. Duration 788 ms by bot id=8929833040
+2026-08-28 17:47:50,705 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689848 is handled. Duration 537 ms by bot id=8929833040
+2026-08-28 17:47:54,031 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689849 is handled. Duration 586 ms by bot id=8929833040
+2026-08-28 17:47:56,645 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689850 is handled. Duration 226 ms by bot id=8929833040
+2026-08-28 17:48:02,056 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689851 is not handled. Duration 2 ms by bot id=8929833040
+2026-08-28 17:49:45,851 - bot.handlers.variants.show_variant - INFO - show_variant.py - start_showing_variant - Пользователь 6066556352 успешно начал команду /show_variant.
+2026-08-28 17:49:46,074 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689852 is handled. Duration 223 ms by bot id=8929833040
+2026-08-28 17:52:59,678 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689853 is handled. Duration 204 ms by bot id=8929833040
+2026-08-28 17:53:04,804 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689854 is handled. Duration 585 ms by bot id=8929833040
+2026-08-28 17:53:07,872 - bot.handlers.variants.show_variant - INFO - show_variant.py - finish_showing_variant - Пользователь 6066556352 успешно получит вариант товара с id 16 от бота!
+2026-08-28 17:53:07,873 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689855 is handled. Duration 457 ms by bot id=8929833040
+2026-08-28 17:53:14,581 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689856 is handled. Duration 222 ms by bot id=8929833040
+2026-08-28 17:53:22,805 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689857 is handled. Duration 204 ms by bot id=8929833040
+2026-08-28 17:53:26,661 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689858 is handled. Duration 233 ms by bot id=8929833040
+2026-08-28 17:53:28,973 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689859 is handled. Duration 398 ms by bot id=8929833040
+2026-08-28 17:53:34,560 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689860 is not handled. Duration 2 ms by bot id=8929833040
+2026-08-28 17:53:38,598 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689861 is not handled. Duration 2 ms by bot id=8929833040
+2026-08-28 17:53:39,008 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689862 is not handled. Duration 1 ms by bot id=8929833040
+2026-08-28 17:53:39,625 - bot.handlers.go_back_handler - INFO - go_back_handler.py - callback_go_back_cancel_handler - Пользователь 6066556352 отменил команду в состояний UpdateVariantFlow:waiting_for_variant_attributes и вышел полностью из команды /update_variant с cancel
+2026-08-28 17:53:39,626 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689863 is handled. Duration 366 ms by bot id=8929833040
+2026-08-28 17:53:40,071 - bot.handlers.go_back_handler - INFO - go_back_handler.py - callback_go_back_cancel_handler - Пользователь 6066556352 отменил команду в состояний None и вышел полностью из команды /update_variant с cancel
+2026-08-28 17:53:40,072 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689864 is handled. Duration 656 ms by bot id=8929833040
+2026-08-28 17:53:42,395 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689865 is not handled. Duration 3 ms by bot id=8929833040
+2026-08-28 17:53:43,198 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689866 is not handled. Duration 1 ms by bot id=8929833040
+2026-08-28 17:53:43,376 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689867 is not handled. Duration 1 ms by bot id=8929833040
+2026-08-28 17:53:43,529 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689868 is not handled. Duration 1 ms by bot id=8929833040
+2026-08-28 17:53:44,122 - bot.handlers.go_back_handler - INFO - go_back_handler.py - callback_go_back_cancel_handler - Пользователь 6066556352 отменил команду в состояний None и вышел полностью из команды /update_variant с cancel
+2026-08-28 17:53:44,123 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689869 is handled. Duration 348 ms by bot id=8929833040
+2026-08-28 17:53:49,283 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689870 is not handled. Duration 2 ms by bot id=8929833040
+2026-08-28 17:53:49,586 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689871 is not handled. Duration 1 ms by bot id=8929833040
+2026-08-28 17:53:49,963 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689872 is not handled. Duration 2 ms by bot id=8929833040
+2026-08-28 17:53:50,149 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689873 is not handled. Duration 3 ms by bot id=8929833040
+2026-08-28 17:53:51,137 - bot.handlers.go_back_handler - INFO - go_back_handler.py - callback_go_back_cancel_handler - Пользователь 6066556352 отменил команду в состояний None и вышел полностью из команды /update_variant с cancel
+2026-08-28 17:53:51,137 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689874 is handled. Duration 821 ms by bot id=8929833040
+2026-08-28 17:53:53,610 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689875 is handled. Duration 274 ms by bot id=8929833040
+2026-08-28 17:53:56,001 - bot.handlers.go_back_handler - INFO - go_back_handler.py - callback_go_back_cancel_handler - Пользователь 6066556352 отменил команду в состояний UpdateVariantFlow:waiting_for_parent_name и вышел полностью из команды /update_variant с cancel
+2026-08-28 17:53:56,002 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689876 is handled. Duration 478 ms by bot id=8929833040
+2026-08-28 18:35:33,182 - aiogram.dispatcher - ERROR - dispatcher.py - _listen_updates - Failed to fetch updates - TelegramNetworkError: HTTP Client says - Request timeout error
+2026-08-28 18:35:33,184 - aiogram.dispatcher - WARNING - dispatcher.py - _listen_updates - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8929833040)
+2026-08-28 18:52:08,646 - aiogram.dispatcher - INFO - dispatcher.py - _listen_updates - Connection established (tryings = 1, bot id = 8929833040)
+2026-08-28 19:03:17,846 - aiogram.dispatcher - WARNING - dispatcher.py - _signal_stop_polling - Received SIGINT signal
+2026-08-28 19:03:17,847 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-28 19:03:17,847 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
+2026-08-28 19:03:18,099 - __main__ - INFO - main.py - main - Bot stopped.
+2026-08-28 19:03:27,046 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Start polling
+2026-08-28 19:03:27,193 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Run polling for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-28 19:03:27,861 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689877 is handled. Duration 524 ms by bot id=8929833040
+2026-08-28 19:03:35,139 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689878 is handled. Duration 229 ms by bot id=8929833040
+2026-08-28 19:03:36,769 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689879 is handled. Duration 347 ms by bot id=8929833040
+2026-08-28 19:03:39,706 - bot.handlers.go_back_handler - INFO - go_back_handler.py - callback_go_back_cancel_handler - Пользователь 6066556352 отменил команду в состояний UpdateVariantFlow:waiting_for_variant_id и вышел полностью из команды /update_variant с cancel
+2026-08-28 19:03:39,707 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689880 is handled. Duration 318 ms by bot id=8929833040
+2026-08-28 19:03:43,762 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689881 is handled. Duration 240 ms by bot id=8929833040
+2026-08-28 19:03:48,423 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689882 is handled. Duration 210 ms by bot id=8929833040
+2026-08-28 19:03:49,538 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689883 is handled. Duration 224 ms by bot id=8929833040
+2026-08-28 19:03:51,106 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689884 is handled. Duration 377 ms by bot id=8929833040
+2026-08-28 19:03:53,807 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689885 is not handled. Duration 2 ms by bot id=8929833040
+2026-08-28 19:06:35,073 - aiogram.dispatcher - WARNING - dispatcher.py - _signal_stop_polling - Received SIGINT signal
+2026-08-28 19:06:35,074 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-28 19:06:35,075 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
+2026-08-28 19:06:35,326 - __main__ - INFO - main.py - main - Bot stopped.
+2026-08-28 19:06:47,345 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Start polling
+2026-08-28 19:06:49,160 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Run polling for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-28 19:06:59,776 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689886 is handled. Duration 5222 ms by bot id=8929833040
+2026-08-28 19:07:06,355 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689887 is handled. Duration 1750 ms by bot id=8929833040
+2026-08-28 19:07:11,376 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689888 is handled. Duration 1856 ms by bot id=8929833040
+2026-08-28 19:07:20,903 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689889 is handled. Duration 4316 ms by bot id=8929833040
+2026-08-28 19:07:28,980 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689890 is handled. Duration 4187 ms by bot id=8929833040
+2026-08-28 19:07:38,096 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689891 is handled. Duration 2257 ms by bot id=8929833040
+2026-08-28 19:07:49,783 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689892 is handled. Duration 6652 ms by bot id=8929833040
+2026-08-28 19:08:01,148 - bot.handlers.go_back_handler - INFO - go_back_handler.py - message_go_back_cancel_handler - Пользователь 6066556352 отменил команду в состояний UpdateVariantFlow:waiting_for_new_data и вышел полностью из команды /update_variant
+2026-08-28 19:08:01,150 - aiogram.event - INFO - dispatcher.py - feed_update - Update id=361689893 is handled. Duration 1183 ms by bot id=8929833040
+2026-08-28 19:25:54,443 - aiogram.dispatcher - WARNING - dispatcher.py - _signal_stop_polling - Received SIGINT signal
+2026-08-28 19:25:54,449 - aiogram.dispatcher - INFO - dispatcher.py - _polling - Polling stopped for bot @bikoai_bot id=8929833040 - 'BikoAiBot'
+2026-08-28 19:25:54,450 - aiogram.dispatcher - INFO - dispatcher.py - start_polling - Polling stopped
+2026-08-28 19:25:54,702 - __main__ - INFO - main.py - main - Bot stopped.
