@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: biko_user
+      POSTGRES_PASSWORD: secret_password
+      POSTGRES_DB: biko_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/postgres_data
+    
+  bot:
+    build: .
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=biko_user
+      - DB_NAME=biko_db
+      - BOT_TOKEN=8929833040:AAFTGpHQye8xDW59qY4nSQdtXB8cxepcAEg
+
+volumes:
+  postgres_datas
